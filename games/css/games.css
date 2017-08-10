@@ -1,0 +1,105 @@
+@charset "UTF-8";
+
+
+/* Games CSS */
+
+#games-content {
+    float: left;
+    width: 100%;
+}
+
+.games-repo {
+    width: 82%;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.games-repo ol {
+    padding-left: 0;
+    margin-top: 0;
+    display: -webkit-flex;
+	display: flex;
+    list-style: none;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    -webkit-flex-wrap: wrap;
+    -webkit-box-pack: justify;
+    -webkit-justify-content: space-around;
+}
+
+.games-repo li {
+    display: -webkit-flex;
+	display: flex;
+    width: 359px;
+    margin-bottom: 16px;
+    padding: 16px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #d1d5da;
+    border-radius: 3px;
+}
+
+.games-repo .games-reout {
+    display: -webkit-flex;
+	display: flex;
+    width: 100%;
+    flex-direction: column;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -webkit-flex-direction: column;
+}
+
+.games-reout>span {
+    position: relative;
+}
+
+.games-reout>span>a {
+    font-weight: 600;
+    color: #0366d6;
+    text-decoration: none;
+}
+
+.games-reout>span>a>span {
+    font-weight: 600;
+    color: #0366d6;
+    text-decoration: none;
+}
+
+.games-reout>span>a>span:hover {
+    cursor: pointer;
+    border-bottom-width: 3px;
+    border-bottom-style: solid;
+    border-bottom-color: #0366d6;
+}
+
+.games-reout .p1 {
+    flex-grow: 1;
+    flex-shrink: 0;
+    flex-basis: auto;
+    color: #586069;
+    margin-bottom: 16px;
+    margin-top: 8px;
+    -webkit-box-flex: 1;
+    -webkit-flex-grow: 1;
+    -webkit-flex-shrink: 0;
+    -webkit-flex-basis: auto;
+}
+
+.games-reout .p2 {
+    font-size: small;
+    margin-bottom: 0;
+    margin-top: 0;
+}
+
+.games-reout>p:last-child>span {
+    background-color: #f1e05a;
+    position: relative;
+    top: 1px;
+    display: inline-block;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+}
+
+
