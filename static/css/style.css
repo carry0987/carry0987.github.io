@@ -1,7 +1,5 @@
 @charset "UTF-8";
 
-
-
 /* Main CSS */
 
 * {
@@ -27,7 +25,7 @@ nav {
     margin-left: auto;
     margin-right: auto;
     display: -webkit-flex;
-	display: flex;
+    display: flex;
     text-align: center;
 }
 
@@ -65,7 +63,7 @@ nav>a:hover {
     float: left;
     margin-bottom: 25px;
     display: -webkit-flex;
-	display: flex;
+    display: flex;
     background-color: #EFF2F4;
     border-radius: 5px;
     overflow: hidden;
@@ -157,7 +155,7 @@ nav>a:hover {
     padding-left: 0;
     margin-top: 0;
     display: -webkit-flex;
-	display: flex;
+    display: flex;
     list-style: none;
     flex-wrap: wrap;
     justify-content: space-around;
@@ -168,7 +166,7 @@ nav>a:hover {
 
 .repo li {
     display: -webkit-flex;
-	display: flex;
+    display: flex;
     width: 359px;
     margin-bottom: 16px;
     padding: 16px;
@@ -180,7 +178,7 @@ nav>a:hover {
 
 .repo .repositories {
     display: -webkit-flex;
-	display: flex;
+    display: flex;
     width: 100%;
     flex-direction: column;
     -webkit-box-orient: vertical;
