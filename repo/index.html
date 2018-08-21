@@ -2,9 +2,14 @@
 
 set -e
 
-wget https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Setup/Install-Main-Pkg.sh
-wget https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Tools/tools.sh
-wget https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/rclone-mount.sh
-wget https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/delete-rclone-mount.sh
+link1=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Setup/Install-Main-Pkg.sh
+link2=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Tools/tools.sh
+link3=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/rclone-mount.sh
+link4=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/delete-rclone-mount.sh
+
+wget $link1 -O `basename $link1`
+wget $link2 -O `basename $link2`
+wget $link3 -O `basename $link3`
+wget $link4 -O `basename $link4`
 
 exit 0
