@@ -2,14 +2,52 @@
 
 set -e
 
-link1=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Setup/Install-Main-Pkg.sh
-link2=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Tools/tools.sh
-link3=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/rclone-mount.sh
-link4=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/delete-rclone-mount.sh
+echo '1) Install Main Pkg'
+echo '2) Set LC'
+echo '3) Tools'
+echo '4) Rclone Mount'
+echo '5) Delete Rclone Mount'
+echo '6) Get All Tools'
+echo '7) Exit'
+read -p 'Which tool do you want to use ? ' tool </dev/tty
 
-wget $link1 -O `basename $link1`
-wget $link2 -O `basename $link2`
-wget $link3 -O `basename $link3`
-wget $link4 -O `basename $link4`
+link1=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Setup/Install-Main-Pkg.sh
+link2=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Setup/Set-LC.sh
+link3=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Tools/tools.sh
+link4=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/rclone-mount.sh
+link5=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/delete-rclone-mount.sh
+
+#Detect tools
+case $tool in
+  1)
+    wget $link1 -O `basename $link1`
+    ;;
+  2)
+    wget $link2 -O `basename $link2`
+    ;;
+  3)
+    wget $link3 -O `basename $link3`
+    ;;
+  4)
+    wget $link4 -O `basename $link4`
+    ;;
+  5)
+    wget $link5 -O `basename $link5`
+    ;;
+  6)
+    wget $link1 -O `basename $link1`
+    wget $link2 -O `basename $link2`
+    wget $link3 -O `basename $link3`
+    wget $link4 -O `basename $link4`
+    wget $link5 -O `basename $link5`
+    ;;
+  7)
+    echo 'Exited'
+    exit 0
+    ;;
+  *)
+    echo 'Tools not supported'
+    ;;
+esac
 
 exit 0
