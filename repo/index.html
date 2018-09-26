@@ -8,8 +8,9 @@ echo '3) Tools'
 echo '4) Zip Tool'
 echo '5) Rclone Mount'
 echo '6) Delete Rclone Mount'
-echo '7) Get All Tools'
-echo '8) Exit'
+echo '7) Video-DL Tool'
+echo '8) Get All Tools'
+echo '9) Exit'
 read -p 'Which tool do you want to use ? ' tool
 #read -p 'Which tool do you want to use ? ' tool </dev/tty
 
@@ -19,6 +20,7 @@ link3=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Tools/tools.sh
 link4=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Tools/zip.sh
 link5=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/rclone-mount.sh
 link6=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/delete-rclone-mount.sh
+link7=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Video-DL/video-dl.sh
 
 #Detect tools
 case $tool in
@@ -41,13 +43,16 @@ case $tool in
         wget $link6 -O `basename $link6`
         ;;
     7)
+        wget $link7 -O `basename $link7`
+        ;;
+    8)
         wget $link1 -O `basename $link1`
         wget $link2 -O `basename $link2`
         wget $link3 -O `basename $link3`
         wget $link4 -O `basename $link4`
         wget $link5 -O `basename $link5`
         ;;
-    8)
+    9)
         echo 'Exited'
         exit 0
         ;;
