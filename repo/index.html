@@ -9,10 +9,11 @@ echo '4) Zip Tool'
 echo '5) Rclone Mount'
 echo '6) Delete Rclone Mount'
 echo '7) Deluge Set'
-echo '8) Video-DL Tool'
-echo '9) Youtube-Upload Tool'
-echo '10) Get All Tools'
-echo '11) Exit'
+echo '8) Uninstall Deluge'
+echo '9) Video-DL Tool'
+echo '10) Youtube-Upload Tool'
+echo '11) Get All Tools'
+echo '12) Exit'
 read -p 'Which tool do you want to use ? ' tool
 #read -p 'Which tool do you want to use ? ' tool </dev/tty
 
@@ -23,8 +24,9 @@ link4=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Tools/zip.sh
 link5=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/rclone-mount.sh
 link6=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Rclone-Mount/delete-rclone-mount.sh
 link7=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Deluge-Set/deluge-setup.sh
-link8=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Video-DL/video-dl.sh
-link9=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Youtube-Upload/youtube-upload.sh
+link8=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Deluge-Set/deluge-unset.sh
+link9=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Video-DL/video-dl.sh
+link10=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Youtube-Upload/youtube-upload.sh
 
 #Detect tools
 case $tool in
@@ -56,16 +58,16 @@ case $tool in
         wget $link9 -O `basename $link9`
         ;;
     10)
-        wget $link1 -O `basename $link1`
-        wget $link2 -O `basename $link2`
-        wget $link3 -O `basename $link3`
-        wget $link4 -O `basename $link4`
-        wget $link5 -O `basename $link5`
-        wget $link6 -O `basename $link6`
-        wget $link7 -O `basename $link7`
-        wget $link8 -O `basename $link8`
+        wget $link10 -O `basename $link10`
         ;;
     11)
+        declare -a arr=($link{1..10})
+        for i in "${arr[@]}"
+        do
+            wget "$i" -O `basename "$i"`
+        done
+        ;;
+    12)
         echo 'Exited'
         exit 0
         ;;
