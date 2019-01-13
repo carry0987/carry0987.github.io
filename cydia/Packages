@@ -1,15 +1,15 @@
-Package: com.carry0987.simulatetower
-Version: 2.11-96
+Package: com.carry0987.tower
+Version: 1.0
 Architecture: iphoneos-arm
 Maintainer: carry0987 <carry0987@gmail.com>
 Depends: firmware (>= 8.0), mobilesubstrate (>= 0.9.5101), preferenceloader (>= 2.2.2)
-Filename: deb/com.carry0987.simulatetower_2.11-96_iphoneos-arm.deb
+Filename: ./deb/com.carry0987.tower_2.11-96_iphoneos-arm.deb
 Size: 7739768
 MD5sum: 40d8e17d25ebd3c5789c07cb93fb9b3a
 SHA1: 49f48f5aae7304d8a846941bfbd68b1ba56d1fe9
 SHA256: 7d38f7c85cdd98ee1441632023c0557a909d6f5044f6aaa344d553689caf78e2
 Section: Tweaks
 Priority: optional
-Description: Auto tool for Puzzle & Dragons, Tower of Saviors.
-Depiction: https://carry0987.github.io/cydia/depictions/?p=com.carry0987.simulatetower
-Name: SimulateTower
+Description: Tower
+Depiction: https://carry0987.github.io/cydia/depictions/?p=com.carry0987.tower
+Name: Tower
