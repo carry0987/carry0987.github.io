@@ -1,6 +1,6 @@
 <package>
-	<id>com.carry0987.fullpackage</id>
-	<name>Full Package</name>
+	<id>com.carry0987.newpackage</id>
+	<name>New Package</name>
 	<version>2.0.0-1</version>
 	<compatibility>
 		<firmware>
