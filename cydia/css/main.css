@@ -1,0 +1,40 @@
+body {
+    background: #0f1a20;
+    color: white;
+    font-family: sans-serif;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+.fullpage {
+    width: 100%;
+    display: inline-flex;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+.btn-default,
+.btn-default:focus {
+    background: #21343e;
+    border: 0;
+    color: white;
+    padding: 10px 25px;
+    transition: 1s ease;
+}
+.btn-default:hover,
+.btn-default:active {
+    background: #4f595f !important;
+    color: white !important;
+}
+#anim1 {
+    margin-top: 10px;
+    animation: 1s textFx ease;
+}
+
+@keyframes textFx {
+    0% {
+        opacity: 0;
+        transform: translateY(20%);
+    }
+}
