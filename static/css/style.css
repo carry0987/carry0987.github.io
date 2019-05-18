@@ -105,7 +105,8 @@ nav>a:hover {
 }
 
 #header>.name :last-child {
-    color: #444444;
+    color: #657786;
+    font-weight: normal;
 }
 
 #header>.bio p {
