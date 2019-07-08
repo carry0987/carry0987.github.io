@@ -12,8 +12,9 @@ echo '7) Deluge Set'
 echo '8) Uninstall Deluge'
 echo '9) Video-DL Tool'
 echo '10) Youtube-Upload Tool'
-echo '11) Get All Tools'
-echo '12) Exit'
+echo '11) Set Mail via SMTP'
+echo '12) Get All Tools'
+echo '13) Exit'
 read -p 'Which tool do you want to use ? ' tool
 #read -p 'Which tool do you want to use ? ' tool </dev/tty
 
@@ -27,6 +28,7 @@ link7=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Deluge-Set/delug
 link8=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Deluge-Set/deluge-unset.sh
 link9=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Video-DL/video-dl.sh
 link10=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Youtube-Upload/youtube-upload.sh
+link11=https://raw.github.com/carry0987/Raspberry-Pi-Repo/master/Setup/Set-Mail.sh
 
 #Detect tools
 case $tool in
@@ -61,13 +63,16 @@ case $tool in
         wget $link10 -O `basename $link10`
         ;;
     11)
-        declare -a arr=($link{1..10})
+        wget $link11 -O `basename $link11`
+        ;;
+    12)
+        declare -a arr=($link{1..11})
         for i in "${arr[@]}"
         do
             wget "$i" -O `basename "$i"`
         done
         ;;
-    12)
+    13)
         echo 'Exited'
         exit 0
         ;;
