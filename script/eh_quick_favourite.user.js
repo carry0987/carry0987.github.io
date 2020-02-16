@@ -2,7 +2,7 @@
 // @name         EH Quick Favourite
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.0.0
+// @version      1.1.0
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      /^https?://(ex|(?:g\.)?e-)hentai\.org/g/\d+?/\w{10}/?/
@@ -586,7 +586,7 @@ function favnoteClick() {
 function injectHotkeyListener() {
     document.addEventListener("keypress", hotkeyHandler);
     var archive = document.getElementsByClassName("g2 gsp");
-    archive[0].addEventListener("click", touchHandler);
+    archive[0].children[1].addEventListener("click", touchHandler);
     //document.getElementById("div").addEventListener("touchmove", touchHandler, false);
     //document.getElementById("div").addEventListener("touchend", touchHandler, false);
     dlog("Listening to keypress events now");
