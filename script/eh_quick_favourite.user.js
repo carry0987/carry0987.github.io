@@ -2,7 +2,7 @@
 // @name         EH Quick Favourite
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.1.0
+// @version      1.2.0
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      /^https?://(ex|(?:g\.)?e-)hentai\.org/g/\d+?/\w{10}/?/
@@ -29,6 +29,7 @@ const config = {
     "editor_size": 60, // Width of the favnotes input element in not-px unit
     "hotkeys": true, // Enable hotkeys
     "cheatsheet": false, // Show cheatsheet after pressing Shift+F
+    "favnote": false,
     "archive_fav": true, // Auto add to default favourite while download archive
     "default_fav": 3 // Default favourite sort [0-9]
 };
@@ -436,7 +437,9 @@ function quickFavourite(id) {
             }
 
             injectQFElements(); // Reinject Quick Favourite UI
-            injectFavnoteElements(); // and Favnote UI
+            if (config.favnote === true) {
+                injectFavnoteElements(); // and Favnote UI
+            }
             disableHotkeys();
             dlog("quickFavourite() done!"); // Done!
         },
@@ -569,7 +572,9 @@ function favnoteClick() {
             // an error occurred, attempt to reload favnotes
             document.querySelector(".favnote").remove();
             document.querySelector(".editor").remove();
-            injectFavnoteElements();
+            if (config.favnote === true) {
+                injectFavnoteElements();
+            }
             break;
         default:
             dlog("What is happening?");
@@ -752,7 +757,9 @@ function init() {
     if (checkSyncNecessity()) syncFavouriteLabels();
     injectStylesheet();
     injectQFElements();
-    injectFavnoteElements();
+    if (config.favnote === true) {
+        injectFavnoteElements();
+    }
     if (config.hotkeys) injectHotkeyListener();
 
     dlog("Initialization finished!");
