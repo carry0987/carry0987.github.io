@@ -2,7 +2,7 @@
 // @name         HV Trainer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.1.0
+// @version      1.1.5
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/*
@@ -12,10 +12,10 @@
 // ==/UserScript==
 
 (function() {
-    if (!gE('#navbar')) return
-    var countdownBox = gE('body').appendChild(cE('a'))
+    if (!getElem('#navbar')) return
+    var countdownBox = getElem('body>#csp>#navbar>div:nth-child(5)>div').appendChild(createElem('a'))
     countdownBox.href = '?s=Character&ss=tr'
-    countdownBox.style.cssText = 'font-weight:bold;font-size:large;position:absolute;top:32px;right:15px'
+    countdownBox.style.cssText = 'font-weight:bold;font-size:large;position:relative;bottom:21px;left:84px'
     var timeLast
     var trainList = {
         'Adept Learner': {
@@ -103,11 +103,11 @@
         var trainTask
         var trainWindow = window.open('', 'trainWindow', 'resizable,scrollbars,width=550,height=250')
         var doc = trainWindow.document
-        var style = gE('head', doc).appendChild(cE('style'))
+        var style = getElem('head', doc).appendChild(createElem('style'))
         style.textContent = '*{margin:5px;text-align:center;}table{border:2px solid #000;border-collapse:collapse;margin:0 auto;}table>tbody>tr>td{border:1px solid #000;}input{text-align:right;width:60px;}'
-        var table = gE('body', doc).appendChild(cE('table'))
-        var tbody = table.appendChild(cE('tbody'))
-        var tr = tbody.appendChild(cE('tr'))
+        var table = getElem('body', doc).appendChild(createElem('table'))
+        var tbody = table.appendChild(createElem('tbody'))
+        var tr = tbody.appendChild(createElem('tr'))
         tr.innerHTML = '<td></td><td>Project</td><td>Freq</td><td>Start Time - End Time</td>'
         var select = [
             '<select>',
@@ -131,17 +131,17 @@
         ].join('')
         var order = 1
         var i, _time, _select, _input
-        var buttonNew = gE('body', doc).appendChild(cE('button'))
+        var buttonNew = getElem('body', doc).appendChild(createElem('button'))
         buttonNew.textContent = 'New Task'
         buttonNew.onclick = function() {
-            tr = tbody.appendChild(cE('tr'))
+            tr = tbody.appendChild(createElem('tr'))
             tr.innerHTML = '<td>' + (order++) + '</td><td>' + select + '</td><td><input type="number" value="1" placeholder="1" min="1"></td><td></td>'
-            gE('select', tr).value = '-1'
+            getElem('select', tr).value = '-1'
         }
-        var buttonSave = gE('body', doc).appendChild(cE('button'))
+        var buttonSave = getElem('body', doc).appendChild(createElem('button'))
         buttonSave.textContent = 'Save Task'
         buttonSave.onclick = function() {
-            var input = gE('select,input', 'all', tbody)
+            var input = getElem('select,input', 'all', tbody)
             trainTask = []
             for (i = 0; i < input.length; i = i + 2) {
                 if (input[i].value !== '-1') {
@@ -158,9 +158,9 @@
         if (getValue('trainTask') && getValue('trainTask') !== '[]') {
             trainTask = getValue('trainTask', true)
             for (i = 0; i < trainTask.length; i++) {
-                tr = tbody.appendChild(cE('tr'))
+                tr = tbody.appendChild(createElem('tr'))
                 tr.innerHTML = '<td>' + (order++) + '</td><td>' + select + '</td><td><input type="number" value="' + trainTask[i].freq + '" placeholder="1" min="1"></td><td></td>'
-                gE('select', tr).value = trainTask[i].id
+                getElem('select', tr).value = trainTask[i].id
             }
             timeChange()
         } else {
@@ -170,9 +170,9 @@
         tbody.onkeyup = changeEvent
 
         function timeChange() {
-            _time = gE('tr>td:nth-child(4)', 'all', tbody)
-            _select = gE('select', 'all', tbody)
-            _input = gE('input', 'all', tbody)
+            _time = getElem('tr>td:nth-child(4)', 'all', tbody)
+            _select = getElem('select', 'all', tbody)
+            _input = getElem('input', 'all', tbody)
             for (i = 0; i < _select.length; i++) {
                 _time[i + 1].textContent = _select[i].value === '-1' ? '' : timeStr(_input[i].value * 1 * trainList2[_select[i].value])
             }
@@ -191,9 +191,9 @@
         }
     }, 'T')
     post('?s=Character&ss=tr', function(data) {
-        if (gE('#train_progcnt', data)) {
-            var nowTraining = gE('#train_progress>div>strong', data).innerText
-            var nowTrainingProcess = gE('#train_progcnt', data).innerText
+        if (getElem('#train_progcnt', data)) {
+            var nowTraining = getElem('#train_progress>div>strong', data).innerText
+            var nowTrainingProcess = getElem('#train_progcnt', data).innerText
             var timeAll = trainList[nowTraining].time
             timeLast = parseInt(timeAll * (1 - 0.01 * nowTrainingProcess) * 60 * 60)
             var timeEnd = new Date(new Date().getTime() + timeLast * 1000)
@@ -248,7 +248,7 @@ function getValue(item, toJSON) {
 }
 
 //Get element
-function gE(ele, mode, parent) {
+function getElem(ele, mode, parent) {
     if (typeof ele === 'object') {
         return ele
     } else if (mode === undefined && parent === undefined) {
@@ -261,7 +261,7 @@ function gE(ele, mode, parent) {
 }
 
 //Create element
-function cE(name) {
+function createElem(name) {
     return document.createElement(name)
 }
 
@@ -278,11 +278,11 @@ function post(href, func, parm) {
     xhr.onload = function(e) {
         if (e.target.status >= 200 && e.target.status < 400 && typeof func === 'function') {
             var data = e.target.response
-            if (xhr.responseType === 'document' && gE('#messagebox', data)) {
-                if (gE('#messagebox')) {
-                    gE('#csp').replaceChild(gE('#messagebox', data), gE('#messagebox'))
+            if (xhr.responseType === 'document' && getElem('#messagebox', data)) {
+                if (getElem('#messagebox')) {
+                    getElem('#csp').replaceChild(getElem('#messagebox', data), getElem('#messagebox'))
                 } else {
-                    gE('#csp').appendChild(gE('#messagebox', data))
+                    getElem('#csp').appendChild(getElem('#messagebox', data))
                 }
             }
             func(data, e)
