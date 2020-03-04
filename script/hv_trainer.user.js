@@ -2,7 +2,7 @@
 // @name         HV Trainer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.0.1
+// @version      1.1.0
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/*
@@ -15,7 +15,7 @@
     if (!gE('#navbar')) return
     var countdownBox = gE('body').appendChild(cE('a'))
     countdownBox.href = '?s=Character&ss=tr'
-    countdownBox.style.cssText = 'font-weight:bold;font-size:large;position:absolute;top:2px;right:2px'
+    countdownBox.style.cssText = 'font-weight:bold;font-size:large;position:absolute;top:32px;right:15px'
     var timeLast
     var trainList = {
         'Adept Learner': {
@@ -47,7 +47,7 @@
             'time': 12
         },
         'Archaeologist': {
-            'id': '', //
+            'id': '',
             'time': 24
         },
         'Metabolism': {
