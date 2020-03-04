@@ -2,12 +2,11 @@
 // @name         HV Trainer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.1.5
+// @version      1.2.0
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/*
 // @include      http*://alt.hentaiverse.org/*
-// @grant        GM.registerMenuCommand
 // @run-at       document-end
 // ==/UserScript==
 
@@ -98,98 +97,6 @@
     }
     var lang = navigator.language
     var timeOption = { hour12: false }
-    GM.registerMenuCommand('Train List', function() {
-        var time = countdownBox.value || new Date().getTime()
-        var trainTask
-        var trainWindow = window.open('', 'trainWindow', 'resizable,scrollbars,width=550,height=250')
-        var doc = trainWindow.document
-        var style = getElem('head', doc).appendChild(createElem('style'))
-        style.textContent = '*{margin:5px;text-align:center;}table{border:2px solid #000;border-collapse:collapse;margin:0 auto;}table>tbody>tr>td{border:1px solid #000;}input{text-align:right;width:60px;}'
-        var table = getElem('body', doc).appendChild(createElem('table'))
-        var tbody = table.appendChild(createElem('tbody'))
-        var tr = tbody.appendChild(createElem('tr'))
-        tr.innerHTML = '<td></td><td>Project</td><td>Freq</td><td>Start Time - End Time</td>'
-        var select = [
-            '<select>',
-            '<option value="-1"></option>',
-            '<option value="50">Adept Learner</option>',
-            '<option value="51">Assimilator</option>',
-            '<option value="80">Ability Boost</option>',
-            '<option value="81">Manifest Destiny</option>',
-            '<option value="70">Scavenger</option>',
-            '<option value="71">Luck of the Draw</option>',
-            '<option value="72">Quartermaster</option>',
-            '<option value="">Archaeologist</option>',
-            '<option value="84">Metabolism</option>',
-            '<option value="85">Inspiration</option>',
-            '<option value="90">Scholar of War</option>',
-            '<option value="91">Tincture</option>',
-            '<option value="98">Pack Rat</option>',
-            '<option value="88">Dissociation</option>',
-            '<option value="96">Set Collector</option>',
-            '</select>'
-        ].join('')
-        var order = 1
-        var i, _time, _select, _input
-        var buttonNew = getElem('body', doc).appendChild(createElem('button'))
-        buttonNew.textContent = 'New Task'
-        buttonNew.onclick = function() {
-            tr = tbody.appendChild(createElem('tr'))
-            tr.innerHTML = '<td>' + (order++) + '</td><td>' + select + '</td><td><input type="number" value="1" placeholder="1" min="1"></td><td></td>'
-            getElem('select', tr).value = '-1'
-        }
-        var buttonSave = getElem('body', doc).appendChild(createElem('button'))
-        buttonSave.textContent = 'Save Task'
-        buttonSave.onclick = function() {
-            var input = getElem('select,input', 'all', tbody)
-            trainTask = []
-            for (i = 0; i < input.length; i = i + 2) {
-                if (input[i].value !== '-1') {
-                    trainTask.push({
-                        id: input[i].value,
-                        freq: (input[i + 1].value || input[i + 1].placeholder) * 1
-                    })
-                }
-            }
-            setValue('trainTask', trainTask)
-            trainWindow.close()
-            window.location.href = window.location.href
-        }
-        if (getValue('trainTask') && getValue('trainTask') !== '[]') {
-            trainTask = getValue('trainTask', true)
-            for (i = 0; i < trainTask.length; i++) {
-                tr = tbody.appendChild(createElem('tr'))
-                tr.innerHTML = '<td>' + (order++) + '</td><td>' + select + '</td><td><input type="number" value="' + trainTask[i].freq + '" placeholder="1" min="1"></td><td></td>'
-                getElem('select', tr).value = trainTask[i].id
-            }
-            timeChange()
-        } else {
-            buttonNew.click()
-        }
-        tbody.onclick = changeEvent
-        tbody.onkeyup = changeEvent
-
-        function timeChange() {
-            _time = getElem('tr>td:nth-child(4)', 'all', tbody)
-            _select = getElem('select', 'all', tbody)
-            _input = getElem('input', 'all', tbody)
-            for (i = 0; i < _select.length; i++) {
-                _time[i + 1].textContent = _select[i].value === '-1' ? '' : timeStr(_input[i].value * 1 * trainList2[_select[i].value])
-            }
-        }
-
-        function timeStr(hour) {
-            var start = time
-            time = start + hour * 60 * 60 * 1000
-            return new Date(start).toLocaleString(lang, timeOption) + ' - ' + new Date(time).toLocaleString(lang, timeOption)
-        }
-
-        function changeEvent(e) {
-            if (e.target.tagName !== 'SELECT' && e.target.tagName !== 'INPUT') return
-            time = countdownBox.value || new Date().getTime()
-            timeChange()
-        }
-    }, 'T')
     post('?s=Character&ss=tr', function(data) {
         if (getElem('#train_progcnt', data)) {
             var nowTraining = getElem('#train_progress>div>strong', data).innerText
