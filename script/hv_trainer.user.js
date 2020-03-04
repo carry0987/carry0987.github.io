@@ -2,7 +2,7 @@
 // @name         HV Trainer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.2.0
+// @version      1.2.5
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/*
@@ -119,8 +119,9 @@
                 }
                 setValue('trainTask', trainTask)
             }
-            countdownBox.innerHTML = 'Train Completed'
-            document.title = 'Train Completed'
+            countdownBox.style.cssText = 'font-weight:bold;font-size:medium;position:relative;bottom:20px;left:84px'
+            countdownBox.innerHTML = 'Completed'
+            document.title = 'Completed'
         }
     })
 
