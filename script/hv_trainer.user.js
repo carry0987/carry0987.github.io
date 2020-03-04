@@ -2,7 +2,7 @@
 // @name         HV Trainer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.0.0
+// @version      1.0.1
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/*
@@ -247,7 +247,8 @@ function getValue(item, toJSON) {
     return (window.localStorage[item]) ? ((toJSON) ? JSON.parse(window.localStorage[item]) : window.localStorage[item]) : null
 }
 
-function gE(ele, mode, parent) { // 获取元素
+//Get element
+function gE(ele, mode, parent) {
     if (typeof ele === 'object') {
         return ele
     } else if (mode === undefined && parent === undefined) {
