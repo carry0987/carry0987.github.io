@@ -2,7 +2,7 @@
 // @name         HV Challenge
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.0.0
+// @version      1.1.0
 // @description  Easily change the challenge level
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/*
@@ -11,20 +11,20 @@
 // ==/UserScript==
 
 (function() {
-    if (!gE('#navbar')) return
+    if (!getElem('#navbar')) return
     let challenges = ['Normal', 'Hard', 'Nightmare', 'Hell', 'Nintendo', 'IWBTH', 'PFUDOR']
     let options = challenges.map(function(i, j) {
         return '<option value="' + (j + 1) + '">' + i + '</option>'
     })
     let init = function() {
-        gE('#level_readout>div.fc4.far.fcb>div').onclick = function(e) {
+        getElem('#level_readout>div.fc4.far.fcb>div').onclick = function(e) {
             e.target.onclick = null
             let text = e.target.textContent.split(' ')
             e.target.innerHTML = '<select style="position:relative;top:-5px;">' + options + '</select> ' + text[1]
             e.target.querySelector('select').value = challenges.indexOf(text[0]) + 1
             e.target.querySelector('select').onchange = function(e1) {
                 changeChallenge(e1.target.value, function() {
-                    gE('#level_readout>div.fc4.far.fcb>div').textContent = challenges[e1.target.value - 1] + ' ' + text[1]
+                    getElem('#level_readout>div.fc4.far.fcb>div').textContent = challenges[e1.target.value - 1] + ' ' + text[1]
                     init()
                 })
             }
@@ -33,7 +33,7 @@
     init()
 
     //Get element
-    function gE(ele, mode, parent) {
+    function getElem(ele, mode, parent) {
         if (typeof ele === 'object') {
             return ele
         } else if (mode === undefined && parent === undefined) {
@@ -58,11 +58,11 @@
         xhr.onload = function(e) {
             if (e.target.status >= 200 && e.target.status < 400 && typeof func === 'function') {
                 let data = e.target.response
-                if (xhr.responseType === 'document' && gE('#messagebox', data)) {
-                    if (gE('#messagebox')) {
-                        gE('#csp').replaceChild(gE('#messagebox', data), gE('#messagebox'))
+                if (xhr.responseType === 'document' && getElem('#messagebox', data)) {
+                    if (getElem('#messagebox')) {
+                        getElem('#csp').replaceChild(getElem('#messagebox', data), getElem('#messagebox'))
                     } else {
-                        gE('#csp').appendChild(gE('#messagebox', data))
+                        getElem('#csp').appendChild(getElem('#messagebox', data))
                     }
                 }
                 func(data, e)
@@ -75,7 +75,7 @@
     //Level:1-7
     function changeChallenge(level, func) {
         post('?s=Character&ss=se', function(data) {
-            let settings = [...gE('#settings_outer input,#settings_outer select', 'all', data)].map(function(i) {
+            let settings = [...getElem('#settings_outer input,#settings_outer select', 'all', data)].map(function(i) {
                 if (i.type === 'radio' || i.type === 'checkbox') {
                     return i.checked ? i.name + '=' + i.value : ''
                 } else {
