@@ -2,7 +2,7 @@
 // @name         EH Hath Seller
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.1.0
+// @version      1.2.0
 // @description  Auto summary credit of hath
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://e-hentai.org/exchange.php?t=hath
@@ -39,8 +39,8 @@
     let init = function() {
         ask_count.onchange = function(e) {
             var get_count = parseInt(ask_count.value);
-            if (get_count > 1) {
-                ask_price.value = get_price * get_count;
+            if (get_count >= 1) {
+                ask_price.value = get_price;
             }
         }
     }
