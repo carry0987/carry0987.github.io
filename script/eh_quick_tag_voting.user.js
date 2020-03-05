@@ -2,7 +2,7 @@
 // @name         EH Gallery Quick Tag Voting
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.0.5
+// @version      1.1.0
 // @description  Adds upvote and downvote button on the left and right sides of tags in EH Gallery to allow faster and easier tag voting
 // @icon         https://carry0987.github.io/favicon.png
 // @include      /^https?://(ex|(g\.)?e-)hentai\.org/g/\d+?/\w{10}/?/
@@ -106,11 +106,11 @@ function hookEvents() {
     var votedowns = document.querySelectorAll('.qtvote.down');
 
     for (var i_1 = 0; i_1 < voteups.length; i_1 += 1) {
-        voteups[i].addEventListener("click", quickVote);
+        voteups[i_1].addEventListener("click", quickVote);
     }
 
     for (var i_2 = 0; i_2 < votedowns.length; i_2 += 1) {
-        votedowns[i].addEventListener("click", quickVote);
+        votedowns[i_2].addEventListener("click", quickVote);
     }
 
     dlog('hookEvents() executed.');
