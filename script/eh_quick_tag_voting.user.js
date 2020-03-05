@@ -6,7 +6,7 @@
 // @description  Adds upvote and downvote button on the left and right sides of tags in EH Gallery to allow faster and easier tag voting
 // @icon         https://carry0987.github.io/favicon.png
 // @include      /^https?://(ex|(g\.)?e-)hentai\.org/g/\d+?/\w{10}/?/
-// @grant        GM.addStyle
+// @grant        GM_addStyle
 // @grant        unsafeWindow
 // ==/UserScript==
 
