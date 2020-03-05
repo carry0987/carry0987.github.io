@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name         EH - How Rich Am I ?
+// @name         EH How Rich Am I ?
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.0.0
+// @version      1.0.5
 // @description  Shows how many Credits/Hath/GP you have, and displays exchange rate of Hath under the Overview tab
 // @icon         https://carry0987.github.io/favicon.png
 // @include      https://e-hentai.org/home.php

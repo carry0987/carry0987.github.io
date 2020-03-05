@@ -3,7 +3,7 @@
 // @author       carry0987
 // @namespace    https://github.com/carry0987
 // @version      1.2.0
-// @description  Auto summary credit of hath
+// @description  Auto insert credit price
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://e-hentai.org/exchange.php?t=hath
 // @run-at       document-end
