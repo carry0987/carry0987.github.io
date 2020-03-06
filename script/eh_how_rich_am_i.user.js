@@ -2,7 +2,7 @@
 // @name         EH How Rich Am I ?
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.0.5
+// @version      1.1.0
 // @description  Shows how many Credits/Hath/GP you have, and displays exchange rate of Hath under the Overview tab
 // @icon         https://carry0987.github.io/favicon.png
 // @include      https://e-hentai.org/home.php
@@ -36,7 +36,8 @@ newbox.textContent = ''
 newbox.appendChild(tbl)
 homebox.parentNode.insertBefore(newbox, homebox.nextSibling.nextSibling)
 
-var get_info_1 = function() {
+//Get Hath
+var getHath = function() {
     var frm = doc.createElement('IFRAME')
     frm.src = 'https://e-hentai.org/exchange.php?t=hath'
     frm.width = frm.height = frm.frameBorder = 0
@@ -55,10 +56,10 @@ var get_info_1 = function() {
     }, false)
     doc.body.appendChild(frm)
 }
-//Get Info Part1
-get_info_1()
+getHath()
 
-var get_info_2 = function() {
+//Get GP
+var getGP = function() {
     var frm = doc.createElement('IFRAME')
     frm.src = 'https://e-hentai.org/exchange.php?t=gp'
     frm.width = frm.height = frm.frameBorder = 0
@@ -74,5 +75,4 @@ var get_info_2 = function() {
     }, false)
     doc.body.appendChild(frm)
 }
-//Get Info Part2
-get_info_2()
+getGP()
