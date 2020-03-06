@@ -2,10 +2,10 @@
 // @name         HV How Rich Am I ?
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.2.0
+// @version      1.2.5
 // @description  Show how many Credits you have
 // @icon         https://carry0987.github.io/favicon.png
-// @include      https://hentaiverse.org/?s=Character*
+// @include      https://hentaiverse.org/?s=Character&ss=ch*
 // ==/UserScript==
 
 var wnd = window
