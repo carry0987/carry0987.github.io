@@ -2,7 +2,7 @@
 // @name         HV How Rich Am I ?
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.1.0
+// @version      1.1.5
 // @description  Show how many Credits you have
 // @icon         https://carry0987.github.io/favicon.png
 // @include      https://hentaiverse.org/*
@@ -18,6 +18,28 @@ var $ = function(e, css) { if (!css) { css = e;
 var $$ = function(e, css) { if (!css) { css = e;
         e = doc }; return e.querySelectorAll(css) }
 
+//Generate chart
+function generateChart(chartContainer, perChart, text) {
+    var container = document.createElement('div');
+    //Used in the for loop
+    var blockDiv, textSpan;
+    container.setAttribute('id', 'networth');
+    container.setAttribute('width', '148px')
+    document.getElementById(chartContainer.replace('#', '')).appendChild(container);
+    for (var i = 0; i < perChart; i++) {
+        blockDiv = document.createElement('div');
+        blockDiv.className = 'fc4 fal fcb';
+        blockDiv.setAttribute('width', '138px');
+        blockDiv.setAttribute('style', 'font-weight: bold; position: relative; top: -2px; right: 5px;');
+        //textSpan = document.createElement('span');
+        //See note about browser compatibility
+        //textSpan.append(text);
+        blockDiv.append(text);
+        //blockDiv.append(textSpan);
+        container.append(blockDiv);
+    }
+}
+
 //Get Credit
 var getCredit = function() {
     var frm = doc.createElement('IFRAME')
@@ -29,17 +51,11 @@ var getCredit = function() {
         var credit = cell.innerHTML.match(/Credits:\s*([,0-9]*)\s*/i)[1]
         credit = parseInt(credit.replace(/,/g, ''))
         //credit = credit.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        var show_credit_1 = document.createElement('div')
-        show_credit_1.setAttribute('id', 'networth')
-        show_credit_1.setAttribute('width', '148px')
-        var show_credit_2 = document.createElement('div')
-        show_credit_2.className = 'fc4 fal fcb'
-        show_credit_2.setAttribute('width', '138px')
         var credit_box = document.getElementById('mainpane')
         if (credit_box !== null) {
-            credit_box.appendChild(show_credit_1)
+            generateChart('mainpane', 1, 'Credits: ' + credit)
         }
-        if (credit != '0') { show_credit_1.innerHTML = 'Credits: ' + credit }
+        //if (credit != '0') { generateChart('mainpane', 1, 'Credits: ' + credit) }
         this.parentElement.removeChild(this)
     }, false)
     doc.body.appendChild(frm)
