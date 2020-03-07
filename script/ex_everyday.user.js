@@ -2,12 +2,13 @@
 // @name         ExH EveryDay
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.3.0
+// @version      1.3.5
 // @description  Get daily bonus reward even in ExHentai & HV
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://exhentai.org/*
 // @match        https://e-hentai.org/*
 // @match        https://hentaiverse.org/?s=Character&ss=ch
+// @match        https://hentaiverse.org/
 // @grant        GM_setValue
 // @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
@@ -61,8 +62,8 @@ const onload = (resp) => {
 }
 
 //Report info in console
-function reportInfo(vars) {
-    console.log(typeof vars);
+function reportInfo(vars, showType = false) {
+    if (showType === true) console.log(typeof vars);
     console.log(vars);
 }
 
@@ -85,7 +86,7 @@ function getBonus() {
     function checkNew() {
         setInterval(function() {
             var dateDiff = Date.now() - lastDate;
-            reportInfo(dateDiff);
+            //reportInfo(six_hr, true);
             if (dateDiff > DAY_MS || dateDiff === 0) {
                 getBonus();
             }
