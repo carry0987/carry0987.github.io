@@ -2,14 +2,15 @@
 // @name         ExH EveryDay
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.0.0
-// @description  Get daily bonus reward even in ExHentai
+// @version      1.1.0
+// @description  Get daily bonus reward even in ExHentai & HV
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://exhentai.org/*
 // @match        https://e-hentai.org/*
-// @grant        GM.setValue
-// @grant        GM.getValue
-// @grant        GM.xmlhttpRequest
+// @match        https://hentaiverse.org/?s=Character&ss=ch
+// @grant        GM_setValue
+// @grant        GM_getValue
+// @grant        GM_xmlhttpRequest
 // @connect      *
 // @license      MIT
 // @noframes
@@ -40,7 +41,7 @@ class Cookie {
 
 const cookie = new Cookie;
 
-const lastDate = new Date(GM.getValue(cookie.id, new Date().toJSON()));
+const lastDate = new Date(GM_getValue(cookie.id, new Date().toJSON()));
 const dateDiff = Date.now() - lastDate;
 
 const onerror = (resp) => {
@@ -50,12 +51,12 @@ const onerror = (resp) => {
 const onload = (resp) => {
     console.info('ExEveryDay', resp);
     if (resp.responseText.match(/It is the dawn of a new day/g)) {
-        GM.setValue(cookie.id, new Date().toJSON());
+        GM_setValue(cookie.id, new Date().toJSON());
     }
 }
 
 if (dateDiff > DAY_MS || dateDiff === 0) {
-    GM.xmlhttpRequest({
+    GM_xmlhttpRequest({
         method: 'GET',
         url: 'https://e-hentai.org/news.php',
         headers: {
