@@ -2,7 +2,7 @@
 // @name         ExH EveryDay
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.1.0
+// @version      1.2.0
 // @description  Get daily bonus reward even in ExHentai & HV
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://exhentai.org/*
@@ -17,6 +17,7 @@
 // ==/UserScript==
 
 const DAY_MS = 86400 * 1e3;
+const DEBUG = false;
 
 class Cookie {
     constructor(cookie = document.cookie) {
@@ -40,16 +41,19 @@ class Cookie {
 }
 
 const cookie = new Cookie;
-
 const lastDate = new Date(GM_getValue(cookie.id, new Date().toJSON()));
 const dateDiff = Date.now() - lastDate;
 
 const onerror = (resp) => {
-    console.error('ExEveryDay', resp);
+    if (DEBUG === true) {
+        console.error('ExEveryDay Error', resp);
+    }
 }
 
 const onload = (resp) => {
-    console.info('ExEveryDay', resp);
+    if (DEBUG === true) {
+        console.info('ExEveryDay Info', resp);
+    }
     if (resp.responseText.match(/It is the dawn of a new day/g)) {
         GM_setValue(cookie.id, new Date().toJSON());
     }
