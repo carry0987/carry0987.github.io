@@ -2,26 +2,25 @@
 // @name         EH Gallery Quick Tag Voting
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.1.5
+// @version      1.2.0
 // @description  Adds upvote and downvote button on the left and right sides of tags in EH Gallery to allow faster and easier tag voting
 // @icon         https://carry0987.github.io/favicon.png
 // @include      /^https?://(ex|(g\.)?e-)hentai\.org/g/\d+?/\w{10}/?/
-// @grant        GM.addStyle
 // @grant        unsafeWindow
 // ==/UserScript==
 
 //Config
 const config = {
-    "debug": false, // Enable debugging?
-    "selective_tags": false, // Affect only tags w/ dashed borders ( those with <100 power and still yield tagging points )
-    "invert_buttons": false, // Invert buttons  ( [+|tag|-] by default, [-|tag|+] if inverted )
-    "short_buttons": true, // Shorter buttons ( [+|tag|-] ,instead of [+++|---] overlay )
-    "upvote_only": false, // Upvote only ( [+|tag  ] )
+    'debug': false, // Enable debugging?
+    'selective_tags': false, // Affect only tags w/ dashed borders ( those with <100 power and still yield tagging points )
+    'invert_buttons': false, // Invert buttons  ( [+|tag|-] by default, [-|tag|+] if inverted )
+    'short_buttons': true, // Shorter buttons ( [+|tag|-] ,instead of [+++|---] overlay )
+    'upvote_only': false, // Upvote only ( [+|tag  ] )
 };
 
 //Stylesheet
-var qt_button_width_default = (config.short_buttons ? "18px" : "35%");
-var qt_button_width_elongated = (config.short_buttons ? "35%" : "68%");
+var qt_button_width_default = (config.short_buttons ? '18px' : '35%');
+var qt_button_width_elongated = (config.short_buttons ? '35%' : '68%');
 var stylesheet = `
 .gt, .gtl {
     position: relative;
@@ -61,14 +60,12 @@ var stylesheet = `
 
 `;
 
-
 //Utilities
 function dlog(msg) {
     if (config.debug) {
         console.log(`EHGQT: ${msg}`);
     }
 }
-
 
 //Core
 function insertElements() {
@@ -77,21 +74,19 @@ function insertElements() {
     var tags = document.querySelectorAll(filter);
 
     //Build insert material
-    var leftvote = (config.invert_buttons ? "down" : "up");
-    var rightvote = (config.invert_buttons ? "up" : "down");
+    var leftvote = (config.invert_buttons ? 'down' : 'up');
+    var rightvote = (config.invert_buttons ? 'up' : 'down');
     if (config.upvote_only) {
         config.invert_buttons ? leftvote += ' hide' : rightvote += ' hide';
     }
     var elleft = `<div class="qtvote left ${leftvote}"></div>`;
     var elright = `<div class="qtvote right ${rightvote}"></div>`;
 
-
     //Insert the elements to the queried tags
     for (var i = 0; i < tags.length; i += 1) {
         tags[i].insertAdjacentHTML('beforeend', elleft);
         tags[i].insertAdjacentHTML('beforeend', elright);
     }
-
     dlog('insertElements() executed.');
 }
 
@@ -106,13 +101,12 @@ function hookEvents() {
     var votedowns = document.querySelectorAll('.qtvote.down');
 
     for (var i_1 = 0; i_1 < voteups.length; i_1 += 1) {
-        voteups[i_1].addEventListener("click", quickVote);
+        voteups[i_1].addEventListener('click', quickVote);
     }
 
     for (var i_2 = 0; i_2 < votedowns.length; i_2 += 1) {
-        votedowns[i_2].addEventListener("click", quickVote);
+        votedowns[i_2].addEventListener('click', quickVote);
     }
-
     dlog('hookEvents() executed.');
 }
 
@@ -120,13 +114,11 @@ function quickVote(e) {
     //Extract tagname and vote value
     var tag = e.target.parentElement.id.substr(3);
     var vote = (e.target.classList.toString().match('up') ? 1 : -1);
-
     //Replace "_" with " " in   tag
     tag = tag.replace(/_/g, ' ');
-
     //Send the vote!
     unsafeWindow.send_vote(tag, vote);
-    dlog("quickVote() executed");
+    dlog('quickVote() executed');
     dlog(`tag = ${tag}`);
     dlog(`vote = ${vote}`);
 }
@@ -135,7 +127,7 @@ function main() {
     insertStylesheet();
     insertElements();
     hookEvents();
-    dlog("main() executed");
+    dlog('main() executed');
 }
 
 function init() {
@@ -146,8 +138,7 @@ function init() {
     var target = document.getElementById('taglist');
     var config = { childList: true };
     observer.observe(target, config);
-    dlog("MutationObserver is now observing #taglist");
+    dlog('MutationObserver is now observing #taglist');
 }
-
 //Init
 init();
