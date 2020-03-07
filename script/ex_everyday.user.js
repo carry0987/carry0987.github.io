@@ -2,7 +2,7 @@
 // @name         ExH EveryDay
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.2.0
+// @version      1.2.5
 // @description  Get daily bonus reward even in ExHentai & HV
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://exhentai.org/*
@@ -59,6 +59,13 @@ const onload = (resp) => {
     }
 }
 
+//Report info in console
+function reportInfo(vars) {
+    console.log(typeof vars);
+    console.log(vars);
+}
+
+//Check date
 if (dateDiff > DAY_MS || dateDiff === 0) {
     GM_xmlhttpRequest({
         method: 'GET',
@@ -70,3 +77,5 @@ if (dateDiff > DAY_MS || dateDiff === 0) {
         onerror,
     });
 }
+//reportInfo(dateDiff);
+//reportInfo(DAY_MS);
