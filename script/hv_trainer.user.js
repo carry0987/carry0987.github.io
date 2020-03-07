@@ -2,7 +2,7 @@
 // @name         HV Trainer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.3.5
+// @version      1.3.6
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/*
@@ -114,9 +114,7 @@
                 if (trainTask[0].freq <= 0) trainTask.splice(0, 1)
                 if (trainTask.length > 0) {
                     trainTask[0].freq--
-                    post('?s=Character&ss=tr', function() {
-                        window.location.href = window.location.href
-                    }, 'start_train=' + trainTask[0].id)
+                    startTraining(trainTask[0].id)
                 }
                 setValue('trainTask', trainTask)
             }

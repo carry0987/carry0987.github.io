@@ -2,7 +2,7 @@
 // @name         ExH EveryDay
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.2.5
+// @version      1.3.0
 // @description  Get daily bonus reward even in ExHentai & HV
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://exhentai.org/*
@@ -18,6 +18,8 @@
 
 const DAY_MS = 86400 * 1e3;
 const DEBUG = false;
+const six_hr = 2.16e+7;
+const twelve_hr = 4.32e+7;
 
 class Cookie {
     constructor(cookie = document.cookie) {
@@ -42,7 +44,6 @@ class Cookie {
 
 const cookie = new Cookie;
 const lastDate = new Date(GM_getValue(cookie.id, new Date().toJSON()));
-const dateDiff = Date.now() - lastDate;
 
 const onerror = (resp) => {
     if (DEBUG === true) {
@@ -65,8 +66,8 @@ function reportInfo(vars) {
     console.log(vars);
 }
 
-//Check date
-if (dateDiff > DAY_MS || dateDiff === 0) {
+//Get bonus
+function getBonus() {
     GM_xmlhttpRequest({
         method: 'GET',
         url: 'https://e-hentai.org/news.php',
@@ -77,5 +78,17 @@ if (dateDiff > DAY_MS || dateDiff === 0) {
         onerror,
     });
 }
-//reportInfo(dateDiff);
-//reportInfo(DAY_MS);
+
+//Check date
+(function() {
+    checkNew();
+    function checkNew() {
+        setInterval(function() {
+            var dateDiff = Date.now() - lastDate;
+            reportInfo(dateDiff);
+            if (dateDiff > DAY_MS || dateDiff === 0) {
+                getBonus();
+            }
+        }, six_hr)
+    }
+})()
