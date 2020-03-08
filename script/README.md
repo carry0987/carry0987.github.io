@@ -14,6 +14,7 @@ Just storge my user script for Tampermonkey
 [ExH EveryDay](https://github.com/carry0987/carry0987.github.io/raw/master/script/ex_everyday.user.js)  
 
 **HV**  
+[HV Trainer](https://github.com/carry0987/carry0987.github.io/raw/master/script/hv_trainer.user.js)  
 [HV Challenge](https://github.com/carry0987/carry0987.github.io/raw/master/script/hv_challenge.user.js)  
 [HV How Rich Am I ?](https://github.com/carry0987/carry0987.github.io/raw/master/script/hv_how_rich_am_i.user.js)  
-[HV Trainer](https://github.com/carry0987/carry0987.github.io/raw/master/script/hv_trainer.user.js)  
+[HV Equipment Repairer](https://github.com/carry0987/carry0987.github.io/raw/master/script/hv_equipment_repairer.user.js)  
