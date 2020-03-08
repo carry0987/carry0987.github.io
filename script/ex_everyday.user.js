@@ -2,15 +2,13 @@
 // @name         ExH EveryDay
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.3.7
+// @version      1.4.0
 // @description  Get daily bonus reward even in ExHentai & HV
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://exhentai.org/*
 // @match        https://e-hentai.org/*
 // @match        https://hentaiverse.org/?s=Character&ss=ch
 // @match        https://hentaiverse.org/
-// @grant        GM_setValue
-// @grant        GM_getValue
 // @grant        GM_xmlhttpRequest
 // @connect      *
 // @license      MIT
@@ -19,8 +17,7 @@
 
 const DAY_MS = 86400 * 1e3;
 const DEBUG = false;
-//const six_hr = 2.16e+7;
-const six_hr = 1000 * 60 * 60 * 6;
+const six_hr = 2.16e+7;
 const twelve_hr = 4.32e+7;
 
 class Cookie {
@@ -45,7 +42,7 @@ class Cookie {
 }
 
 const cookie = new Cookie;
-const lastDate = new Date(GM_getValue(cookie.id, new Date().toJSON()));
+const lastDate = new Date(getValue(cookie.id, false));
 
 const onerror = (resp) => {
     if (DEBUG === true) {
@@ -58,7 +55,7 @@ const onload = (resp) => {
         console.info('ExEveryDay Info', resp);
     }
     if (resp.responseText.match(/It is the dawn of a new day/g)) {
-        GM_setValue(cookie.id, new Date().toJSON());
+        setValue(cookie.id, new Date().toJSON());
     }
 }
 
@@ -81,9 +78,20 @@ function getBonus() {
     });
 }
 
+//Set value via localSorage
+function setValue(item, value) {
+    window.localStorage[item] = (typeof value === 'string') ? value : JSON.stringify(value);
+}
+
+//Get value via localSorage
+function getValue(item, toJSON) {
+    return (window.localStorage[item]) ? ((toJSON) ? JSON.parse(window.localStorage[item]) : window.localStorage[item]) : null;
+}
+
 //Check date
 (function() {
     checkNew();
+    reportInfo(lastDate);
     function checkNew() {
         setInterval(function() {
             var dateDiff = Date.now() - lastDate;

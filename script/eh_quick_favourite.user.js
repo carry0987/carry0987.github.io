@@ -2,7 +2,7 @@
 // @name         EH Quick Favourite
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.2.0
+// @version      1.2.5
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      /^https?://(ex|(?:g\.)?e-)hentai\.org/g/\d+?/\w{10}/?/
@@ -25,33 +25,31 @@
 
 // Config
 const config = {
-    "debug": false,
-    "editor_size": 60, // Width of the favnotes input element in not-px unit
-    "hotkeys": true, // Enable hotkeys
-    "cheatsheet": false, // Show cheatsheet after pressing Shift+F
-    "favnote": false,
-    "archive_fav": true, // Auto add to default favourite while download archive
-    "default_fav": 3 // Default favourite sort [0-9]
+    'debug': false,
+    'editor_size': 60, // Width of the favnotes input element in not-px unit
+    'hotkeys': true, // Enable hotkeys
+    'cheatsheet': false, // Show cheatsheet after pressing Shift+F
+    'favnote': false,
+    'archive_fav': true, // Auto add to default favourite while download archive
+    'default_fav': 3 // Default favourite sort [0-9]
 };
 
 // Colors
 var geh = {
-    "border": "#5C0D12",
-    "bg": "#E3E0D1",
-    "bg_light": "#F8F6EE",
+    'border': '#5C0D12',
+    'bg': '#E3E0D1',
+    'bg_light': '#F8F6EE',
 };
 var exh = {
-    "border": "#000000",
-    "bg": "#4F535B",
-    "bg_light": "#5F636B",
+    'border': '#000000',
+    'bg': '#4F535B',
+    'bg_light': '#5F636B',
 };
 var color;
 var hotkeyInit = false;
 
 // Are we on fjords?
-color = (location.host.substr(0, 2) == "ex") ?
-    color = exh :
-    color = geh;
+color = (location.host.substr(0, 2) == 'ex') ? color = exh : color = geh;
 
 // Stylesheet
 var stylesheet = `
@@ -263,15 +261,14 @@ var stylesheet = `
 // Debug msg
 function dlog(...msg) {
     if (config.debug) {
-        console.log("EHGQF:", ...msg);
+        console.log('EHGQF:', ...msg);
     }
 }
 
 // Get the actual/current favourite category of the current gallery
 function getPageFavId() {
-    let idElement = document.querySelector("#fav .i");
+    let idElement = document.querySelector('#fav .i');
     if (!idElement) return 10;
-
     return (idElement.style.backgroundPositionY.match(/\d+/)[0] - 2) / 19;
 }
 
@@ -281,15 +278,15 @@ function getPageFavId() {
 \* ========================================================================= */
 // Inject CSS
 function injectStylesheet() {
-    dlog("Injecting stylesheet");
-    var stylesheetEl = document.createElement("style");
+    dlog('Injecting stylesheet');
+    var stylesheetEl = document.createElement('style');
     stylesheetEl.innerHTML = stylesheet;
     document.body.appendChild(stylesheetEl);
 }
 
 // Build and inject FavNote UI
 function injectFavnoteElements() {
-    dlog("Injecting Favnote UI elements");
+    dlog('Injecting Favnote UI elements');
 
     // Fetch the FavID of the current gallery
     var curFavID = getPageFavId();
@@ -297,11 +294,10 @@ function injectFavnoteElements() {
     // Fetch favnotes if current gallery was already in a fav category
     if (curFavID != 10) {
         fetchFavouriteNotes(favnote => {
-
             // Determine icon type
-            var favnoteStatus = "";
-            if (favnote === false) favnoteStatus = "exclamation";
-            if (favnote === "") favnoteStatus = "plus";
+            var favnoteStatus = '';
+            if (favnote === false) favnoteStatus = 'exclamation';
+            if (favnote === '') favnoteStatus = 'plus';
 
             // Build elements for Favnotes
             var favnoteEl = `
@@ -312,23 +308,23 @@ function injectFavnoteElements() {
             `;
 
             // Inject
-            var gdf = document.getElementById("gdf");
-            gdf.insertAdjacentHTML("beforeend", favnoteEl);
+            var gdf = document.getElementById('gdf');
+            gdf.insertAdjacentHTML('beforeend', favnoteEl);
 
             // Add event listeners
-            document.querySelector("#gdf > .favnote").addEventListener("click", favnoteClick);
+            document.querySelector('#gdf > .favnote').addEventListener('click', favnoteClick);
 
-            dlog("Successfully injected Favnote UI");
+            dlog('Successfully injected Favnote UI');
             return;
         });
     }
-    dlog("FavID = 10: No notes to inject!");
+    dlog('FavID = 10: No notes to inject!');
 }
 
 // Build & Inject QF UI
 function injectQFElements() {
     var i;
-    dlog("Injecting Quick Fav UI elements");
+    dlog('Injecting Quick Fav UI elements');
 
     // Fetch the FavID of the current gallery
     var curFavID = getPageFavId();
@@ -364,7 +360,7 @@ function injectQFElements() {
     `);
 
     // Build top list
-    var qfTopElContent = "";
+    var qfTopElContent = '';
     for (i = 0; i < curFavID; i++) { qfTopElContent += favEl[i]; }
     var qfTopEl = `<div class='qf-top'>${qfTopElContent}</div>`;
 
@@ -374,22 +370,22 @@ function injectQFElements() {
     var qfBotEl = `<div class='qf-bot'>${qfBotElContent}</div>`;
 
     // Inject Elements! Finally
-    var gdf = document.getElementById("gdf");
-    gdf.insertAdjacentHTML("beforeend", qfTopEl);
-    gdf.insertAdjacentHTML("beforeend", qfBotEl);
+    var gdf = document.getElementById('gdf');
+    gdf.insertAdjacentHTML('beforeend', qfTopEl);
+    gdf.insertAdjacentHTML('beforeend', qfBotEl);
 
     // Add Event Listeners
-    var favDOMEl = document.querySelectorAll("#gdf .fav");
+    var favDOMEl = document.querySelectorAll('#gdf .fav');
     for (i = 0; i < favDOMEl.length; i++) {
-        favDOMEl[i].addEventListener("click", quickFavourite);
+        favDOMEl[i].addEventListener('click', quickFavourite);
     }
 
     // Disable `#gdf` click event; move it to its child element;
     gdf.children[0].onclick = gdf.onclick;
     gdf.children[1].onclick = gdf.onclick;
-    gdf.onclick = "";
+    gdf.onclick = '';
 
-    dlog("UI Injection successful!");
+    dlog('UI Injection successful!');
 }
 
 
@@ -398,11 +394,11 @@ function injectQFElements() {
 \* ========================================================================= */
 // Send Favouriting XHR request to EH server
 function quickFavourite(id) {
-    dlog("quickFavourite() triggered!");
+    dlog('quickFavourite() triggered!');
 
     // Gather and build things
-    let favnoteEl = document.querySelector(".favnote + .editor > input");
-    let favnote = (favnoteEl) ? favnoteEl.value : "";
+    let favnoteEl = document.querySelector('.favnote + .editor > input');
+    let favnote = (favnoteEl) ? favnoteEl.value : '';
     let favID;
     try { favID = this.attributes.qfid.value; } catch (e) {
         favID = id;
@@ -415,25 +411,25 @@ function quickFavourite(id) {
     let dat = `apply=Add to Favorites&favcat=${favID}&favnote=${favnote}&update=1`;
 
     // Remove Quick Favourite Elements to prevent sending multiple XHR
-    document.querySelector(".qf-top").remove();
-    document.querySelector(".qf-bot").remove();
-    if (favnoteEl) document.querySelector(".favnote").remove();
-    if (favnoteEl) document.querySelector(".editor").remove();
+    document.querySelector('.qf-top').remove();
+    document.querySelector('.qf-bot').remove();
+    if (favnoteEl) document.querySelector('.favnote').remove();
+    if (favnoteEl) document.querySelector('.editor').remove();
 
     // Send XHR
     GM.xmlHttpRequest({
-        method: "POST",
+        method: 'POST',
         url: url,
         data: dat,
         headers: {
-            "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8"
+            'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         },
         onload: function(response) {
             if (response.status == 200) {
                 updateCurrentFav(favID); // Update #gdf
             } else {
-                dlog("Error occurred! Favorite was not updated!");
-                alert("Error occurred! Favorite was not updated!");
+                dlog('Error occurred! Favorite was not updated!');
+                alert('Error occurred! Favorite was not updated!');
             }
 
             injectQFElements(); // Reinject Quick Favourite UI
@@ -441,24 +437,24 @@ function quickFavourite(id) {
                 injectFavnoteElements(); // and Favnote UI
             }
             disableHotkeys();
-            dlog("quickFavourite() done!"); // Done!
+            dlog('quickFavourite() done!'); // Done!
         },
     });
 }
 
 // Update the current/actual Favourite Category of the current Gallery
 function updateCurrentFav(favID) {
-    dlog("Updating current fav with favID " + favID);
+    dlog('Updating current fav with favID ' + favID);
 
     // If id is not specified, refresh
-    if (typeof favID == "undefined") {
+    if (typeof favID == 'undefined') {
         favID = getPageFavId();
-        dlog("FavID set to " + favID);
+        dlog('FavID set to ' + favID);
     }
 
     var el;
 
-    if (favID == "favdel" || favID === 10) {
+    if (favID == 'favdel' || favID === 10) {
         el = `
         <div style="float:left">
             &nbsp; <a onclick="return false" href="#" id="favoritelink"><img src="https://ehgt.org/g/mr.gif"> Add to Favorites</a>
@@ -488,7 +484,7 @@ function updateCurrentFav(favID) {
         `;
     }
 
-    document.getElementById("gdf").innerHTML = el;
+    document.getElementById('gdf').innerHTML = el;
 }
 
 /* ========================================================================= *\
@@ -496,7 +492,7 @@ function updateCurrentFav(favID) {
 \* ========================================================================= */
 // Get Favourite Notes remotely from the popup
 function fetchFavouriteNotes(cb) {
-    dlog("Beginning to check favnotes");
+    dlog('Beginning to check favnotes');
 
     // Send XHR to Favourite Page
     var galID = location.pathname.match(/^\/\w\/(\d+)\//)[1];
@@ -507,21 +503,21 @@ function fetchFavouriteNotes(cb) {
 
 
     GM.xmlHttpRequest({
-        method: "GET",
+        method: 'GET',
         url: url,
         timeout: config.timeout,
         onload: function(response) {
             if (response.status === 200) {
-                const responseXML = new DOMParser().parseFromString(response.responseText, "text/xml");
-                var favnoteEl = responseXML.querySelector("textarea[name='favnote']");
-                dlog("Favnotes successfully found");
+                const responseXML = new DOMParser().parseFromString(response.responseText, 'text/xml');
+                var favnoteEl = responseXML.querySelector('textarea[name=\'favnote\']');
+                dlog('Favnotes successfully found');
                 cb(favnoteEl.value); // Fire callback function
             } else {
-                dlog("XHR failed; notes not found");
+                dlog('XHR failed; notes not found');
             }
         },
         ontimeout: function() {
-            dlog("XHR timed out; notes not found");
+            dlog('XHR timed out; notes not found');
             return false;
         },
     });
@@ -530,10 +526,10 @@ function fetchFavouriteNotes(cb) {
 // Update favnote icon status
 function updateFavnoteIcon(status) {
     dlog(`Updating favnote icon to ${status}`);
-    var favnoteEl = document.querySelector("#gdf > .favnote");
+    var favnoteEl = document.querySelector('#gdf > .favnote');
 
     // Clear all classes but .favnote
-    favnoteEl.className = "favnote";
+    favnoteEl.className = 'favnote';
 
     // Add status
     favnoteEl.classList.add(status);
@@ -542,43 +538,43 @@ function updateFavnoteIcon(status) {
 // FavNote click event handler
 function favnoteClick() {
     var favnoteEl = this;
-    var editorEl = document.querySelector("#gdf > .favnote + .editor");
-    var inputEl = document.querySelector("#gdf > .favnote + .editor > input");
+    var editorEl = document.querySelector('#gdf > .favnote + .editor');
+    var inputEl = document.querySelector('#gdf > .favnote + .editor > input');
 
     // Determine mode
     var mode;
-    if (favnoteEl.classList.length === 1) mode = "show";
-    else if (favnoteEl.classList.contains("arrow")) mode = "save";
-    else if (favnoteEl.classList.contains("exclamation")) mode = "reload";
-    else mode = "edit";
+    if (favnoteEl.classList.length === 1) mode = 'show';
+    else if (favnoteEl.classList.contains('arrow')) mode = 'save';
+    else if (favnoteEl.classList.contains('exclamation')) mode = 'reload';
+    else mode = 'edit';
 
     // Behave accordingly
     switch (mode) {
-        case "show":
-            updateFavnoteIcon("pencil"); // marks the next action to edit
-            editorEl.classList.add("show");
-            inputEl.classList.add("notinput");
+        case 'show':
+            updateFavnoteIcon('pencil'); // marks the next action to edit
+            editorEl.classList.add('show');
+            inputEl.classList.add('notinput');
             break;
-        case "edit":
-            updateFavnoteIcon("arrow"); // marks the next action to save
-            editorEl.classList.add("show");
-            inputEl.classList.remove("notinput");
+        case 'edit':
+            updateFavnoteIcon('arrow'); // marks the next action to save
+            editorEl.classList.add('show');
+            inputEl.classList.remove('notinput');
             break;
-        case "save":
+        case 'save':
             var favID = getPageFavId();
             quickFavourite(favID);
             break;
-        case "reload":
-            // an error occurred, attempt to reload favnotes
-            document.querySelector(".favnote").remove();
-            document.querySelector(".editor").remove();
+        case 'reload':
+            // An error occurred, attempt to reload favnotes
+            document.querySelector('.favnote').remove();
+            document.querySelector('.editor').remove();
             if (config.favnote === true) {
                 injectFavnoteElements();
             }
             break;
         default:
-            dlog("What is happening?");
-            alert("A really strange error occurred. This part of code should be reached.");
+            dlog('What is happening?');
+            alert('A really strange error occurred. This part of code should be reached.');
             return;
     }
 }
@@ -589,12 +585,12 @@ function favnoteClick() {
 \* ========================================================================= */
 // Adds keypress event listener
 function injectHotkeyListener() {
-    document.addEventListener("keypress", hotkeyHandler);
-    var archive = document.getElementsByClassName("g2 gsp");
-    archive[0].children[1].addEventListener("click", touchHandler);
+    document.addEventListener('keypress', hotkeyHandler);
+    var archive = document.getElementsByClassName('g2 gsp');
+    archive[0].children[1].addEventListener('click', touchHandler);
     //document.getElementById("div").addEventListener("touchmove", touchHandler, false);
     //document.getElementById("div").addEventListener("touchend", touchHandler, false);
-    dlog("Listening to keypress events now");
+    dlog('Listening to keypress events now');
 }
 
 // Handles keypresses
@@ -605,50 +601,49 @@ function hotkeyHandler(e) {
         if (e.keyCode == 27) {
             return;
         }
-
-        // 0-9 and "-"
+        // 0-9 and '-'
         let favID;
         switch (char) {
-            case ("0"):
+            case ('0'):
                 favID = 0;
                 break;
-            case ("1"):
+            case ('1'):
                 favID = 1;
                 break;
-            case ("2"):
+            case ('2'):
                 favID = 2;
                 break;
-            case ("3"):
+            case ('3'):
                 favID = 3;
                 break;
-            case ("4"):
+            case ('4'):
                 favID = 4;
                 break;
-            case ("5"):
+            case ('5'):
                 favID = 5;
                 break;
-            case ("6"):
+            case ('6'):
                 favID = 6;
                 break;
-            case ("7"):
+            case ('7'):
                 favID = 7;
                 break;
-            case ("8"):
+            case ('8'):
                 favID = 8;
                 break;
-            case ("9"):
+            case ('9'):
                 favID = 9;
                 break;
-            case ("-"):
-                favID = "favdel";
+            case ('-'):
+                favID = 'favdel';
                 break;
             default:
                 disableHotkeys();
                 break;
         }
-        if (typeof favID != "undefined") quickFavourite(favID);
+        if (typeof favID != 'undefined') quickFavourite(favID);
     } else {
-        if (char == "F") {
+        if (char == 'F') {
             enableHotkeys();
         }
     }
@@ -675,23 +670,23 @@ function touchHandler(e) {
 function enableHotkeys() {
     hotkeyInit = true;
     if (config.cheatsheet) showCheatSheet();
-    dlog("Entering active hotkey favouriting mode");
+    dlog('Entering active hotkey favouriting mode');
 }
 
 function disableHotkeys() {
     if (config.cheatsheet) hideCheatSheet();
     hotkeyInit = false;
-    dlog("Quitting active hotkey favouriting mode");
+    dlog('Quitting active hotkey favouriting mode');
 }
 
 function showCheatSheet() {
-    dlog("Showing Cheat Sheet");
-    document.getElementById("gdf").classList.add("hover");
+    dlog('Showing Cheat Sheet');
+    document.getElementById('gdf').classList.add('hover');
 }
 
 function hideCheatSheet() {
-    dlog("Hiding Cheat Sheet");
-    document.getElementById("gdf").classList.remove("hover");
+    dlog('Hiding Cheat Sheet');
+    document.getElementById('gdf').classList.remove('hover');
 }
 
 
@@ -701,28 +696,28 @@ function hideCheatSheet() {
 function checkSyncNecessity() {
     // >1w = stale
     let currentTime = new Date().getTime();
-    let lastSyncTime = localStorage.getItem("EHGQF-lastSyncTime");
+    let lastSyncTime = localStorage.getItem('EHGQF-lastSyncTime');
     let timeDelta = currentTime - lastSyncTime;
     if (timeDelta > 1000 * 60 * 60 * 24 * 7) return true;
 
     // setup
-    let x = localStorage.getItem("EHGQF-setup");
-    if (typeof x == "undefined") return true;
+    let x = localStorage.getItem('EHGQF-setup');
+    if (typeof x == 'undefined') return true;
 
     // constant page check
     let labelId = getPageFavId();
     if (labelId == 10) return false; // can't check if page isn't favourited yet
 
-    let pageLabel = document.querySelector("#favoritelink").textContent;
+    let pageLabel = document.querySelector('#favoritelink').textContent;
     let storedLabel = localStorage.getItem(`EHGQF-fav${labelId}`);
     if (pageLabel != storedLabel) return true;
 
-    dlog("No reason found to sync favourite labels");
+    dlog('No reason found to sync favourite labels');
     return false;
 }
 
 function syncFavouriteLabels() {
-    dlog("Fetching fresh Favourite Labels!");
+    dlog('Fetching fresh Favourite Labels!');
 
     // Send XHR to Favourite Page
     var galID = location.pathname.match(/^\/\w\/(\d+)\//)[1];
@@ -732,20 +727,20 @@ function syncFavouriteLabels() {
     var url = `${prot}//${host}/gallerypopups.php?gid=${galID}&t=${token}&act=addfav`;
 
     GM.xmlHttpRequest({
-        method: "GET",
+        method: 'GET',
         url: url,
         onload: function(response) {
-            const responseXML = new DOMParser().parseFromString(response.responseText, "text/xml");
+            const responseXML = new DOMParser().parseFromString(response.responseText, 'text/xml');
 
             for (let i = 0; i <= 9; i++) {
                 let label = responseXML.querySelector(`div + div + div[onclick*='fav${i}']`).textContent;
                 localStorage.setItem(`EHGQF-fav${i}`, label);
             }
 
-            dlog("Favourite Labels Updated!");
+            dlog('Favourite Labels Updated!');
             let time = new Date().getTime();
-            localStorage.setItem("EHGQF-setup", 1);
-            localStorage.setItem("EHGQF-lastSyncTime", time);
+            localStorage.setItem('EHGQF-setup', 1);
+            localStorage.setItem('EHGQF-lastSyncTime', time);
             updateCurrentFav();
             injectQFElements();
         }
@@ -753,7 +748,7 @@ function syncFavouriteLabels() {
 }
 
 function init() {
-    dlog("Initialization start!");
+    dlog('Initialization start!');
     if (checkSyncNecessity()) syncFavouriteLabels();
     injectStylesheet();
     injectQFElements();
@@ -762,7 +757,7 @@ function init() {
     }
     if (config.hotkeys) injectHotkeyListener();
 
-    dlog("Initialization finished!");
+    dlog('Initialization finished!');
 }
 
 init();
