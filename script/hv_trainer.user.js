@@ -2,7 +2,7 @@
 // @name         HV Trainer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.3.6
+// @version      1.4.0
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/*
@@ -15,67 +15,68 @@
     var countdownBox = getElem('body>#csp>#navbar>div:nth-child(5)>div').appendChild(createElem('a'))
     countdownBox.href = '?s=Character&ss=tr'
     countdownBox.style.cssText = 'font-weight:bold;font-size:large;position:relative;bottom:21px;left:84px'
-    var TrainID = 50
+    //If you don't want to start training automatically, set it to false
+    const TrainID = 50
     var timeLast
     var trainList = {
         'Adept Learner': {
-            id: 50,
-            time: 1
+            'id': 50,
+            'time': 1
         },
         'Assimilator': {
-            'id': '51',
+            'id': 51,
             'time': 24
         },
         'Ability Boost': {
-            'id': '80',
+            'id': 80,
             'time': 2
         },
         'Manifest Destiny': {
-            'id': '81',
+            'id': 81,
             'time': 24
         },
         'Scavenger': {
-            'id': '70',
+            'id': 70,
             'time': 4
         },
         'Luck of the Draw': {
-            'id': '71',
+            'id': 71,
             'time': 8
         },
         'Quartermaster': {
-            'id': '72',
+            'id': 72,
             'time': 12
         },
         'Archaeologist': {
-            'id': '',
+            'id': 73,
             'time': 24
         },
         'Metabolism': {
-            'id': '84',
+            'id': 84,
             'time': 24
         },
         'Inspiration': {
-            'id': '85',
+            'id': 85,
             'time': 24
         },
         'Scholar of War': {
-            'id': '90',
+            'id': 90,
             'time': 0
         },
         'Tincture': {
-            'id': '91',
+            'id': 91,
             'time': 0
         },
         'Pack Rat': {
-            'id': '98',
+            'id': 98,
             'time': 0
         },
         'Dissociation': {
-            'id': '88',
+            'id': 88,
             'time': 24
         },
         'Set Collector': {
-            'id': '96',
+            'id': 96,
             'time': 12
         }
     }
@@ -203,7 +204,9 @@ function post(href, func, parm) {
 
 //Start Training
 function startTraining(train_id) {
-    post('?s=Character&ss=tr', function() {
-        window.location.href = window.location.href
-    }, 'start_train=' + train_id)
+    if (train_id !== false) {
+        post('?s=Character&ss=tr', function() {
+            window.location.href = window.location.href
+        }, 'start_train=' + train_id)
+    }
 }
