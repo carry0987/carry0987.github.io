@@ -1227,7 +1227,7 @@ function sendEquipRanges() {
     }
     dbGet(function(obj) {
         SmartSearch = obj;
-        allEquips = [];
+        var allEquips = [];
 
         function add(forum) {
             Object.keys(SmartSearch[forum]).forEach(function(threadId) {
@@ -1586,8 +1586,9 @@ function parseEquip(data, item) {
     } else if (potencyStr[0] !== '0') {
         pxp0 = getPxp0(parseInt(potencyStr.match(/\d+(?=\))/)[0]), parseInt(potencyStr[0]));
         item.info += ', IW ' + potencyStr[0];
-    } else
+    } else {
         pxp0 = parseInt(potencyStr.match(/(\d+)\)/)[1]);
+    }
 
     // statNames: [abbreviated name, forging name, html name, base multiplier, level scaling factor]
     var statNames = [
@@ -1729,8 +1730,9 @@ function parseEquip(data, item) {
                 if (lower.indexOf(subName) !== -1) {
                     return true;
                 }
-            }))
+            })) {
             return;
+        }
         if (range[4] && lower.indexOf(range[4]) !== -1) {
             return;
         }
