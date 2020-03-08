@@ -91,7 +91,6 @@ function getValue(item, toJSON) {
 //Check date
 (function() {
     checkNew();
-    reportInfo(lastDate);
     function checkNew() {
         setInterval(function() {
             var dateDiff = Date.now() - lastDate;
