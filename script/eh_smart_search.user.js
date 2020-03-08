@@ -40,8 +40,9 @@ if (window.location.href === 'https://hentaiverse.org/fakepage') {
     window.addEventListener('message', function(hvEvent) {
         if (hvEvent.origin === 'https://forums.e-hentai.org') {
             var msg = JSON.parse(hvEvent.data);
-            if (!msg.postedMessage || msg.postedMessage.string !== 'request for equips')
+            if (!msg.postedMessage || msg.postedMessage.string !== 'request for equips') {
                 return;
+            }
             var equips = [];
             var totalEquips = msg.postedMessage.object.length;
             var responseCount = 0;
@@ -65,8 +66,9 @@ if (window.location.href === 'https://hentaiverse.org/fakepage') {
 
 
 var forum = window.location.href.match(/showforum=(\d+)/);
-if (!forum || (forum[1] !== '77' && forum[1] !== '78'))
+if (!forum || (forum[1] !== '77' && forum[1] !== '78')) {
     return;
+}
 forum = forum[1];
 
 var headTable = document.getElementsByClassName('ipbtable')[0];
@@ -81,8 +83,9 @@ input.type = 'text';
 input.style.width = '350px';
 var select = true;
 input.onkeyup = function(event) {
-    if (event.keyCode === 13)
+    if (event.keyCode === 13) {
         search.click();
+    }
 };
 input.addEventListener('click', function() {
     if (select) input.select();
@@ -97,8 +100,9 @@ if (typeof localStorage.SmartSearch === 'undefined' || /ignored/.test(localStora
     //https://forums.e-hentai.org/index.php?s=&showtopic=22234&view=findpost&p=4468357
 }
 
-if (!/lastSearch/.test(localStorage.SmartSearch))
+if (!/lastSearch/.test(localStorage.SmartSearch)) {
     localStorage.SmartSearch = '{"lastSearch":"* = wildcard. Use checkbox for regular expression.", "lowestEid":"67180000"}';
+}
 
 var lastStorage = JSON.parse(localStorage.SmartSearch);
 var lastSearch = lastStorage.lastSearch;
@@ -183,18 +187,20 @@ a:visited {color:#c06}
     buildCSS();
 
     var re;
-    if (useRE.checked === true)
+    if (useRE.checked === true) {
         re = new RegExp(input.value, 'i');
-    else
+    } else {
         re = new RegExp(input.value.replace(/\*/g, '.+').replace(/[\-\[\]\/\{\}\(\)\*\?\^\$\|]/g, '\\$&').replace(/\s+/g, '\\s'), 'i');
+    }
 
 
     dbGet(function(obj) {
         SmartSearch = obj;
 
         w.document.body.appendChild(w.document.createElement('h3')).textContent = document.getElementById('navstrip').textContent + ':\n' + Object.keys(SmartSearch[forum]).length + ' threads saved in this forum';
-        if (showSize === true)
+        if (showSize === true) {
             w.document.body.appendChild(w.document.createElement('h3')).textContent = Math.round(JSON.stringify(SmartSearch).length / 1000) + 'k characters in database';
+        }
         w.document.body.appendChild(w.document.createElement('h6')).textContent = (useRE.checked === false ? input.value + '\u00A0\u00A0\u00A0\u00A0\u00A0|\u00A0\u00A0\u00A0\u00A0\u00A0' : '') + re.source;
 
         var resultsCountDiv = w.document.body.appendChild(w.document.createElement('div'));
@@ -224,8 +230,9 @@ a:visited {color:#c06}
             if (includeCbox.checked === true) {
                 include = 1;
                 excludeCbox.checked = false;
-            } else
+            } else {
                 include = 0;
+            }
             hide();
         });
         filterThreadCheckboxDiv.appendChild(w.document.createElement('span')).textContent = 'Include';
@@ -239,8 +246,9 @@ a:visited {color:#c06}
             if (excludeCbox.checked === true) {
                 include = -1;
                 includeCbox.checked = false;
-            } else
+            } else {
                 include = 0;
+            }
             hide();
         });
         filterThreadCheckboxDiv.appendChild(w.document.createElement('span')).textContent = 'Exclude';
@@ -259,11 +267,13 @@ a:visited {color:#c06}
             var equips = [];
             [].forEach.call(table.getElementsByTagName('tr'), function(tr) {
                 var a = tr.children[5].getElementsByTagName('a');
-                if (a.length === 0)
+                if (a.length === 0) {
                     return;
+                }
                 var equip = getEquipFromLink(a[0].href);
-                if (!equip)
+                if (!equip) {
                     return;
+                }
                 equips.push(equip);
             });
             getLevelsFromHv(equips, checkLevels);
@@ -277,17 +287,21 @@ a:visited {color:#c06}
             if (showingStats === true) {
                 showStats.textContent = 'Don\'t Show Stats';
                 [].slice.call(table.getElementsByTagName('tr')).forEach(function(tr) {
-                    if (tr.style.display === 'none')
+                    if (tr.style.display === 'none') {
                         return;
+                    }
                     var a = tr.children[5].getElementsByTagName('a');
-                    if (a.length === 0)
+                    if (a.length === 0) {
                         return;
+                    }
                     var equip = getEquipFromLink(a[0].href);
-                    if (!equip)
+                    if (!equip) {
                         return;
+                    }
                     var item = SmartSearch.savedEquips[equip.eid];
-                    if (!item || !item.info)
+                    if (!item || !item.info) {
                         return;
+                    }
                     var infoTr = w.document.createElement('tr');
                     infoTr.setAttribute('class', 'info');
                     infoTr.innerHTML = '<td></td><td></td><td></td><td></td><td></td><td>' + item.info + '</td><td></td><td></td><td></td>';
@@ -296,18 +310,21 @@ a:visited {color:#c06}
             } else {
                 showStats.textContent = 'Show Stats';
                 [].slice.call(table.getElementsByTagName('tr')).forEach(function(tr) {
-                    if (tr.className === 'info')
+                    if (tr.className === 'info') {
                         tr.parentElement.removeChild(tr);
+                    }
                 });
             }
         });
 
         function getEquipFromLink(href) {
             var eidRe = href.match(/showequip\.php\?eid=(\d+)&amp;key=(\w+)/);
-            if (!eidRe)
+            if (!eidRe) {
                 eidRe = href.match(/hentaiverse.org\/equip\/(\d+)\/(\w+)/);
-            if (!eidRe)
+            }
+            if (!eidRe) {
                 return false;
+            }
             return { eid: eidRe[1], key: eidRe[2] };
         }
 
@@ -321,8 +338,9 @@ a:visited {color:#c06}
             var hideEidCount = 0;
             var hideTitleCount = 0;
             [].forEach.call(table.getElementsByTagName('tr'), function(tr) {
-                if (tr.children[0].tagName === 'TH')
+                if (tr.children[0].tagName === 'TH') {
                     return;
+                }
                 tr.style.display = '';
                 var eid = tr.children[2].textContent;
                 if (eid && eid < lowestEid) {
@@ -339,10 +357,11 @@ a:visited {color:#c06}
                     }
                 }
             });
-            if (hideEidCount.value === 0)
+            if (hideEidCount.value === 0) {
                 filterEidResult.textContent = '';
-            else
+            } else {
                 filterEidResult.textContent = hideEidCount + ' hidden';
+            }
             if (hideTitleCount === 0) {
                 filterThreadResult.textContent = '0 hidden';
                 filterThreadResult.style.visibility = 'hidden';
@@ -359,47 +378,57 @@ a:visited {color:#c06}
         var now = Date.now();
         var resultsCount = 0;
         Object.keys(SmartSearch[forum]).forEach(function(threadId) {
-            if (threadId === 'ignored' || Object.keys(SmartSearch.ignored.threads).indexOf(threadId) !== -1)
+            if (threadId === 'ignored' || Object.keys(SmartSearch.ignored.threads).indexOf(threadId) !== -1) {
                 return;
+            }
             var thread = SmartSearch[forum][threadId];
-            if (thread.locked && hideLocked)
+            if (thread.locked && hideLocked) {
                 return;
+            }
             thread.posts.forEach(function(post) {
-                if (Object.keys(SmartSearch.ignored.posts).indexOf(post.postId) !== -1)
+                if (Object.keys(SmartSearch.ignored.posts).indexOf(post.postId) !== -1) {
                     return;
+                }
                 var lines = post.postText.split('\n');
                 var lineStartsWithStrikethrough = false;
                 var lineEndsWithStrikethrough = false;
                 var i = 0;
                 lines.forEach(function(line) {
-                    if (line.indexOf('[s]') !== -1)
+                    if (line.indexOf('[s]') !== -1) {
                         lineEndsWithStrikethrough = true;
-                    if (line.indexOf('[/s]') !== -1)
+                    }
+                    if (line.indexOf('[/s]') !== -1) {
                         lineEndsWithStrikethrough = false;
+                    }
                     if (!re.test(line)) {
                         lineStartsWithStrikethrough = lineEndsWithStrikethrough;
                         i++;
                         return;
                     }
-                    if (!showStrikeouts && (lineStartsWithStrikethrough || lineEndsWithStrikethrough || line.indexOf('[s]') !== -1))
+                    if (!showStrikeouts && (lineStartsWithStrikethrough || lineEndsWithStrikethrough || line.indexOf('[s]') !== -1)) {
                         return;
+                    }
                     resultsCount++;
                     var tr = tbody.appendChild(w.document.createElement('tr'));
                     tr.appendChild(w.document.createElement('td')).textContent = thread.opName;
                     var titleTd = tr.appendChild(w.document.createElement('td'));
                     titleTd.innerHTML = '<a href="https://forums.e-hentai.org/index.php?showtopic=' + threadId + '&view=findpost&p=' + post.postId + '" target="_blank">' + thread.title + '</a>';
                     titleTd.title = thread.title;
-                    if (/close/i.test(thread.title) || /delete/i.test(thread.title) || /end/i.test(thread.title) || /done/i.test(thread.title))
+                    if (/close/i.test(thread.title) || /delete/i.test(thread.title) || /end/i.test(thread.title) || /done/i.test(thread.title)) {
                         tr.className = 'ended';
+                    }
                     var eidTd = tr.appendChild(w.document.createElement('td'));
                     var equip = getEquipFromLink(line);
-                    if (equip && equip.eid)
+                    if (equip && equip.eid) {
                         eidTd.textContent = equip.eid;
+                    }
                     var priceRe = line.replace(/start(\s?bid)?\s?:\s?[0-9,.]+\s?[kmc]/ig, "#").match(/([1-9]\d*(?:[\.,]\d+)?\s?[kmc])(?:[^\w"]|$)/i);
-                    if (!priceRe)
+                    if (!priceRe) {
                         priceRe = line.match(/@\s?([1-9]\d*(?:[\.,]\d+)?)/i);
-                    if (!priceRe && wildGuess)
+                    }
+                    if (!priceRe && wildGuess) {
                         priceRe = line.match(/[^\=\d]([1-9]\d*(?:[\.,]\d+)?)([^\w"]|$)/i);
+                    }
                     tr.appendChild(w.document.createElement('td')).textContent = priceRe && (priceRe[1].length < 9 || priceRe[1].indexOf(',') !== -1) ? priceRe[1] : '';
                     tr.appendChild(w.document.createElement('td'));
                     //tr.appendChild(w.document.createElement('td')).innerHTML = (lineStartsWithStrikethrough && line.indexOf('[s]') !== 0 ? '[s]' : '') + line.replace(/<a\s/g, '<a target="_blank" ');
@@ -413,8 +442,9 @@ a:visited {color:#c06}
                     tr.dataset.edited = post.lastEdited;
                     tr.appendChild(w.document.createElement('td')).textContent = agoObj[0];
                     warn2 = agoObj[1];
-                    if (warn1 || warn2)
+                    if (warn1 || warn2) {
                         tr.className = 'warn';
+                    }
                     var ignoreBtn = tr.appendChild(w.document.createElement('td')).appendChild(w.document.createElement('button'));
                     ignoreBtn.textContent = 'Ignore';
                     ignoreBtn.addEventListener('click', function() {
@@ -431,13 +461,16 @@ a:visited {color:#c06}
         function refreshLevels() {
             [].forEach.call(table.getElementsByTagName('tr'), function(tr) {
                 var a = tr.children[5].getElementsByTagName('a');
-                if (a.length === 0)
+                if (a.length === 0) {
                     return;
+                }
                 var equip = getEquipFromLink(a[0].href);
-                if (!equip)
+                if (!equip) {
                     return;
-                if (!SmartSearch.savedEquips[equip.eid])
+                }
+                if (!SmartSearch.savedEquips[equip.eid]) {
                     return;
+                }
                 tr.children[4].textContent = SmartSearch.savedEquips[equip.eid].level;
             });
         }
@@ -467,13 +500,16 @@ a:visited {color:#c06}
             btn.textContent = 'Saving levels of ' + equips.length + ' gears';
             dbGet(function(obj) {
                 SmartSearch = obj;
-                if (!SmartSearch.savedEquips)
+                if (!SmartSearch.savedEquips) {
                     SmartSearch.savedEquips = {};
+                }
                 equips.forEach(function(equip) {
-                    if (equip.level !== equip.info)
+                    if (equip.level !== equip.info) {
                         SmartSearch.savedEquips[equip.eid] = { key: equip.key, level: equip.level, info: equip.info };
-                    else
+                    }
+                    else {
                         SmartSearch.savedEquips[equip.eid] = { key: equip.key, level: equip.level };
+                    }
                 });
                 dbSet(SmartSearch, function() {
                     btn.textContent = 'Saved levels of ' + equips.length + ' gears';
@@ -485,12 +521,14 @@ a:visited {color:#c06}
         function ago(num) {
             var daysAgo = Math.round((now - num) / (1000 * 3600 * 24));
             if (daysAgo < 364) {
-                if (daysAgo < daysAgoLimit)
+                if (daysAgo < daysAgoLimit) {
                     return [daysAgo + ' days ago', false];
-                else
+                } else {
                     return [daysAgo + ' days ago', true];
-            } else
+                }
+            } else {
                 return [Math.round(daysAgo / 36.5) / 10 + ' years ago', 1];
+            }
         }
 
         //Sort by level
@@ -499,8 +537,9 @@ a:visited {color:#c06}
             var trs = [];
             for (var i = table.children[1].children.length - 1; i >= 0; i--) {
                 var tr = table.children[1].children[i];
-                if (tr.className !== 'info')
+                if (tr.className !== 'info') {
                     trs.push(tr);
+                }
                 table.children[1].removeChild(tr);
             }
             trs.sort(function(a, b) {
@@ -508,16 +547,17 @@ a:visited {color:#c06}
             });
 
             function levelValue(levelText) {
-                if (levelText === 'No such item')
+                if (levelText === 'No such item') {
                     return -3;
-                else if (levelText === 'Soulbound')
+                } else if (levelText === 'Soulbound') {
                     return -2;
-                else if (!levelText)
+                } else if (!levelText) {
                     return -1;
-                else if (levelText === 'Unassigned')
+                } else if (levelText === 'Unassigned') {
                     return 501;
-                else
+                } else {
                     return 500 - levelText;
+                }
             }
             trs.forEach(function(tr) {
                 table.children[1].appendChild(tr);
@@ -530,8 +570,9 @@ a:visited {color:#c06}
             var trs = [];
             for (var i = table.children[1].children.length - 1; i >= 0; i--) {
                 var tr = table.children[1].children[i];
-                if (tr.className !== 'info')
+                if (tr.className !== 'info') {
                     trs.push(tr);
+                }
                 table.children[1].removeChild(tr);
             }
             trs.sort(function(a, b) {
@@ -539,8 +580,9 @@ a:visited {color:#c06}
             });
 
             function priceValue(priceText) {
-                if (!priceText)
+                if (!priceText) {
                     return -999999;
+                }
                 priceText = priceText.replace(/,/g, '').toLowerCase();
                 var priceNumber;
                 try {
@@ -548,10 +590,11 @@ a:visited {color:#c06}
                 } catch (err) {
                     return -499999;
                 }
-                if (priceText.substring(priceText.length - 1) === 'k')
+                if (priceText.substring(priceText.length - 1) === 'k') {
                     priceNumber *= 1000;
-                else if (priceText.substring(priceText.length - 1) === 'm')
+                } else if (priceText.substring(priceText.length - 1) === 'm') {
                     priceNumber *= 1000000;
+                }
                 return priceNumber / 1000000;
             }
             trs.forEach(function(tr) {
@@ -565,8 +608,9 @@ a:visited {color:#c06}
             var trs = [];
             for (var i = table.children[1].children.length - 1; i >= 0; i--) {
                 var tr = table.children[1].children[i];
-                if (tr.className !== 'info')
+                if (tr.className !== 'info') {
                     trs.push(tr);
+                }
                 table.children[1].removeChild(tr);
             }
             trs.sort(function(a, b) {
@@ -583,8 +627,9 @@ a:visited {color:#c06}
             var trs = [];
             for (var i = table.children[1].children.length - 1; i >= 0; i--) {
                 var tr = table.children[1].children[i];
-                if (tr.className !== 'info')
+                if (tr.className !== 'info') {
                     trs.push(tr);
+                }
                 table.children[1].removeChild(tr);
             }
             trs.sort(function(a, b) {
@@ -603,8 +648,9 @@ a:visited {color:#c06}
     var ignoredDiv;
 
     function makeIgnoreInterface(threadId, post, str) {
-        if (ignoredDiv)
+        if (ignoredDiv) {
             return;
+        }
 
         var thread = SmartSearch[forum][threadId];
 
@@ -784,12 +830,14 @@ save.addEventListener('click', function() {
     var threadIds = [];
     dbGet(function(obj) {
         SmartSearch = obj;
-        if (typeof SmartSearch[forum] === 'undefined')
+        if (typeof SmartSearch[forum] === 'undefined') {
             SmartSearch[forum] = {};
+        }
         [].forEach.call(document.getElementsByClassName('ipbtable')[1].getElementsByTagName('tr'), function(tr) {
             var threadId = tr.children[0].id.match(/\d+/);
-            if (!threadId)
+            if (!threadId) {
                 return;
+            }
             if (!checkInit.inited || checkIds[threadId[0]].checked) {
                 threadIds.push(threadId[0]);
             }
@@ -800,33 +848,40 @@ save.addEventListener('click', function() {
             get('http' + https + '://forums.e-hentai.org/index.php?showtopic=' + threadId, function(response) {
                 //response = response.replace(/<img[^>]*>/g, '');
                 var locked = false;
-                if (response.querySelectorAll('.ipbtable img[border="0"]')[1].src.includes('t_closed.gif'))
+                if (response.querySelectorAll('.ipbtable img[border="0"]')[1].src.includes('t_closed.gif')) {
                     locked = true;
+                }
                 var title = response.querySelector('.borderwrap b').textContent;
                 var postElms = [].slice.call(response.querySelectorAll('.borderwrap tbody > tr:nth-child(2)'));
-                if (postElms.length === 0) { //empty thread
+                //Empty thread
+                if (postElms.length === 0) {
                     tryFinish();
                     return;
                 }
                 var posts = [];
-                while (postElms[0].getElementsByClassName('radiobutton').length !== 0 || postElms[0].children.length !== 2) //poll (votable), or likely poll (already voted)
+                //Poll (votable), or likely poll (already voted)
+                while (postElms[0].getElementsByClassName('radiobutton').length !== 0 || postElms[0].children.length !== 2) {
                     postElms.splice(0, 1);
+                }
                 var opName = getPosterName(postElms[0]);
                 var postnum = 0;
                 [].forEach.call(postElms, function(post) {
                     postnum++;
                     try {
-                        if (getPosterName(post) !== opName)
+                        if (getPosterName(post) !== opName) {
                             return;
+                        }
                     } catch (except) {
                         return;
                     }
                     var postId = post.children[1].id.match(/\d+/)[0];
                     var postContentElm = post.children[1].children[0];
                     if (postContentElm.textContent === '') {
-                        if (typeof post.children[1].children[1] === 'undefined')
+                        if (typeof post.children[1].children[1] === 'undefined') {
                             return;
-                        postContentElm = post.children[1].children[1]; //Cutie Mark
+                        }
+                        //Cutie Mark
+                        postContentElm = post.children[1].children[1];
                     }
                     var postHtml = postContentElm.innerHTML;
                     [].forEach.call(postContentElm.getElementsByClassName('quotetop'), function(quoteTopElm) {
@@ -836,8 +891,9 @@ save.addEventListener('click', function() {
                         postHtml = postHtml.replace(quoteMainElm.outerHTML, '');
                     });
                     [].forEach.call(postContentElm.getElementsByTagName('a'), function(a) {
-                        if (a.href.indexOf('hentaiverse') === -1)
+                        if (a.href.indexOf('hentaiverse') === -1) {
                             postHtml = postHtml.replace(a.outerHTML, '');
+                        }
                     });
 
                     var replacements = [
@@ -887,8 +943,9 @@ save.addEventListener('click', function() {
 
         function tryFinish() {
             numResponses++;
-            if (numResponses < threadIds.length)
+            if (numResponses < threadIds.length) {
                 return;
+            }
             dbSet(SmartSearch, function() {
                 save.textContent = 'Saved';
                 save.style.cssText = 'margin-left:30px; background-color:#33cccc; color:black;';
@@ -896,12 +953,13 @@ save.addEventListener('click', function() {
         }
 
         function getDateFromForumStr(str) {
-            if (/Yesterday/.test(str))
+            if (/Yesterday/.test(str)) {
                 return Date.now() - (1000 * 3600 * 24);
-            else if (/Today/.test(str))
+            } else if (/Today/.test(str)) {
                 return Date.now();
-            else
+            } else {
                 return Date.UTC(/\d{4}/.exec(str), getMonthFromString(str.substring(0, 3)), str.substring(4, 6));
+            }
         }
 
         function getMonthFromString(mon) {
@@ -925,8 +983,9 @@ checkInit.addEventListener("change", function(e) {
         checkInit.inited = true;
         [].forEach.call(document.getElementsByClassName('ipbtable')[1].getElementsByTagName('tr'), function(tr) {
             var threadId = tr.children[0].id.match(/\d+/);
-            if (!threadId)
+            if (!threadId) {
                 return;
+            }
             var checkbox = document.createElement("input");
             checkbox.type = "checkbox";
             checkbox.style.cssText = "position:absolute;margin:0;left:20px";
@@ -1150,8 +1209,9 @@ function get(url, done) {
     r.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
     r.responseType = 'document';
     r.onload = function() {
-        if (r.readyState !== 4)
+        if (r.readyState !== 4) {
             return;
+        }
         if (r.status === 200) {
             done(r.response);
         }
@@ -1162,8 +1222,9 @@ function get(url, done) {
 
 function sendEquipRanges() {
     // https://forums.e-hentai.org/index.php?showtopic=53281
-    if (/https/.test(window.location.href))
+    if (/https/.test(window.location.href)) {
         alert('Can\'t post to HTTP from HTTPS');
+    }
     dbGet(function(obj) {
         SmartSearch = obj;
         allEquips = [];
@@ -1217,14 +1278,6 @@ function sendEquipRanges() {
 //If you want to help out the effort on the wiki to figure out equipment ranges:
 //Then every so often, use sendEquipRanges to send all equipment URLs found in threads:
 //Uncomment sendEquipRanges. If you use HTTPS then copy everything in the text field, navigate to HTTP, paste it into the text field, press the button, and wait a few seconds.
-
-
-
-
-
-
-
-
 
 function parseEquip(data, item) {
     var ranges = [
@@ -1456,16 +1509,19 @@ function parseEquip(data, item) {
 
     function getName(body) {
         var nameDiv;
-        if (typeof body.children[1] === 'undefined')
+        if (typeof body.children[1] === 'undefined') {
             return 'No such item';
+        }
         var showequip = body.children[1];
-        if (showequip.children.length === 3)
+        if (showequip.children.length === 3) {
             nameDiv = showequip.children[0].children[0];
-        else
+        } else {
             nameDiv = showequip.children[1].children[0];
+        }
         var name = nameDiv.children[0].textContent;
-        if (nameDiv.children.length === 3)
+        if (nameDiv.children.length === 3) {
             name += ' ' + nameDiv.children[2].textContent;
+        }
         return name;
     }
 
@@ -1476,21 +1532,26 @@ function parseEquip(data, item) {
         return item;
     }
     var dataText = data.innerHTML;
-    if (/Soulbound/.test(dataText))
+    if (/Soulbound/.test(dataText)) {
         item.level = 'Soulbound';
-    else
+    } else {
         item.level = dataText.match(/Level\s([^\s]+)/)[1];
+    }
     item.info = item.level;
     if (/(Shield\s)|(Buckler)/.test(item.name)) {
         item.info += ',';
-        if (/Strength/.test(dataText))
+        if (/Strength/.test(dataText)) {
             item.info += ' Str';
-        if (/Dexterity/.test(dataText))
+        }
+        if (/Dexterity/.test(dataText)) {
             item.info += ' Dex';
-        if (/Endurance/.test(dataText))
+        }
+        if (/Endurance/.test(dataText)) {
             item.info += ' End';
-        if (/Agility/.test(dataText))
+        }
+        if (/Agility/.test(dataText)) {
             item.info += ' Agi';
+        }
     }
     item.badinfo = '';
 
@@ -1500,10 +1561,11 @@ function parseEquip(data, item) {
             var sumPxpNextLevel = 1000 * (Math.pow(1 + pxp0Est / 1000, n + 1) - 1);
             var sumPxpThisLevel = 1000 * (Math.pow(1 + pxp0Est / 1000, n) - 1);
             var estimate = sumPxpNextLevel - sumPxpThisLevel;
-            if (estimate > pxpN)
+            if (estimate > pxpN) {
                 pxp0Est -= 300 / Math.pow(2, i);
-            else
+            } else {
                 pxp0Est += 300 / Math.pow(2, i);
+            }
         }
         return Math.round(pxp0Est);
     }
@@ -1512,14 +1574,15 @@ function parseEquip(data, item) {
     var potencyStr = dataText.match(/Potency\sTier:\s([^\)]+\))/)[1];
     if (potencyStr === '10 (MAX)') {
         item.info += ', IW 10';
-        if (/Peerless/.test(item.name))
+        if (/Peerless/.test(item.name)) {
             pxp0 = 400;
-        else if (/Legendary/.test(item.name))
+        } else if (/Legendary/.test(item.name)) {
             pxp0 = 357;
-        else if (/Magnificent/.test(item.name))
+        } else if (/Magnificent/.test(item.name)) {
             pxp0 = 326;
-        else
+        } else {
             pxp0 = 280; //too low to matter
+        }
     } else if (potencyStr[0] !== '0') {
         pxp0 = getPxp0(parseInt(potencyStr.match(/\d+(?=\))/)[0]), parseInt(potencyStr[0]));
         item.info += ', IW ' + potencyStr[0];
@@ -1557,11 +1620,13 @@ function parseEquip(data, item) {
     [].forEach.call(data.querySelectorAll('#eu > span'), function(span) {
         var re = span.textContent.match(/(.+)\sLv\.(\d+)/);
         var thisUpgrade = parseInt(re[2]);
-        if (maxUpgrade < thisUpgrade)
+        if (maxUpgrade < thisUpgrade) {
             maxUpgrade = thisUpgrade;
+        }
         var htmlNameObj = forgeNameToHtmlName(re[1]);
-        if (htmlNameObj)
+        if (htmlNameObj) {
             item.forging[htmlNameObj.htmlName] = { amount: thisUpgrade, baseMultiplier: htmlNameObj.baseMultiplier, scalingFactor: htmlNameObj.scalingFactor };
+        }
     });
 
     function reverseForgeMultiplierDamage(forgedBase, forgeLevelObj) {
@@ -1580,26 +1645,28 @@ function parseEquip(data, item) {
         return unforgedBase;
     }
 
-    if (maxUpgrade > 0)
+    if (maxUpgrade > 0) {
         item.info += ', forged ' + maxUpgrade;
+    }
 
     function forgeNameToHtmlName(forgeName) {
         var htmlNameObj;
         statNames.forEach(function(stats) {
-            if (forgeName === stats[1])
+            if (forgeName === stats[1]) {
                 htmlNameObj = { htmlName: stats[2], baseMultiplier: stats[3], scalingFactor: stats[4] };
+            }
         });
         return htmlNameObj;
     }
     var lower = item.name.toLowerCase();
 
-    if (/leather/.test(lower) || /\splate/.test(lower) || (/cotton/.test(lower) && (/protection/.test(lower) || /warding/.test(lower))))
+    if (/leather/.test(lower) || /\splate/.test(lower) || (/cotton/.test(lower) && (/protection/.test(lower) || /warding/.test(lower)))) {
         return item;
+    }
 
     var htmlMagicTypes = ['Holy', 'Dark', 'Wind', 'Elec', 'Cold', 'Fire'];
     var htmlProfTypes = ['Divine', 'Forbidden', 'Elemental', 'Deprecating', 'Supportive'];
     var staffPrefixes = { 'Holy': 'Hallowed', 'Dark': 'Demonic', 'Wind': 'Tempestuous', 'Elec': 'Shocking', 'Cold': 'Arctic', 'Fire': 'Fiery' };
-
     var equipStats = {};
 
     function titleStrToBase(title) {
@@ -1611,11 +1678,14 @@ function parseEquip(data, item) {
             return;
         }
         var htmlName = div.childNodes[0].textContent;
-        if (/\+/.test(htmlName)) // "Elec +"
+        //"Elec +"
+        if (/\+/.test(htmlName)) {
             htmlName = htmlName.substr(0, htmlName.length - 2);
+        }
         if (htmlMagicTypes.indexOf(htmlName) !== -1) {
-            if (div.parentElement.children[0].textContent === 'Damage Mitigations')
+            if (div.parentElement.children[0].textContent === 'Damage Mitigations') {
                 htmlName += ' Mit';
+            }
         }
         equipStats[htmlName] = titleStrToBase(div.title);
     });
@@ -1625,19 +1695,23 @@ function parseEquip(data, item) {
 
         if (abbrevName === 'Prof') { //ambiguous/wrong for prof and EDB without adding these tests, so:
             Object.keys(equipStats).forEach(function(equipStatName) {
-                if (htmlName)
-                    return;
+                if (htmlName) return;
                 //console.log(lower + ' checking ' + equipStatName + ' against ' + htmlProfTypes);
-                if (htmlProfTypes.indexOf(equipStatName) !== -1)
+                if (htmlProfTypes.indexOf(equipStatName) !== -1) {
                     htmlName = equipStatName;
+                }
             });
         } else if (abbrevName === 'EDB') {
             Object.keys(equipStats).forEach(function(equipStatName) {
-                if (htmlMagicTypes.indexOf(equipStatName) !== -1 && !/Staff/.test(item.name))
+                if (htmlMagicTypes.indexOf(equipStatName) !== -1 && !/Staff/.test(item.name)) {
                     htmlName = equipStatName;
-                if (htmlMagicTypes.indexOf(equipStatName) !== -1 && /Staff/.test(item.name)) //For staff, continue on to list EDB of prefixed element only
-                    if (item.name.indexOf(staffPrefixes[equipStatName]) !== -1)
+                }
+                //For staff, continue on to list EDB of prefixed element only
+                if (htmlMagicTypes.indexOf(equipStatName) !== -1 && /Staff/.test(item.name)) {
+                    if (item.name.indexOf(staffPrefixes[equipStatName]) !== -1) {
                         htmlName = equipStatName;
+                    }
+                }
             });
         } else {
             statNames.forEach(function(stats) {
@@ -1652,12 +1726,14 @@ function parseEquip(data, item) {
     var found = false;
     ranges.forEach(function(range) {
         if (!range[3].every(function(subName) {
-                if (lower.indexOf(subName) !== -1)
+                if (lower.indexOf(subName) !== -1) {
                     return true;
+                }
             }))
             return;
-        if (range[4] && lower.indexOf(range[4]) !== -1)
+        if (range[4] && lower.indexOf(range[4]) !== -1) {
             return;
+        }
 
         var abbrevName = range[0];
         var htmlName = abbrevNameToHtmlName(abbrevName);
@@ -1673,19 +1749,23 @@ function parseEquip(data, item) {
         }
 
         if (abbrevName === 'ADB' || abbrevName === 'MDB') {
-            if (item.forging[htmlName])
+            if (item.forging[htmlName]) {
                 stat = reverseForgeMultiplierDamage(stat, item.forging[htmlName]);
-        } else if (item.forging[htmlName])
+            }
+        } else if (item.forging[htmlName]) {
             stat = reverseForgeMultiplierPlain(stat, item.forging[htmlName]);
+        }
 
         if (abbrevName === 'ADB') {
             var butcher = dataText.match(/Butcher\sLv.(\d)/);
-            if (butcher)
+            if (butcher) {
                 stat = stat / (1 + 0.02 * parseInt(butcher[1]));
+            }
         } else if (abbrevName === 'MDB') {
             var archmage = dataText.match(/Archmage\sLv.(\d)/);
-            if (archmage)
+            if (archmage) {
                 stat = stat / (1 + 0.02 * parseInt(archmage[1]));
+            }
         }
 
         if (!stat) {
@@ -1695,13 +1775,15 @@ function parseEquip(data, item) {
         found = true;
         var percentile = Math.round(100 * (stat - range[1]) / (range[2] - range[1]));
         var dontShowInAuction = [/Int/, /Wis/, /Agi/, /Evd/, /Pmit/];
-        if (percentile < 0)
+        if (percentile < 0) {
             item.badinfo += ', ' + range[0] + ' ' + percentile + '%';
-        else if (typeof showSeller === 'undefined' || !showSeller || dontShowInAuction.every(function(re) { return !re.test(range[0]); }))
+        } else if (typeof showSeller === 'undefined' || !showSeller || dontShowInAuction.every(function(re) { return !re.test(range[0]); })) {
             item.info += ', ' + range[0] + ' ' + percentile + '%';
+        }
     });
 
-    if (found === false && !/plate/.test(lower) && !/leather/.test(lower))
+    if (found === false && !/plate/.test(lower) && !/leather/.test(lower)) {
         alert('No match for ' + lower);
+    }
     return item;
 }
