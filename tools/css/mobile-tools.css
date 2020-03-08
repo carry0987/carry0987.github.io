@@ -1,0 +1,14 @@
+@charset "UTF-8";
+
+/* Mobile Games CSS */
+
+@media screen and (min-width: 280px) and (max-width: 1024px) {
+    .tools-repo li {
+        padding: 12px;
+    }
+
+    .tools-reout .p1 {
+        margin-bottom: 8px;
+        margin-top: 6px;
+    }
+}
