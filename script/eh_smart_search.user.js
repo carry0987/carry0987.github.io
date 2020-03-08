@@ -1693,7 +1693,6 @@ function parseEquip(data, item) {
 
     function abbrevNameToHtmlName(abbrevName) {
         var htmlName;
-
         if (abbrevName === 'Prof') { //ambiguous/wrong for prof and EDB without adding these tests, so:
             Object.keys(equipStats).forEach(function(equipStatName) {
                 if (htmlName) return;
@@ -1779,7 +1778,9 @@ function parseEquip(data, item) {
         var dontShowInAuction = [/Int/, /Wis/, /Agi/, /Evd/, /Pmit/];
         if (percentile < 0) {
             item.badinfo += ', ' + range[0] + ' ' + percentile + '%';
-        } else if (typeof showSeller === 'undefined' || !showSeller || dontShowInAuction.every(function(re) { return !re.test(range[0]); })) {
+        } else if (typeof showSeller === 'undefined' || !showSeller || dontShowInAuction.every(function(re) {
+            return !re.test(range[0]);
+        })) {
             item.info += ', ' + range[0] + ' ' + percentile + '%';
         }
     });
