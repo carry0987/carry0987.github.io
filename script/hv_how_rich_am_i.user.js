@@ -2,10 +2,10 @@
 // @name         HV How Rich Am I ?
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.4.0
+// @version      1.4.5
 // @description  Show how many Credits you have
 // @icon         https://carry0987.github.io/favicon.png
-// @include      https://hentaiverse.org/?s=Character&ss=ch*
+// @include      https://hentaiverse.org/?s=Character&ss=ch
 // @include      https://hentaiverse.org/
 // ==/UserScript==
 
@@ -65,3 +65,16 @@ var getCredit = function() {
     doc.body.appendChild(frm)
 }
 getCredit()
+
+//Get element
+function getElem(ele, mode, parent) {
+    if (typeof ele === 'object') {
+        return ele
+    } else if (mode === undefined && parent === undefined) {
+        return (isNaN(ele * 1)) ? document.querySelector(ele) : document.getElementById(ele)
+    } else if (mode === 'all') {
+        return (parent === undefined) ? document.querySelectorAll(ele) : parent.querySelectorAll(ele)
+    } else if (typeof mode === 'object' && parent === undefined) {
+        return mode.querySelector(ele)
+    }
+}
