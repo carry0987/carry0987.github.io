@@ -2,12 +2,15 @@
 // @name         HV How Rich Am I ?
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.3.0
+// @version      1.4.0
 // @description  Show how many Credits you have
 // @icon         https://carry0987.github.io/favicon.png
 // @include      https://hentaiverse.org/?s=Character&ss=ch*
 // @include      https://hentaiverse.org/
 // ==/UserScript==
+
+//Check if is not in battle
+if (!getElem('#navbar')) return
 
 var wnd = window
 var doc = wnd.document
