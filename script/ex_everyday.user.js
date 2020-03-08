@@ -2,7 +2,7 @@
 // @name         ExH EveryDay
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.4.0
+// @version      1.4.5
 // @description  Get daily bonus reward even in ExHentai & HV
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://exhentai.org/*
@@ -56,6 +56,10 @@ const onload = (resp) => {
     }
     if (resp.responseText.match(/It is the dawn of a new day/g)) {
         setValue(cookie.id, new Date().toJSON());
+    } else if (resp.responseText.match(/Click here to fight in the HentaiVerse/g)) {
+        var link = resp.responseText.match(/href="https:\/\/hentaiverse\.org\/\?s=Battle&ss=ba&encounter=(.*?)"/g);
+        reportInfo(link[1]);
+        window.open('https://hentaiverse.org/?s=Battle&ss=ba&encounter='+link[1]);
     }
 }
 
@@ -88,6 +92,19 @@ function getValue(item, toJSON) {
     return (window.localStorage[item]) ? ((toJSON) ? JSON.parse(window.localStorage[item]) : window.localStorage[item]) : null;
 }
 
+//Get element
+function getElem(ele, mode, parent) {
+    if (typeof ele === 'object') {
+        return ele
+    } else if (mode === undefined && parent === undefined) {
+        return (isNaN(ele * 1)) ? document.querySelector(ele) : document.getElementById(ele)
+    } else if (mode === 'all') {
+        return (parent === undefined) ? document.querySelectorAll(ele) : parent.querySelectorAll(ele)
+    } else if (typeof mode === 'object' && parent === undefined) {
+        return mode.querySelector(ele)
+    }
+}
+
 //Check date
 (function() {
     checkNew();
@@ -95,9 +112,12 @@ function getValue(item, toJSON) {
         setInterval(function() {
             var dateDiff = Date.now() - lastDate;
             //reportInfo(six_hr, true);
+            getBonus();
+            /*
             if (dateDiff > DAY_MS || dateDiff === 0) {
                 getBonus();
             }
-        }, six_hr)
+            */
+        }, 5000)
     }
 })()
