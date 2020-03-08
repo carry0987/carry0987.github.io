@@ -12,6 +12,7 @@
 //Check if is not in battle
 if (!getElem('#navbar')) return
 
+//Set varible
 var wnd = window
 var doc = wnd.document
 var loc = location
