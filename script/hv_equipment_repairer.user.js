@@ -2,7 +2,7 @@
 // @name         HV Equipment Repairer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.0.0
+// @version      1.1.0
 // @description  Repair equipments automatically
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/?s=Forge&ss=re*
@@ -13,7 +13,7 @@
 (function() {
     //Check if is not in shop
     if (!getElem('#filterbar')) return
-    var Material = [{
+    var material = [{
             'name': 'Scrap Cloth',
             'code': '60051',
             'cost': '100'
@@ -50,8 +50,8 @@
         if (materialsList.length > 0) {
             for (var i = 0; i < materialsList.length; i++) {
                 var amount = materialsList[i].innerHTML.match(/\d+/)[0]
-                var code = Material[materialsName2Code(materialsList[i].innerHTML.match(/\d+x (.*)/)[1])].code
-                buyMaterial(code, amount, Material[i].cost, token)
+                var code = material[materialsName2Code(materialsList[i].innerHTML.match(/\d+x (.*)/)[1])].code
+                buyMaterial(code, amount, material[i].cost, token)
             }
             setTimeout(function() {
                 document.querySelector('#repairall div').click()
@@ -82,8 +82,7 @@ function buyMaterial(code, amount, cost, token) {
     var xhr = 'xhr_Buy' + Math.random().toString()
     xhr = new window.XMLHttpRequest()
     xhr.open('POST', window.location.origin + '/?s=Bazaar&ss=is&filter=ma')
-    //item_pane: Sell
-    //shop_pane: Buy
+    //shop_pane: Buy, item_pane: Sell
     var parm = 'storetoken=' + token + '&select_mode=shop_pane&select_item=' + code + '&select_count=' + amount
     xhr.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')

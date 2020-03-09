@@ -2,7 +2,7 @@
 // @name         HV Hightlight Equipment
 // @author       carry0987; ggxxsol(ggxxhy); hc br
 // @namespace    https://github.com/carry0987
-// @version      1.0.0
+// @version      1.1.0
 // @description  People always discern the color first, then to see word
 // @icon         https://e-hentai.org/favicon.ico
 // @include      https://hentaiverse.org/*
@@ -33,19 +33,32 @@ function mainhh() {
         return
     }
     var lklist = new Array();
-    lklist = lklist.concat('Character&ss=in') //背包0
-    lklist = lklist.concat('Bazaar&ss=is') //道具店1
-    lklist = lklist.concat('Character&ss=eq') //裝備2
-    lklist = lklist.concat('Bazaar&ss=es') //裝備店3
-    lklist = lklist.concat('Bazaar&ss=ss') //祭壇4
-    lklist = lklist.concat('Character&ss=it') //戰鬥道具5
-    lklist = lklist.concat('ss=iw') //iw漢化6
-    lklist = lklist.concat('forums') //論壇漢化7
-    lklist = lklist.concat('Bazaar&ss=lt') //武器彩卷8
-    lklist = lklist.concat('Bazaar&ss=la') //武器彩卷9
-    lklist = lklist.concat('Forge&ss=up&*') //強化10
-    lklist = lklist.concat('Forge&ss=en&*') //附魔11
-    lklist = lklist.concat('Forge') //鍛造12
+    //背包0
+    lklist = lklist.concat('Character&ss=in')
+    //道具店1
+    lklist = lklist.concat('Bazaar&ss=is')
+    //裝備2
+    lklist = lklist.concat('Character&ss=eq')
+    //裝備店3
+    lklist = lklist.concat('Bazaar&ss=es')
+    //祭壇4
+    lklist = lklist.concat('Bazaar&ss=ss')
+    //戰鬥道具5
+    lklist = lklist.concat('Character&ss=it')
+    //iw漢化6
+    lklist = lklist.concat('ss=iw')
+    //論壇漢化7
+    lklist = lklist.concat('forums')
+    //武器彩卷8
+    lklist = lklist.concat('Bazaar&ss=lt')
+    //武器彩卷9
+    lklist = lklist.concat('Bazaar&ss=la')
+    //強化10
+    lklist = lklist.concat('Forge&ss=up&*')
+    //附魔11
+    lklist = lklist.concat('Forge&ss=en&*')
+    //鍛造12
+    lklist = lklist.concat('Forge')
     for (var i = 0; i < lklist.length; i++) {
         if (document.location.href.match(lklist[i])) {
             var temp = i;
@@ -65,7 +78,6 @@ function mainhh() {
                 document.querySelector('#inv_eqstor.cspp').innerHTML = equipdiv;
             } catch (e) {}
             break;
-
         case 1: //道具店1
             torep = new Array();
             repby = new Array();
@@ -74,7 +86,6 @@ function mainhh() {
             itemdiv = yhanhua(torep, repby, itemdiv)
             document.querySelector('#mainpane').innerHTML = itemdiv;
             break;
-
         case 2: //裝備2
             torep = new Array();
             repby = new Array();
@@ -82,7 +93,6 @@ function mainhh() {
             equipdiv = eqmthh(equipdiv)
             document.querySelector('#eqsb').innerHTML = equipdiv;
             break;
-
         case 3: //裝備店3
             torep = new Array();
             repby = new Array();
@@ -94,15 +104,15 @@ function mainhh() {
             var equhide = document.createElement('a');
             equhide.style.cssText = 'font-size:15px; color:red; position:absolute; top:660px; left:2px; text-align:left';
             try {
-
-                if (!localStorage.hideflag) { localStorage.hideflag == 'Hide the locking equipment' }
-                if (localStorage.hideflag == 'Display lock equipment') {} else {
+                if (!localStorage.hideflag) {
+                    localStorage.hideflag = 'Display lock equipment'
+                }
+                if (localStorage.hideflag != 'Display lock equipment') {
                     equipdiv = document.querySelectorAll('.il')
                     for (i = 0; i < equipdiv.length; i++) {
                         equipdiv[i].parentNode.style.cssText = 'display:none;'
                     }
                 }
-
                 equhide.innerHTML = 'NOW ' + localStorage.hideflag
             } catch (e) { alert(e) }
             equhide.onclick = function() {
@@ -112,7 +122,6 @@ function mainhh() {
                     for (i = 0; i < equipdiv.length; i++) {
                         equipdiv[i].parentNode.style.cssText = 'display:block;'
                     }
-
                 } else {
                     localStorage.hideflag = 'Hide the locking equipment'
                     for (i = 0; i < equipdiv.length; i++) {
@@ -123,7 +132,6 @@ function mainhh() {
             }
             document.body.appendChild(equhide);
             break;
-
         case 4: // 祭壇4
             torep = new Array();
             repby = new Array();
@@ -201,8 +209,8 @@ function mainhh() {
         default:
     }
 
-
-    function yhanhua(torep, repby, temp) { //源語句，漢化後語句，漢化變量
+    //源語句，漢化後語句，漢化變量
+    function yhanhua(torep, repby, temp) {
         for (var i = 0; i < torep.length; i++) {
             var regex = new RegExp(torep[i], 'g');
             temp = temp.replace(regex, repby[i]);
