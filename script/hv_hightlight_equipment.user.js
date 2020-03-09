@@ -2,7 +2,7 @@
 // @name         HV Hightlight Equipment
 // @author       carry0987; ggxxsol(ggxxhy); hc br
 // @namespace    https://github.com/carry0987
-// @version      1.2.6
+// @version      1.2.7
 // @description  People always discern the color first, then to see word
 // @icon         https://e-hentai.org/favicon.ico
 // @include      https://hentaiverse.org/*
@@ -19,7 +19,7 @@
 var getLocation = document.location.href;
 if (getLocation.match(/ss=iw/) && !document.getElementById('item_pane')) return
 var hanhua = true;
-var closeH = 0
+var closeH = 0;
 var mhtml = document.body.innerHTML;
 var html = document.body.innerHTML;
 mainhh();
@@ -29,7 +29,7 @@ var repby = new Array();
 
 function mainhh() {
     if (getLocation.match('://hentaiverse.org/equip/') || getLocation.match('://hentaiverse.org/pages/showequip.php')) {
-        html = eqmthh(document.body)
+        html = eqmthh(document.body);
         document.body.innerHTML = html;
         return
     }
@@ -90,9 +90,13 @@ function mainhh() {
         case 2: //裝備2
             torep = new Array();
             repby = new Array();
-            equipdiv = document.querySelector('#eqsb');
+            var getEquip = document.querySelector('#eqsb');
+            if (!getEquip) {
+                getEquip = document.querySelector('#equip_pane');
+            }
+            equipdiv = getEquip;
             equipdiv = eqmthh(equipdiv)
-            document.querySelector('#eqsb').innerHTML = equipdiv;
+            getEquip.innerHTML = equipdiv;
             break;
         case 3: //裝備店3
             torep = new Array();
