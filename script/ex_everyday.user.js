@@ -2,7 +2,7 @@
 // @name         ExH EveryDay
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.4.5
+// @version      1.4.6
 // @description  Get daily bonus reward even in ExHentai & HV
 // @icon         https://carry0987.github.io/favicon.png
 // @match        https://exhentai.org/*
@@ -57,9 +57,9 @@ const onload = (resp) => {
     if (resp.responseText.match(/It is the dawn of a new day/g)) {
         setValue(cookie.id, new Date().toJSON());
     } else if (resp.responseText.match(/Click here to fight in the HentaiVerse/g)) {
-        var link = resp.responseText.match(/href="https:\/\/hentaiverse\.org\/\?s=Battle&ss=ba&encounter=(.*?)"/g);
-        reportInfo(link[1]);
-        window.open('https://hentaiverse.org/?s=Battle&ss=ba&encounter='+link[1]);
+        var link = resp.responseText.match(/encounter=(.*?)=/g);
+        setValue('The Encounter', new Date().toJSON());
+        window.open('https://hentaiverse.org/?s=Battle&ss=ba&'+link[0]);
     }
 }
 
