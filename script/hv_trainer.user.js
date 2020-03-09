@@ -2,7 +2,7 @@
 // @name         HV Trainer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.4.5
+// @version      1.4.6
 // @description  Upgrades the gallery favourite button to allow quick favouriting of a gallery
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/*
@@ -106,7 +106,7 @@
             var timeAll = trainList[nowTraining].time
             timeLast = parseInt(timeAll * (1 - 0.01 * nowTrainingProcess) * 60 * 60)
             var timeEnd = new Date(new Date().getTime() + timeLast * 1000)
-            var nextTrain = getTrainine(trainList, TrainID)
+            var nextTrain = getTraining(trainList, 'id', TrainID)
             countdownBox.title = 'Now Train: ' + nowTraining + '\nTrain End: ' + timeEnd.toLocaleString(lang, timeOption) + '\nNext Train: ' + nextTrain
             countdownBox.value = timeEnd.getTime()
             timeUpdate()
@@ -213,11 +213,11 @@ function startTraining(train_id) {
 }
 
 //Get Training name
-function getTrainine(arr, val) {
+function getTraining(arr, keys, val) {
     var array_key = Object.keys(arr);
     for (var j = 0; j < array_key.length; j++) {
         for (var i = 0; i < array_key[j].length; i++) {
-            if (arr[array_key[j]].id === 80) {
+            if (arr[array_key[j]][keys] === 80) {
                 return array_key[j];
             }
         }
