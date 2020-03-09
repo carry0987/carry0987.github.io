@@ -2,7 +2,7 @@
 // @name         HV Hightlight Equipment
 // @author       carry0987; ggxxsol(ggxxhy); hc br
 // @namespace    https://github.com/carry0987
-// @version      1.1.0
+// @version      1.2.0
 // @description  People always discern the color first, then to see word
 // @icon         https://e-hentai.org/favicon.ico
 // @include      https://hentaiverse.org/*
@@ -27,7 +27,8 @@ var torep = new Array();
 var repby = new Array();
 
 function mainhh() {
-    if (document.location.href.match('https://hentaiverse.org/equip/')) {
+    var getLocation = document.location.href;
+    if (getLocation.match('://hentaiverse.org/equip/') || getLocation.match('://hentaiverse.org/pages/showequip.php')) {
         html = eqmthh(document.body)
         document.body.innerHTML = html;
         return
@@ -102,7 +103,7 @@ function mainhh() {
             temp = eqmthh(equipdiv[1])
             equipdiv[1].innerHTML = temp
             var equhide = document.createElement('a');
-            equhide.style.cssText = 'font-size:15px; color:red; position:absolute; top:660px; left:2px; text-align:left';
+            equhide.style.cssText = 'font-size: 15px;color: red;position: absolute;top: 652px;left: 2px;text-align: left;border: 1px solid #5C0D11;padding: 4px';
             try {
                 if (!localStorage.hideflag) {
                     localStorage.hideflag = 'Display lock equipment'
@@ -161,12 +162,12 @@ function mainhh() {
             equipdiv = document.getElementsByClassName('postcolor');
             for (var ii = 0; ii < equipdiv.length; ii++) {
                 var tempequipment = equipdiv[ii]
-                //tempequipment.innerHTML=tempequipment.innerHTML.replace(/<span [^>]+>[^>]+>/g,"")
+                //tempequipment.innerHTML = tempequipment.innerHTML.replace(/<span [^>]+>[^>]+>/g,"")
                 tempequipment.innerHTML = tempequipment.innerHTML.replace(/<!--[/]?color[^>]+>/g, "")
                 tempequipment.innerHTML = tempequipment.innerHTML.replace(/<[/]*b>/g, "")
                 tempequipment = eqmthh(tempequipment)
                 //item()
-                //tempequipment=yhanhua(torep,repby,tempequipment);
+                //tempequipment = yhanhua(torep,repby,tempequipment);
                 document.getElementsByClassName('postcolor')[ii].innerHTML = tempequipment;
             }
             break;
@@ -221,20 +222,7 @@ function mainhh() {
     function item() {}
 
     function eqmthh(eminn) {
-        try {
-            if (document.location.href.match('://hentaiverse.org/pages/showequip.php')) {
-                temp = document.querySelectorAll('.fd4')
-                var name = ''
-                var em
-                if (temp.length == 2) {
-                    em = temp[0].textContent + " " + temp[1].textContent.replace('The', 'the')
-                } else {
-                    em = temp[0].textContent
-                }
-            } else {
-                em = eminn.innerHTML.match(/([>]|[>\[\]0-9A-Z]+)(Fine|Super|Exquisite|Average|Crude|Fair|Magnificent|Legendary|Peerless)[a-zA-Z- ]*/g)
-            }
-        } catch (e) {}
+        var em = eminn.innerHTML.match(/([>]|[>\[\]0-9A-Z]+)(Fine|Super|Exquisite|Average|Crude|Fair|Magnificent|Legendary|Peerless)[a-zA-Z- ]*/g)
         if (em == null) return eminn.innerHTML
         var eqc1 = new Array();
         var eqc2 = new Array();
@@ -254,41 +242,23 @@ function mainhh() {
         eq3()
         eq4()
         eq5()
-        if (document.location.href.match('://hentaiverse.org/pages/showequip.php')) {
-            var e1
-            var e2
-            var e3
-            var e4
-            var e5
-            try {
-                e1 = eqc(em, eqe1)
-                e2 = eqc(em, eqe2)
-                e3 = eqc(em, eqe3)
-                e4 = eqc(em, eqe4)
-                e5 = eqc(em, eqe5)
-                emc[0] = eqc1[e1] + ' ' + eqc2[e2] + ' ' + eqc4[e4] + ' ' + eqc5[e5] + ' ' + eqc3[e3] + '</span>'
-                var tempeq = eminn.innerHTML
-                if (temp.length == 2) {
-                    tempeq = tempeq.replace(temp[0].textContent, '')
-                    tempeq = tempeq.replace(temp[1].textContent, emc[0])
-                } else {
-                    tempeq = tempeq.replace(temp[0].textContent, emc[0])
-                }
-            } catch (e) {}
-        } else {
-            for (var i = 0; i < em.length; i++) {
-                em[i] = em[i].replace('The', 'the')
-                e1 = eqc(em[i], eqe1)
-                e2 = eqc(em[i], eqe2)
-                e3 = eqc(em[i], eqe3)
-                e4 = eqc(em[i], eqe4)
-                e5 = eqc(em[i], eqe5)
-                emc[i] = eqc1[e1] + ' ' + eqc2[e2] + ' ' + eqc4[e4] + ' ' + eqc5[e5] + ' ' + eqc3[e3] + '</span>'
-            }
-            tempeq = eminn.innerHTML
-            for (i = 0; i < emc.length; i++) {
-                tempeq = tempeq.replace(em[i], '>' + emc[i])
-            }
+        var e1
+        var e2
+        var e3
+        var e4
+        var e5
+        for (var i = 0; i < em.length; i++) {
+            em[i] = em[i].replace('The', 'the')
+            e1 = eqc(em[i], eqe1)
+            e2 = eqc(em[i], eqe2)
+            e3 = eqc(em[i], eqe3)
+            e4 = eqc(em[i], eqe4)
+            e5 = eqc(em[i], eqe5)
+            emc[i] = eqc1[e1] + ' ' + eqc2[e2] + ' ' + eqc4[e4] + ' ' + eqc5[e5] + ' ' + eqc3[e3] + '</span>'
+        }
+        var tempeq = eminn.innerHTML
+        for (i = 0; i < emc.length; i++) {
+            tempeq = tempeq.replace(em[i], '>' + emc[i])
         }
 
         eqa() //道具裝載
@@ -298,7 +268,8 @@ function mainhh() {
         }
         return tempeq
 
-        function eqc(temp, eqeq) { //temp 輸入裝備名稱，eqeq列表英文
+        //temp 輸入裝備名稱, eqeq 列表英文
+        function eqc(temp, eqeq) {
             var temps = temp
             for (var j = 0; j < eqeq.length; j++) {
                 var aaa = temps.match(eqeq[j])
@@ -323,7 +294,7 @@ function mainhh() {
             eqc5 = eqc5.concat('');
             eqe5 = eqe5.concat('Tower Shield');
             eqc5 = eqc5.concat('');
-            // 單手武器類
+            //單手武器類
             eqe5 = eqe5.concat('Dagger');
             eqc5 = eqc5.concat('Dagger(1H)');
             eqe5 = eqe5.concat('Shortsword');
