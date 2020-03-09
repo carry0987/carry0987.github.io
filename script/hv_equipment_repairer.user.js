@@ -2,7 +2,7 @@
 // @name         HV Equipment Repairer
 // @author       carry0987
 // @namespace    https://github.com/carry0987
-// @version      1.1.0
+// @version      1.1.5
 // @description  Repair equipments automatically
 // @icon         https://carry0987.github.io/favicon.png
 // @include      http*://hentaiverse.org/?s=Forge&ss=re*
@@ -39,26 +39,21 @@
             'cost': '200'
         }
     ]
-    var materialsList = document.querySelectorAll('#repairall+div span')
-    var xhr = new window.XMLHttpRequest()
-    xhr.open('GET', window.location.origin + '/?s=Bazaar&ss=is&filter=ma')
-    xhr.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
-    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
-    xhr.responseType = 'document'
-    xhr.onload = function() {
-        var token = xhr.response.querySelector('input[name="storetoken"]').value
-        if (materialsList.length > 0) {
-            for (var i = 0; i < materialsList.length; i++) {
-                var amount = materialsList[i].innerHTML.match(/\d+/)[0]
-                var code = material[materialsName2Code(materialsList[i].innerHTML.match(/\d+x (.*)/)[1])].code
-                buyMaterial(code, amount, material[i].cost, token)
-            }
-            setTimeout(function() {
-                document.querySelector('#repairall div').click()
-            }, 3000)
+    var materialBox = document.getElementById('repairall')
+    if (materialBox) {
+        const add_box = `
+        <div style="padding: 5px">
+            <span id="auto_buy" style="color: #0382dc; cursor: pointer">Auto Purchase Material And Repair All</span>
+        </div>
+        `
+        materialBox.parentElement.insertAdjacentHTML('afterbegin', add_box);
+    }
+    var getBox = document.getElementById('auto_buy')
+    if (getBox) {
+        getBox.onclick = function() {
+            repairEqupiment(material)
         }
     }
-    xhr.send(null)
 })()
 
 //Get material name
@@ -88,6 +83,30 @@ function buyMaterial(code, amount, cost, token) {
     xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
     xhr.send(parm)
     xhr.onload = function() {}
+}
+
+//Repair all equipment
+function repairEqupiment(material) {
+    var materialsList = document.querySelectorAll('#repairall+div span')
+    var xhr = new window.XMLHttpRequest()
+    xhr.open('GET', window.location.origin + '/?s=Bazaar&ss=is&filter=ma')
+    xhr.setRequestHeader('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8')
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded')
+    xhr.responseType = 'document'
+    xhr.onload = function() {
+        var token = xhr.response.querySelector('input[name="storetoken"]').value
+        if (materialsList.length > 0) {
+            for (var i = 0; i < materialsList.length; i++) {
+                var amount = materialsList[i].innerHTML.match(/\d+/)[0]
+                var code = material[materialsName2Code(materialsList[i].innerHTML.match(/\d+x (.*)/)[1])].code
+                buyMaterial(code, amount, material[i].cost, token)
+            }
+            setTimeout(function() {
+                document.querySelector('#repairall div').click()
+            }, 3000)
+        }
+    }
+    xhr.send(null)
 }
 
 //Get element

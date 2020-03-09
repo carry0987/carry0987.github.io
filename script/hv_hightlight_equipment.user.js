@@ -2,7 +2,7 @@
 // @name         HV Hightlight Equipment
 // @author       carry0987; ggxxsol(ggxxhy); hc br
 // @namespace    https://github.com/carry0987
-// @version      1.2.7
+// @version      1.2.8
 // @description  People always discern the color first, then to see word
 // @icon         https://e-hentai.org/favicon.ico
 // @include      https://hentaiverse.org/*
@@ -107,7 +107,9 @@ function mainhh() {
             temp = eqmthh(equipdiv[1])
             equipdiv[1].innerHTML = temp
             var equhide = document.createElement('a');
-            equhide.style.cssText = 'font-size: 15px;color: red;position: absolute;top: 652px;left: 2px;text-align: left;border: 1px solid #5C0D11;padding: 4px';
+            equhide.style.cssText = `
+            font-size: 15px;color: red;position: absolute;top: 652px;left: 2px;text-align: left;border: 1px solid rgb(92, 13, 17);padding: 4px;cursor: pointer;-webkit-user-select: none;-khtml-user-select: none;-moz-user-select: none;-ms-user-select: none;user-select: none
+            `;
             try {
                 if (!localStorage.hideflag) {
                     localStorage.hideflag = 'Display lock equipment'
