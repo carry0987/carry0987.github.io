@@ -2,7 +2,7 @@
 // @name         HV Hightlight Equipment
 // @author       carry0987; ggxxsol(ggxxhy); hc br
 // @namespace    https://github.com/carry0987
-// @version      1.2.0
+// @version      1.2.5
 // @description  People always discern the color first, then to see word
 // @icon         https://e-hentai.org/favicon.ico
 // @include      https://hentaiverse.org/*
@@ -16,7 +16,8 @@
 // @run-at       document-end
 // ==/UserScript==
 
-if (document.location.href.match(/ss=iw/) && !document.getElementById('item_pane')) return
+var getLocation = document.location.href;
+if (getLocation.match(/ss=iw/) && !document.getElementById('item_pane')) return
 var hanhua = true;
 var closeH = 0
 var mhtml = document.body.innerHTML;
@@ -27,7 +28,6 @@ var torep = new Array();
 var repby = new Array();
 
 function mainhh() {
-    var getLocation = document.location.href;
     if (getLocation.match('://hentaiverse.org/equip/') || getLocation.match('://hentaiverse.org/pages/showequip.php')) {
         html = eqmthh(document.body)
         document.body.innerHTML = html;
@@ -46,7 +46,7 @@ function mainhh() {
     lklist = lklist.concat('Bazaar&ss=ss')
     //戰鬥道具5
     lklist = lklist.concat('Character&ss=it')
-    //iw漢化6
+    //IW漢化6
     lklist = lklist.concat('ss=iw')
     //論壇漢化7
     lklist = lklist.concat('forums')
@@ -61,7 +61,7 @@ function mainhh() {
     //鍛造12
     lklist = lklist.concat('Forge')
     for (var i = 0; i < lklist.length; i++) {
-        if (document.location.href.match(lklist[i])) {
+        if (getLocation.match(lklist[i])) {
             var temp = i;
             break;
         }
