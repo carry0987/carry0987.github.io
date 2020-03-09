@@ -2,7 +2,7 @@
 // @name         HV Hightlight Equipment
 // @author       carry0987; ggxxsol(ggxxhy); hc br
 // @namespace    https://github.com/carry0987
-// @version      1.2.5
+// @version      1.2.6
 // @description  People always discern the color first, then to see word
 // @icon         https://e-hentai.org/favicon.ico
 // @include      https://hentaiverse.org/*
@@ -286,7 +286,7 @@ function mainhh() {
         }
 
         function eq5() {
-            eqe5 = eqe5.concat('ddsezxcwer')
+            eqe5 = eqe5.concat('ddsezxcwer');
             eqc5 = eqc5.concat(''); //如果出現問號絕對有問題
             eqe5 = eqe5.concat('Buckler');
             eqc5 = eqc5.concat('');
@@ -356,8 +356,8 @@ function mainhh() {
 
         function eq4() {
             /////////////////////////////盾或者材料,武器不會出現這個
-            eqe4 = eqe4.concat('ddsezxcwer') //防止空缺
-            eqc4 = eqc4.concat('')
+            eqe4 = eqe4.concat('ddsezxcwer'); //防止空缺
+            eqc4 = eqc4.concat('');
             //盾
             eqe4 = eqe4.concat('Buckler');
             eqc4 = eqc4.concat('Buckler');
@@ -400,51 +400,51 @@ function mainhh() {
         }
 
         function eq3() {
-            eqe3 = eqe3.concat('ddsezxcwer') //防止空缺
-            eqc3 = eqc3.concat('')
+            eqe3 = eqe3.concat('ddsezxcwer'); //防止空缺
+            eqc3 = eqc3.concat('');
             ///////////////////////////////////////////防具後綴////////////////////////////////////////////
-            eqe3 = eqe3.concat('of the Cheetah')
-            eqc3 = eqc3.concat('of the Cheetah')
-            eqe3 = eqe3.concat('of Negation')
-            eqc3 = eqc3.concat('of Negation')
-            eqe3 = eqe3.concat('of the Shadowdancer')
-            eqc3 = eqc3.concat('of the Shadowdancer')
-            eqe3 = eqe3.concat('of the Arcanist')
-            eqc3 = eqc3.concat('of the Arcanist')
-            eqe3 = eqe3.concat('of the Fleet')
-            eqc3 = eqc3.concat('of the Fleet')
-            eqe3 = eqe3.concat('Spirit-ward')
-            eqc3 = eqc3.concat('Spirit-ward')
-            eqe3 = eqe3.concat('of the Fire-eater')
-            eqc3 = eqc3.concat('of the Fire-eater')
-            eqe3 = eqe3.concat('Fire-eater')
-            eqc3 = eqc3.concat('Fire-eater')
-            eqe3 = eqe3.concat('of the Thunder-child')
-            eqc3 = eqc3.concat('of the Thunder-child')
-            eqe3 = eqe3.concat('of the Wind-waker')
-            eqc3 = eqc3.concat('of the Wind-waker')
-            eqe3 = eqe3.concat('of the Spirit-ward')
-            eqc3 = eqc3.concat('of the Spirit-ward')
-            eqe3 = eqe3.concat('of Dampening')
-            eqc3 = eqc3.concat('of Dampening')
-            eqe3 = eqe3.concat('of Stoneskin')
-            eqc3 = eqc3.concat('of Stoneskin')
-            eqe3 = eqe3.concat('of Deflection')
-            eqc3 = eqc3.concat('of Deflection')
+            eqe3 = eqe3.concat('of the Cheetah');
+            eqc3 = eqc3.concat('of the Cheetah');
+            eqe3 = eqe3.concat('of Negation');
+            eqc3 = eqc3.concat('of Negation');
+            eqe3 = eqe3.concat('of the Shadowdancer');
+            eqc3 = eqc3.concat('of the Shadowdancer');
+            eqe3 = eqe3.concat('of the Arcanist');
+            eqc3 = eqc3.concat('of the Arcanist');
+            eqe3 = eqe3.concat('of the Fleet');
+            eqc3 = eqc3.concat('of the Fleet');
+            eqe3 = eqe3.concat('Spirit-ward');
+            eqc3 = eqc3.concat('Spirit-ward');
+            eqe3 = eqe3.concat('of the Fire-eater');
+            eqc3 = eqc3.concat('of the Fire-eater');
+            eqe3 = eqe3.concat('Fire-eater');
+            eqc3 = eqc3.concat('Fire-eater');
+            eqe3 = eqe3.concat('of the Thunder-child');
+            eqc3 = eqc3.concat('of the Thunder-child');
+            eqe3 = eqe3.concat('of the Wind-waker');
+            eqc3 = eqc3.concat('of the Wind-waker');
+            eqe3 = eqe3.concat('of the Spirit-ward');
+            eqc3 = eqc3.concat('of the Spirit-ward');
+            eqe3 = eqe3.concat('of Dampening');
+            eqc3 = eqc3.concat('of Dampening');
+            eqe3 = eqe3.concat('of Stoneskin');
+            eqc3 = eqc3.concat('of Stoneskin');
+            eqe3 = eqe3.concat('of Deflection');
+            eqc3 = eqc3.concat('of Deflection');
             eqe3 = eqe3.concat('of the Battlecaster');
             eqc3 = eqc3.concat('of the Battlecaster');
             eqe3 = eqe3.concat('of the Nimble');
             eqc3 = eqc3.concat('of the Nimble');
-            eqe3 = eqe3.concat('of the Barrier')
-            eqc3 = eqc3.concat('of the Barrier')
-            eqe3 = eqe3.concat('of Protection')
-            eqc3 = eqc3.concat('of Protection')
-            eqe3 = eqe3.concat('of Warding')
-            eqc3 = eqc3.concat('of Warding')
-            eqe3 = eqe3.concat('of the Raccoon')
-            eqc3 = eqc3.concat('of the Raccoon')
-            eqe3 = eqe3.concat('of the Frost-born')
-            eqc3 = eqc3.concat('of the Frost-born')
+            eqe3 = eqe3.concat('of the Barrier');
+            eqc3 = eqc3.concat('of the Barrier');
+            eqe3 = eqe3.concat('of Protection');
+            eqc3 = eqc3.concat('of Protection');
+            eqe3 = eqe3.concat('of Warding');
+            eqc3 = eqc3.concat('of Warding');
+            eqe3 = eqe3.concat('of the Raccoon');
+            eqc3 = eqc3.concat('of the Raccoon');
+            eqe3 = eqe3.concat('of the Frost-born');
+            eqc3 = eqc3.concat('of the Frost-born');
             ////////////////////////////////////////////////////武器後綴/////////////////////////////////
             eqe3 = eqe3.concat('of Swiftness');
             eqc3 = eqc3.concat('of Swiftness');
@@ -456,40 +456,40 @@ function mainhh() {
             eqc3 = eqc3.concat('of the Illithid');
             eqe3 = eqe3.concat('of the Vampire');
             eqc3 = eqc3.concat('of the Vampire');
-            eqe3 = eqe3.concat('of Focus')
-            eqc3 = eqc3.concat('of Focus')
-            eqe3 = eqe3.concat('of the Elementalist')
-            eqc3 = eqc3.concat('of the Elementalist')
-            eqe3 = eqe3.concat('of the Heaven-sent')
-            eqc3 = eqc3.concat('of the Heaven-sent')
-            eqe3 = eqe3.concat('of the Demon-fiend')
-            eqc3 = eqc3.concat('of the Demon-fiend')
-            eqe3 = eqe3.concat('of the Earth-walker')
-            eqc3 = eqc3.concat('of the Earth-walker')
-            eqe3 = eqe3.concat('of the Priestess')
-            eqc3 = eqc3.concat('of the Priestess')
-            eqe3 = eqe3.concat('of the Curse-weaver')
-            eqc3 = eqc3.concat('of the Curse-weaver')
-            eqe3 = eqe3.concat('of the Thrice-blessed')
-            eqc3 = eqc3.concat('of the Thrice-blessed')
+            eqe3 = eqe3.concat('of Focus');
+            eqc3 = eqc3.concat('of Focus');
+            eqe3 = eqe3.concat('of the Elementalist');
+            eqc3 = eqc3.concat('of the Elementalist');
+            eqe3 = eqe3.concat('of the Heaven-sent');
+            eqc3 = eqc3.concat('of the Heaven-sent');
+            eqe3 = eqe3.concat('of the Demon-fiend');
+            eqc3 = eqc3.concat('of the Demon-fiend');
+            eqe3 = eqe3.concat('of the Earth-walker');
+            eqc3 = eqc3.concat('of the Earth-walker');
+            eqe3 = eqe3.concat('of the Priestess');
+            eqc3 = eqc3.concat('of the Priestess');
+            eqe3 = eqe3.concat('of the Curse-weaver');
+            eqc3 = eqc3.concat('of the Curse-weaver');
+            eqe3 = eqe3.concat('of the Thrice-blessed');
+            eqc3 = eqc3.concat('of the Thrice-blessed');
             eqe3 = eqe3.concat('of Slaughter');
             eqc3 = eqc3.concat('<span style=\"background:#FF0000;color:#FFFFFF\" >of Slaughter</span>');
             eqe3 = eqe3.concat('of Balance');
             eqc3 = eqc3.concat('<span style=\"background:#c8c87c\;color:#000000\" >of Balance</span>');
-            eqe3 = eqe3.concat('of Destruction')
-            eqc3 = eqc3.concat('<span style=\"background:#9400d3\;color:#FFFFFF" >of Destruction</span>')
-            eqe3 = eqe3.concat('of Surtr')
-            eqc3 = eqc3.concat('<span style=\"background:#f97c7c\;color:#000000" >of Surtr</span>')
-            eqe3 = eqe3.concat('of Niflheim')
-            eqc3 = eqc3.concat('<span style=\"background:#94c2f5\;color:#000000" >of Niflheim</span>')
-            eqe3 = eqe3.concat('of Mjolnir')
-            eqc3 = eqc3.concat('<span style=\"background:#fcff66\;color:#000000" >of Mjolnir</span>')
-            eqe3 = eqe3.concat('of Freyr')
-            eqc3 = eqc3.concat('<span style=\"background:#7ff97c\;color:#000000" >of Freyr</span>')
-            eqe3 = eqe3.concat('of Heimdall')
-            eqc3 = eqc3.concat('<span style=\"background:#ffffff\;color:#000000" >of Heimdall</span>')
-            eqe3 = eqe3.concat('of Fenrir')
-            eqc3 = eqc3.concat('<span style=\"background:#000000\;color:#ffffff" >of Fenrir</span>')
+            eqe3 = eqe3.concat('of Destruction');
+            eqc3 = eqc3.concat('<span style=\"background:#9400d3\;color:#FFFFFF" >of Destruction</span>');
+            eqe3 = eqe3.concat('of Surtr');
+            eqc3 = eqc3.concat('<span style=\"background:#f97c7c\;color:#000000" >of Surtr</span>');
+            eqe3 = eqe3.concat('of Niflheim');
+            eqc3 = eqc3.concat('<span style=\"background:#94c2f5\;color:#000000" >of Niflheim</span>');
+            eqe3 = eqe3.concat('of Mjolnir');
+            eqc3 = eqc3.concat('<span style=\"background:#fcff66\;color:#000000" >of Mjolnir</span>');
+            eqe3 = eqe3.concat('of Freyr');
+            eqc3 = eqc3.concat('<span style=\"background:#7ff97c\;color:#000000" >of Freyr</span>');
+            eqe3 = eqe3.concat('of Heimdall');
+            eqc3 = eqc3.concat('<span style=\"background:#ffffff\;color:#000000" >of Heimdall</span>');
+            eqe3 = eqe3.concat('of Fenrir');
+            eqc3 = eqc3.concat('<span style=\"background:#000000\;color:#ffffff" >of Fenrir</span>');
         }
 
         function eq2() {
@@ -528,32 +528,32 @@ function mainhh() {
             eqc2 = eqc2.concat('Shielding');
             eqe2 = eqe2.concat('Radiant');
             eqc2 = eqc2.concat('<span style=\"background:#ffffff\;color:red" >Radiant</span>');
-            eqe2 = eqe2.concat('Arctic')
-            eqc2 = eqc2.concat('<span style=\"background:#94c2f5\;color:#000000" >Arctic</span>')
-            eqe2 = eqe2.concat('Fiery')
-            eqc2 = eqc2.concat('<span style=\"background:#f97c7c\;color:#000000" >Fiery</span>')
-            eqe2 = eqe2.concat('Shocking')
-            eqc2 = eqc2.concat('<span style=\"background:#fcff66\;color:#000000" >Shocking</span>')
-            eqe2 = eqe2.concat('Tempestuous')
-            eqc2 = eqc2.concat('<span style=\"background:#a9f94f\;color:#000000" >Tempestuous</span>')
-            eqe2 = eqe2.concat('Hallowed')
-            eqc2 = eqc2.concat('<span style=\"background:#ffffff\;color:#000000" >Hallowed</span>')
-            eqe2 = eqe2.concat('Demonic')
-            eqc2 = eqc2.concat('<span style=\"background:#000000\;color:#ffffff" >Demonic</span>')
-            eqe2 = eqe2.concat('Ethereal')
-            eqc2 = eqc2.concat('<span style=\"background:#ffffff\;color:#5c5a5a" >Ethereal</span>')
+            eqe2 = eqe2.concat('Arctic');
+            eqc2 = eqc2.concat('<span style=\"background:#94c2f5\;color:#000000" >Arctic</span>');
+            eqe2 = eqe2.concat('Fiery');
+            eqc2 = eqc2.concat('<span style=\"background:#f97c7c\;color:#000000" >Fiery</span>');
+            eqe2 = eqe2.concat('Shocking');
+            eqc2 = eqc2.concat('<span style=\"background:#fcff66\;color:#000000" >Shocking</span>');
+            eqe2 = eqe2.concat('Tempestuous');
+            eqc2 = eqc2.concat('<span style=\"background:#a9f94f\;color:#000000" >Tempestuous</span>');
+            eqe2 = eqe2.concat('Hallowed');
+            eqc2 = eqc2.concat('<span style=\"background:#ffffff\;color:#000000" >Hallowed</span>');
+            eqe2 = eqe2.concat('Demonic');
+            eqc2 = eqc2.concat('<span style=\"background:#000000\;color:#ffffff" >Demonic</span>');
+            eqe2 = eqe2.concat('Ethereal');
+            eqc2 = eqc2.concat('<span style=\"background:#ffffff\;color:#5c5a5a" >Ethereal</span>');
         }
 
         function eq1() {
             /////////////////品質//////////
-            eqe1 = eqe1.concat('Crude')
-            eqc1 = eqc1.concat('Crude')
+            eqe1 = eqe1.concat('Crude');
+            eqc1 = eqc1.concat('Crude');
             eqe1 = eqe1.concat('Fair');
             eqc1 = eqc1.concat('Fair');
             eqe1 = eqe1.concat('Average');
             eqc1 = eqc1.concat('Average');
-            eqe1 = eqe1.concat('Fine')
-            eqc1 = eqc1.concat('Fine(OUT)')
+            eqe1 = eqe1.concat('Fine');
+            eqc1 = eqc1.concat('Fine(OUT)');
             eqe1 = eqe1.concat('Superior');
             eqc1 = eqc1.concat('<span style=\"background:#44c554\;color:#ffffff" >Superior</span>');
             eqe1 = eqe1.concat('Exquisite');
