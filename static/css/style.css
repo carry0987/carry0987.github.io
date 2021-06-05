@@ -119,7 +119,8 @@ nav>a:hover {
     color: #A2A2A2;
     text-align: center;
     font-size: x-large;
-    margin-bottom: 0;
+    margin-bottom: 0px;
+    margin-top: 0px;
 }
 
 #header>.bio p:last-child {
