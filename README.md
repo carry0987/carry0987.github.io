@@ -2,7 +2,7 @@
 **carry0987 Personal Website**
 
 ## Repo
-This script will download raspberry pi repo automatically
+The list of Linux tools
 ```
 bash -c "$(curl https://carry0987.github.io/repo/)"
 ```
