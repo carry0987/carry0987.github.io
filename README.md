@@ -4,5 +4,5 @@
 ## Repo
 The list of Linux tools
 ```
-bash -c "$(curl https://carry0987.github.io/repo/)"
+sudo bash -c "$(curl https://carry0987.github.io/repo/)"
 ```
