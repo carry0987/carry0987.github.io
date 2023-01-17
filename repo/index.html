@@ -35,9 +35,6 @@ link7=https://raw.github.com/carry0987/Linux-Script/master/SSR/ssr.sh
 link8=https://raw.github.com/carry0987/Linux-Script/master/VPN/vpn.sh
 link9=https://raw.github.com/carry0987/Linux-Script/master/Vim/vim-setup.sh
 
-#Check root
-[[ $EUID -ne 0 ]] && echo -e "${Error} This script must be run as root!" && exit 1
-
 #Detect tools
 case $tool in
     1)
