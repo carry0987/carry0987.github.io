@@ -121,16 +121,23 @@ export const App = () => {
     ];
 
     // Fetch data from the GitHub API
+    const userInfo = useSignal<UserInfo>({
+        avatar_url: '',
+        bio: 'Still learning \n HTML, CSS, PHP, Javascript, Python, C, Java',
+        html_url: 'https://github.com/carry0987',
+        public_repos: 0,
+        repos_url: ''
+    });
     const fetchGithubRepo = throttle(async () => {
         try {
-            const userInfo = await fetchData<UserInfo>({
+            userInfo.value = await fetchData<UserInfo>({
                 url: 'https://api.github.com/users/carry0987',
                 method: 'GET'
             });
 
-            if (userInfo && userInfo.public_repos > 0) {
+            if (userInfo && userInfo.value.public_repos > 0) {
                 repoList.value = await fetchData<RepoInfo[]>({
-                    url: userInfo.repos_url,
+                    url: userInfo.value.repos_url,
                     method: 'GET',
                     data: {
                         sort: 'pushed',
@@ -166,10 +173,9 @@ export const App = () => {
                     <div className="w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-lg mb-4 lg:mb-0">
                         <img src={carry0987Logo} alt="Profile" className="rounded mx-auto" />
                         <div className="text-center mt-4">
-                            <div className="font-bold text-lg">carry0987</div>
-                            <div className="text-blue-500">@carry0987</div>
-                            <div className="text-gray-500">Still learning</div>
-                            <div className="text-gray-500">HTML, CSS, PHP, Javascript, Python, C, Java</div>
+                            <div className="font-bold text-4xl"><span>carry0987</span></div>
+                            <a href={userInfo.value.html_url} target="_blank" className="text-blue-500 text-3xl hover:underline">@carry0987</a>
+                            <p className="text-gray-500">{userInfo.value.bio}</p>
                         </div>
                     </div>
                     <div className="w-full lg:w-3/4 lg:ml-4">
