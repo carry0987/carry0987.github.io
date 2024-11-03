@@ -183,7 +183,7 @@ export const App = () => {
                         </div>
                     </div>
                     <div className="w-full lg:w-3/4 lg:ml-4">
-                        <div className="text-center font-bold text-xl mb-4">Repositories Source</div>
+                        <div className="text-center font-bold text-xl mb-4"><span>Repositories Source</span></div>
                         <div class="border-t-2 border-gray-300 my-1 mb-3"></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {repoList.value.length > 0
