@@ -129,7 +129,7 @@ class Main {
                     r: this.BH_SIZE,
                     power: 2
                 });
-                newBlackHole.setFixed(createFixed);
+                newBlackHole.fixed = createFixed;
 
                 return this.blackholes.push(newBlackHole);
             } else if (bh && e.button === 2) {
