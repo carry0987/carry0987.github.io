@@ -41,7 +41,8 @@ export const App = () => {
         {
             name: 'TemplateEngine',
             full_name: 'carry0987/TemplateEngine',
-            description: 'A lightweight and fast PHP template engine, using Composer, featuring caching abilities, customizable cache lifetime, template inheritance, and support for Redis and MySQL.',
+            description:
+                'A lightweight and fast PHP template engine, using Composer, featuring caching abilities, customizable cache lifetime, template inheritance, and support for Redis and MySQL.',
             html_url: 'https://github.com/carry0987/TemplateEngine',
             archived: false,
             language: 'PHP'
@@ -175,36 +176,45 @@ export const App = () => {
                             <div className="rounded mx-auto flex justify-center">
                                 <img src={carry0987Logo} alt="Profile" className="rounded mx-auto" />
                             </div>
-                            <div className="font-bold mt-2 lg:mt-4 text-2xl lg:text-4xl"><span>carry0987</span></div>
-                            <a href={userInfo.value.html_url} target="_blank" className="text-blue-500 text-xl lg:text-3xl hover:underline">@carry0987</a>
+                            <div className="font-bold mt-2 lg:mt-4 text-2xl lg:text-4xl">
+                                <span>carry0987</span>
+                            </div>
+                            <a
+                                href={userInfo.value.html_url}
+                                target="_blank"
+                                className="text-blue-500 text-xl lg:text-3xl hover:underline">
+                                @carry0987
+                            </a>
                         </div>
                         <div id="bio" className="text-center ml-2 lg:ml-0 lg:mt-4">
                             <p className="text-gray-500 lg:mt-4">{userInfo.value.bio}</p>
                         </div>
                     </div>
                     <div className="w-full lg:w-3/4 lg:ml-4">
-                        <div className="text-center font-bold text-xl mb-4"><span>Repositories Source</span></div>
+                        <div className="text-center font-bold text-xl mb-4">
+                            <span>Repositories Source</span>
+                        </div>
                         <div class="border-t-2 border-gray-300 my-1 mb-3"></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {repoList.value.length > 0
                                 ? repoList.value.map((repo, index) => (
-                                    <Repo
-                                        key={index}
-                                        name={repo.name}
-                                        description={repo.description}
-                                        language={repo.language}
-                                        html_url={repo.html_url}
-                                    />
-                                ))
+                                      <Repo
+                                          key={index}
+                                          name={repo.name}
+                                          description={repo.description}
+                                          language={repo.language}
+                                          html_url={repo.html_url}
+                                      />
+                                  ))
                                 : defaultRepos.map((repo, index) => (
-                                    <Repo
-                                        key={index}
-                                        name={repo.name}
-                                        description={repo.description}
-                                        language={repo.language}
-                                        html_url={repo.html_url}
-                                    />
-                                ))}
+                                      <Repo
+                                          key={index}
+                                          name={repo.name}
+                                          description={repo.description}
+                                          language={repo.language}
+                                          html_url={repo.html_url}
+                                      />
+                                  ))}
                         </div>
                     </div>
                 </div>
