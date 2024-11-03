@@ -170,12 +170,16 @@ export const App = () => {
                     ))}
                 </div>
                 <div className="flex flex-col lg:flex-row mt-4">
-                    <div className="w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-lg mb-4 lg:mb-0">
-                        <img src={carry0987Logo} alt="Profile" className="rounded mx-auto" />
-                        <div className="text-center mt-4">
-                            <div className="font-bold text-4xl"><span>carry0987</span></div>
-                            <a href={userInfo.value.html_url} target="_blank" className="text-blue-500 text-3xl hover:underline">@carry0987</a>
-                            <p className="text-gray-500 mt-4">{userInfo.value.bio}</p>
+                    <div className="w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-lg mb-4 lg:mb-0 flex flex-row lg:flex-col">
+                        <div id="profile" className="text-center lg:mt-4">
+                            <div className="rounded mx-auto flex justify-center">
+                                <img src={carry0987Logo} alt="Profile" className="rounded mx-auto" />
+                            </div>
+                            <div className="font-bold mt-2 lg:mt-4 text-2xl lg:text-4xl"><span>carry0987</span></div>
+                            <a href={userInfo.value.html_url} target="_blank" className="text-blue-500 text-xl lg:text-3xl hover:underline">@carry0987</a>
+                        </div>
+                        <div id="bio" className="text-center ml-2 lg:ml-0 lg:mt-4">
+                            <p className="text-gray-500 lg:mt-4">{userInfo.value.bio}</p>
                         </div>
                     </div>
                     <div className="w-full lg:w-3/4 lg:ml-4">
