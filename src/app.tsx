@@ -18,8 +18,7 @@ export const App = () => {
     const menu = {
         Games: './games',
         Cydia: './cydia',
-        Script: 'https://github.com/carry0987/UserJS',
-        Tools: './tools'
+        Script: 'https://github.com/carry0987/UserJS'
     };
     const defaultRepos: RepoInfo[] = [
         {
