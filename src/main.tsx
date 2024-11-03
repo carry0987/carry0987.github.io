@@ -1,12 +1,13 @@
 import { App } from './app';
 import { NotFound } from '@/view/error/notfound';
-import { Home } from '@/view/home';
+import { GameList } from '@/view/game/gameList';
+import { BlackHoleMain } from '@/view/game/blackhole';
 import { DarkMode } from '@carry0987/darkmode';
 import { LocationProvider, Router, Route } from 'preact-iso';
 import { render } from 'preact';
 
 // Import the global styles
-import './index.css';
+import './index.scss';
 
 const container = document.getElementById('app');
 if (!container) {
@@ -23,7 +24,8 @@ const Main = () => {
         <LocationProvider>
             <Router>
                 <Route path="/" component={App} />
-                <Route path="/test" component={Home} />
+                <Route path="/games" component={GameList} />
+                <Route path="/games/blackhole" component={BlackHoleMain} />
                 <Route default component={NotFound} />
             </Router>
         </LocationProvider>

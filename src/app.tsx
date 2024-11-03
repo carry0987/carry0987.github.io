@@ -10,7 +10,7 @@ import carry0987Logo from '@/assets/carry0987.jpg';
 import githubLogo from '@/assets/github.svg';
 
 // Import the CSS file
-import './app.css';
+import './app.scss';
 
 export const App = () => {
     const repoList = useSignal<RepoInfo[]>([]);
