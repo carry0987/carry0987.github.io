@@ -13,6 +13,6 @@ export default defineConfig({
     plugins: [preact()],
     base: '/',
     css: {
-        postcss
+        postcss: postcss
     }
 });
