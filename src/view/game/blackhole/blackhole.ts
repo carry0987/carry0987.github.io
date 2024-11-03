@@ -8,7 +8,7 @@ interface BlackHoleOptions {
 class BlackHole {
     public options: BlackHoleOptions;
     public destory: boolean = false;
-    private fixed: boolean = false;
+    public fixed: boolean = false;
     private step: number;
     private bigger: number;
     private isAdd: boolean = false;
@@ -55,12 +55,8 @@ class BlackHole {
         return (this.isAdd = true);
     }
 
-    public setFixed(fixed: boolean) {
-        this.fixed = fixed;
-    }
-
     public attract(bh: BlackHole) {
-        if (bh.fixed) return;
+        if (this.fixed || bh.fixed) return;
 
         let cx, cy, jl, lax, lay, power;
 
@@ -96,6 +92,7 @@ class BlackHole {
             } else {
                 [nbh, lbh] = [this, bh];
             }
+            // '~~' is a bitwise operator that is used to convert a number to an integer.
             nbh.options.r = ~~Math.sqrt(bh.options.r * bh.options.r + this.options.r * this.options.r);
             nbh.options.power = bh.options.power + this.options.power;
             nbh.animate(Math.max(bh.options.r, this.options.r));
