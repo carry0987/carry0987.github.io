@@ -8,7 +8,7 @@ import githubLogo from '@/assets/github.svg';
 export const GameList = () => {
     const currentYear = new Date().getFullYear();
     const menu = {
-        Games: './games',
+        Home: './',
         Cydia: './cydia',
         Script: 'https://github.com/carry0987/UserJS'
     };
