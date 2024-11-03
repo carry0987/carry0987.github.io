@@ -226,6 +226,8 @@ class Main {
             p.draw(bufferCtx);
         }
         ctx.drawImage(bufferCanvas, 0, 0);
+
+        // Update stats
         this.stats.update();
 
         return this.RAF(this.animate);

@@ -62,6 +62,16 @@ class Main {
         }
     }
 
+    // Animation loop encapsulation
+    private RAF: (callback: FrameRequestCallback) => number = (() => {
+        return (
+            window.requestAnimationFrame ||
+            function (callback: FrameRequestCallback): number {
+                return window.setTimeout(callback, 1000 / 60);
+            }
+        ).bind(window);
+    })();
+
     private animate = () => {
         if (!this.canvas) {
             throw new Error('Canvas element not found');
@@ -85,9 +95,10 @@ class Main {
             b.run(canvas, t);
         });
 
-        if ('requestAnimationFrame' in window) {
-            requestAnimationFrame(this.animate);
-        }
+        // Update stats
+        this.stats.update();
+
+        return this.RAF(this.animate);
     };
 
     private collision() {
