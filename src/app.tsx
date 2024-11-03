@@ -123,7 +123,7 @@ export const App = () => {
     // Fetch data from the GitHub API
     const userInfo = useSignal<UserInfo>({
         avatar_url: '',
-        bio: 'Still learning \n HTML, CSS, PHP, Javascript, Python, C, Java',
+        bio: 'Still learning HTML, CSS, PHP, Javascript, Python, C, Java',
         html_url: 'https://github.com/carry0987',
         public_repos: 0,
         repos_url: ''
@@ -175,7 +175,7 @@ export const App = () => {
                         <div className="text-center mt-4">
                             <div className="font-bold text-4xl"><span>carry0987</span></div>
                             <a href={userInfo.value.html_url} target="_blank" className="text-blue-500 text-3xl hover:underline">@carry0987</a>
-                            <p className="text-gray-500">{userInfo.value.bio}</p>
+                            <p className="text-gray-500 mt-2">{userInfo.value.bio}</p>
                         </div>
                     </div>
                     <div className="w-full lg:w-3/4 lg:ml-4">
