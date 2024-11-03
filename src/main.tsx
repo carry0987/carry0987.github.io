@@ -1,5 +1,6 @@
 import { App } from './app';
 import { NotFound } from '@/view/error/notfound';
+import { Cydia } from '@/view/cydia';
 import { GameList } from '@/view/game/gameList';
 import { BlackHoleMain } from '@/view/game/blackhole';
 import { ShotBallMain } from '@/view/game/shotball';
@@ -28,6 +29,7 @@ const Main = () => {
                 <Route path="/games" component={GameList} />
                 <Route path="/games/blackhole" component={BlackHoleMain} />
                 <Route path="/games/shotball" component={ShotBallMain} />
+                <Route path="/cydia" component={Cydia} />
                 <Route default component={NotFound} />
             </Router>
         </LocationProvider>
