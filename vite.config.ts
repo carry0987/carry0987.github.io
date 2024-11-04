@@ -14,5 +14,12 @@ export default defineConfig({
     base: '/',
     css: {
         postcss: postcss
+    },
+    build: {
+        rollupOptions: {
+            input: {
+                main: 'index.html'
+            }
+        }
     }
 });
