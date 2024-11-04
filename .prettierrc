@@ -1,0 +1,23 @@
+{
+    "singleQuote": true,
+    "trailingComma": "none",
+    "bracketSameLine": true,
+    "semi": true,
+    "tabWidth": 4,
+    "useTabs": false,
+    "printWidth": 120,
+    "overrides": [
+        {
+            "files": "*.ts",
+            "options": {
+                "parser": "typescript"
+            }
+        },
+        {
+            "files": ".github/**/*.yml",
+            "options": {
+                "tabWidth": 2
+            }
+        }
+    ]
+}

@@ -1,0 +1,58 @@
+.fullpage {
+    width: 100%;
+    display: inline-flex;
+    height: 80vh;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    touch-action: manipulation;
+    cursor: pointer;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+.btn-default {
+    background: #21343e;
+    border: 0;
+    color: white;
+    padding: 10px 25px;
+    transition: 1s ease;
+
+    &:focus {
+        background: #21343e;
+        border: 0;
+        color: white;
+    }
+
+    &:hover,
+    &:active {
+        background: #4f595f !important;
+        color: white !important;
+    }
+}
+
+.anim {
+    margin-top: 10px;
+    animation: 1s textFx ease;
+}
+
+@keyframes textFx {
+    0% {
+        opacity: 0;
+        transform: translateY(20%);
+    }
+}
