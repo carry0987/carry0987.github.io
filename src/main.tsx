@@ -5,8 +5,7 @@ import { GameList } from '@/view/game/gameList';
 import { BlackHoleMain } from '@/view/game/blackhole';
 import { ShotBallMain } from '@/view/game/shotball';
 import { DarkMode } from '@carry0987/darkmode';
-import { LocationProvider, Router, Route } from 'preact-iso';
-import { render } from 'preact';
+import { LocationProvider, Router, Route, hydrate } from 'preact-iso';
 
 // Import the global styles
 import './index.scss';
@@ -36,4 +35,4 @@ const Main = () => {
     );
 };
 
-render(<Main />, container);
+hydrate(<Main />, container);
