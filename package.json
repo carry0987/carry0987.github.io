@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "lint": "prettier --write \"src/**/*.{ts,tsx,css,scss}\" \"index.html\"",
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "dev": "vite-react-ssg dev",
+    "build": "vite-react-ssg build",
     "preview": "vite preview"
   },
   "dependencies": {
