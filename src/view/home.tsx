@@ -133,10 +133,10 @@ export default function Home() {
                 })
             );
 
-            if (userInfo && userInfo.value.public_repos > 0) {
+            if (userInfo && userInfo.public_repos > 0) {
                 updateRepoList(
                     await fetchData<RepoInfo[]>({
-                        url: userInfo.value.repos_url,
+                        url: userInfo.repos_url,
                         method: 'GET',
                         data: {
                             sort: 'pushed',
