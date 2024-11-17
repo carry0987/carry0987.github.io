@@ -1,6 +1,7 @@
 import postcss from './postcss.config';
 import { defineConfig } from 'vite';
-import preact from '@preact/preset-vite';
+import react from '@vitejs/plugin-react-swc';
+import {} from 'vite-react-ssg';
 import path from 'path';
 
 // https://vite.dev/config/
@@ -10,16 +11,18 @@ export default defineConfig({
             '@': path.resolve(__dirname, 'src')
         }
     },
-    plugins: [preact()],
-    base: '/',
+    plugins: [react()],
     css: {
         postcss: postcss
     },
-    build: {
-        rollupOptions: {
-            input: {
-                main: 'index.html'
-            }
+    ssgOptions: {
+        mock: true,
+        crittersOptions: false
+    },
+    server: {
+        headers: {
+            'Cross-Origin-Opener-Policy': 'same-origin',
+            'Cross-Origin-Embedder-Policy': 'require-corp'
         }
     }
 });

@@ -1,12 +1,10 @@
-import { Fragment } from 'preact';
-
 // Import the images
 import cydiaImage from '@/assets/cydia/Cydia.svg';
 
 // Import the CSS file
 import style from './style.module.scss';
 
-export const Cydia = () => {
+export default function Cydia() {
     const menu = {
         Home: './',
         Games: './games',
@@ -14,7 +12,7 @@ export const Cydia = () => {
     };
 
     return (
-        <Fragment>
+        <>
             <div className="container mx-auto p-4">
                 <div className="bg-gray-800 text-white text-center flex justify-around rounded overflow-hidden">
                     {Object.entries(menu).map(([text, link], index, array) => (
@@ -43,6 +41,6 @@ export const Cydia = () => {
                     </a>
                 </div>
             </div>
-        </Fragment>
+        </>
     );
-};
+}
