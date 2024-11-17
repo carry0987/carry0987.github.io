@@ -132,7 +132,13 @@ export default function Home() {
                     method: 'GET'
                 })
             );
+        } catch (error) {
+            return;
+        }
+    }, 100);
 
+    useEffect(() => {
+        const fetchRepoList = async () => {
             if (userInfo && userInfo.public_repos > 0) {
                 updateRepoList(
                     await fetchData<RepoInfo[]>({
@@ -146,10 +152,9 @@ export default function Home() {
                     })
                 );
             }
-        } catch (error) {
-            return;
-        }
-    }, 100);
+        };
+        fetchRepoList();
+    }, [userInfo]);
 
     useEffect(() => {
         new DarkMode({
