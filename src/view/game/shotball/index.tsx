@@ -1,7 +1,6 @@
 import { ShotBall } from './shotball';
 import { Stats } from '@adakrei/stats';
-import { useEffect } from 'preact/hooks';
-import { Fragment } from 'preact';
+import { useEffect } from 'react';
 
 // Import CSS
 import './style.scss';
@@ -167,7 +166,7 @@ class Main {
     }
 }
 
-export const ShotBallMain = () => {
+export default function ShotBallMain() {
     // Set oncontextmenu to prevent right click for body
     document.body.addEventListener('contextmenu', (e) => {
         e.preventDefault();
@@ -178,9 +177,9 @@ export const ShotBallMain = () => {
     }, []);
 
     return (
-        <Fragment>
+        <>
             <span className="tips">Left click to create a gravity point</span>
             <canvas id="cas" className="bg-[#0A3136]" />
-        </Fragment>
+        </>
     );
-};
+}

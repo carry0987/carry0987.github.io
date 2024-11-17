@@ -1,11 +1,10 @@
 import { RepoInfo } from '@/interface/interfaces';
 import { Repo } from '@/view/component/repo';
-import { Fragment } from 'preact';
 
 // Import the images
 import githubLogo from '@/assets/github.svg';
 
-export const GameList = () => {
+export default function GameList() {
     const currentYear = new Date().getFullYear();
     const menu = {
         Home: './',
@@ -32,7 +31,7 @@ export const GameList = () => {
     ];
 
     return (
-        <Fragment>
+        <>
             <div className="container mx-auto p-4">
                 <div className="bg-gray-800 text-white text-center flex justify-around rounded overflow-hidden">
                     {Object.entries(menu).map(([text, link], index, array) => (
@@ -50,7 +49,7 @@ export const GameList = () => {
                         <div className="text-center font-bold text-xl mb-4">
                             <span>Game List</span>
                         </div>
-                        <div class="border-t-2 border-gray-300 my-1 mb-3"></div>
+                        <div className="border-t-2 border-gray-300 my-1 mb-3"></div>
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {gameRepos.map((repo, index) => (
                                 <Repo
@@ -77,6 +76,6 @@ export const GameList = () => {
                     </div>
                 </div>
             </div>
-        </Fragment>
+        </>
     );
-};
+}

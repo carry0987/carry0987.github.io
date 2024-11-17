@@ -1,8 +1,7 @@
 import { BlackHole } from './blackhole';
 import { Particle } from './particle';
 import { Stats } from '@adakrei/stats';
-import { useEffect } from 'preact/hooks';
-import { Fragment } from 'preact';
+import { useEffect } from 'react';
 
 // Import CSS
 import './style.scss';
@@ -254,7 +253,7 @@ class Main {
     }
 }
 
-export const BlackHoleMain = () => {
+export default function BlackHoleMain() {
     // Set oncontextmenu to prevent right click for body
     document.body.addEventListener('contextmenu', (e) => {
         e.preventDefault();
@@ -265,9 +264,9 @@ export const BlackHoleMain = () => {
     }, []);
 
     return (
-        <Fragment>
+        <>
             <span className="tips">Left click to build one hole, right click to delete a hole</span>
             <canvas id="cas" className="bg-[#0A3136]" />
-        </Fragment>
+        </>
     );
-};
+}
