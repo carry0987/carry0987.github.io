@@ -18,7 +18,7 @@
     "@carry0987/darkmode": "^1.2.1",
     "@carry0987/utils": "^3.8.4",
     "@types/jquery": "^3.5.32",
-    "@types/node": "^22.10.2",
+    "@types/node": "^22.12.0",
     "@types/react": "^18.3.18",
     "@types/react-dom": "^18.3.5",
     "@vitejs/plugin-react-swc": "^3.7.2",
@@ -26,12 +26,18 @@
     "jquery": "^3.7.1",
     "prettier": "^3.4.2",
     "react-head": "^3.4.2",
-    "react-router-dom": "^6.28.1",
-    "sass-embedded": "^1.83.0",
-    "tailwindcss": "^3.4.17",
-    "typescript": "~5.6.3",
-    "vite": "^5.4.11",
+    "react-router-dom": "^6.28.2",
+    "sass-embedded": "^1.83.4",
+    "tailwindcss": "^4.0.0",
+    "typescript": "^5.7.3",
+    "vite": "^5.4.14",
     "vite-plugin-pages": "^0.32.4",
-    "vite-react-ssg": "^0.8.3"
+    "vite-react-ssg": "^0.8.4"
+  },
+  "pnpm": {
+    "onlyBuiltDependencies": [
+      "@swc/core",
+      "esbuild"
+    ]
   }
 }
