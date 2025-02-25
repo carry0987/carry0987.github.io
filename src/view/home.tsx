@@ -1,4 +1,5 @@
 import { UserInfo, RepoInfo } from '@/interface/interfaces';
+import { Background } from './component/background';
 import { Repo } from '@/view/component/repo';
 import { throttle, fetchData } from '@carry0987/utils';
 import { DarkMode } from '@carry0987/darkmode';
@@ -165,78 +166,81 @@ export default function Home() {
     }, []);
 
     return (
-        <div className="container mx-auto p-4">
-            <div className="bg-gray-800 text-white text-center flex justify-around rounded overflow-hidden">
-                {Object.entries(menu).map(([text, link], index, array) => (
-                    <a
-                        key={index}
-                        href={link} // Use the link from the menu object
-                        target={link.startsWith('http') ? '_blank' : '_self'}
-                        className={`font-bold text-xl py-2 ${index !== array.length - 1 ? 'border-r border-gray-400' : ''} w-full hover:bg-blue-300 hover:text-black transition-colors duration-300`}>
-                        {text} {/* Display text from the menu object */}
-                    </a>
-                ))}
-            </div>
-            <div className="flex flex-col lg:flex-row mt-4">
-                <div className="w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-lg mb-4 lg:mb-0 flex flex-row lg:flex-col">
-                    <div id="profile" className="text-center lg:mt-4">
-                        <div className="rounded mx-auto flex justify-center">
-                            <img src={carry0987Logo} alt="Profile" className="rounded mx-auto" />
-                        </div>
-                        <div className="font-bold mt-2 lg:mt-4 text-2xl lg:text-4xl">
-                            <span>carry0987</span>
-                        </div>
+        <>
+            <Background />
+            <div className="container mx-auto p-4 relative z-1">
+                <div className="bg-gray-800 text-white text-center flex justify-around rounded overflow-hidden">
+                    {Object.entries(menu).map(([text, link], index, array) => (
                         <a
-                            href={userInfo.html_url}
-                            target="_blank"
-                            className="text-blue-500 text-xl lg:text-3xl hover:underline">
-                            @carry0987
+                            key={index}
+                            href={link} // Use the link from the menu object
+                            target={link.startsWith('http') ? '_blank' : '_self'}
+                            className={`font-bold text-xl py-2 ${index !== array.length - 1 ? 'border-r border-gray-400' : ''} w-full hover:bg-blue-300 hover:text-black transition-colors duration-300`}>
+                            {text} {/* Display text from the menu object */}
                         </a>
+                    ))}
+                </div>
+                <div className="flex flex-col lg:flex-row mt-4">
+                    <div className="w-full lg:w-1/4 bg-white p-4 rounded-lg shadow-lg mb-4 lg:mb-0 flex flex-row lg:flex-col">
+                        <div id="profile" className="text-center lg:mt-4">
+                            <div className="rounded mx-auto flex justify-center">
+                                <img src={carry0987Logo} alt="Profile" className="rounded mx-auto" />
+                            </div>
+                            <div className="font-bold mt-2 lg:mt-4 text-2xl lg:text-4xl">
+                                <span>carry0987</span>
+                            </div>
+                            <a
+                                href={userInfo.html_url}
+                                target="_blank"
+                                className="text-blue-500 text-xl lg:text-3xl hover:underline">
+                                @carry0987
+                            </a>
+                        </div>
+                        <div id="bio" className="text-center ml-2 lg:ml-0 lg:mt-4">
+                            <p className="text-gray-500 lg:mt-4">{userInfo.bio}</p>
+                        </div>
                     </div>
-                    <div id="bio" className="text-center ml-2 lg:ml-0 lg:mt-4">
-                        <p className="text-gray-500 lg:mt-4">{userInfo.bio}</p>
+                    <div className="w-full lg:w-3/4 lg:ml-4">
+                        <div className="text-center font-bold text-xl mb-4">
+                            <span>Repositories Source</span>
+                        </div>
+                        <div className="border-t-2 border-gray-300 my-1 mb-3"></div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {repoList.length > 0
+                                ? repoList.map((repo, index) => (
+                                    <Repo
+                                        key={index}
+                                        name={repo.name}
+                                        description={repo.description}
+                                        language={repo.language}
+                                        html_url={repo.html_url}
+                                    />
+                                ))
+                                : defaultRepos.map((repo, index) => (
+                                    <Repo
+                                        key={index}
+                                        name={repo.name}
+                                        description={repo.description}
+                                        language={repo.language}
+                                        html_url={repo.html_url}
+                                    />
+                                ))}
+                        </div>
                     </div>
                 </div>
-                <div className="w-full lg:w-3/4 lg:ml-4">
-                    <div className="text-center font-bold text-xl mb-4">
-                        <span>Repositories Source</span>
-                    </div>
-                    <div className="border-t-2 border-gray-300 my-1 mb-3"></div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        {repoList.length > 0
-                            ? repoList.map((repo, index) => (
-                                  <Repo
-                                      key={index}
-                                      name={repo.name}
-                                      description={repo.description}
-                                      language={repo.language}
-                                      html_url={repo.html_url}
-                                  />
-                              ))
-                            : defaultRepos.map((repo, index) => (
-                                  <Repo
-                                      key={index}
-                                      name={repo.name}
-                                      description={repo.description}
-                                      language={repo.language}
-                                      html_url={repo.html_url}
-                                  />
-                              ))}
+                <div className="text-center mt-8">
+                    <a
+                        href="https://github.com/carry0987"
+                        className="text-blue-500"
+                        title="carry0987 GitHub"
+                        target="_blank">
+                        <img src={githubLogo} alt="Github" className="w-8 inline-block" />
+                    </a>
+                    <div className="text-gray-500">
+                        <span>&copy; {currentYear} carry0987. All rights reserved. Made by carry0987</span>
                     </div>
                 </div>
             </div>
-            <div className="text-center mt-8">
-                <a
-                    href="https://github.com/carry0987"
-                    className="text-blue-500"
-                    title="carry0987 GitHub"
-                    target="_blank">
-                    <img src={githubLogo} alt="Github" className="w-8 inline-block" />
-                </a>
-                <div className="text-gray-500">
-                    <span>&copy; {currentYear} carry0987. All rights reserved. Made by carry0987</span>
-                </div>
-            </div>
-        </div>
+        </>
     );
 }

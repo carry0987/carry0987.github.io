@@ -1,4 +1,5 @@
 import { RepoInfo } from '@/interface/interfaces';
+import { Background } from '@/view/component/background';
 import { Repo } from '@/view/component/repo';
 
 // Import the images
@@ -32,7 +33,8 @@ export default function GameList() {
 
     return (
         <>
-            <div className="container mx-auto p-4">
+            <Background />
+            <div className="container mx-auto p-4 relative z-1">
                 <div className="bg-gray-800 text-white text-center flex justify-around rounded overflow-hidden">
                     {Object.entries(menu).map(([text, link], index, array) => (
                         <a
