@@ -1,0 +1,1 @@
+import{a as o}from"./app-BVOFpDLd.js";var e,t=o;t.createRoot,e=t.hydrateRoot;const a=Object.freeze(Object.defineProperty({__proto__:null,get hydrateRoot(){return e}},Symbol.toStringTag,{value:"Module"}));export{a as c};
