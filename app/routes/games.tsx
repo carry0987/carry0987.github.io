@@ -22,7 +22,7 @@ export default function GameList() {
             name: 'BlackHole',
             full_name: '',
             description: 'A Funny Canvas Game',
-            html_url: './games/blackhole',
+            html_url: './blackhole',
             archived: false,
             language: 'TypeScript'
         },
@@ -30,7 +30,7 @@ export default function GameList() {
             name: 'ShotBall',
             full_name: '',
             description: 'Use Canvas to creat gravity core',
-            html_url: './games/shotball',
+            html_url: './shotball',
             archived: false,
             language: 'TypeScript'
         }
