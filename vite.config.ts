@@ -1,23 +1,21 @@
-import postcss from './postcss.config';
+import { reactRouter } from '@react-router/dev/vite';
 import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react-swc';
-import {} from 'vite-react-ssg';
-import path from 'path';
+import tsconfigPaths from 'vite-tsconfig-paths';
+import tailwindcss from '@tailwindcss/vite';
+import autoprefixer from 'autoprefixer';
 
-// https://vite.dev/config/
 export default defineConfig({
-    resolve: {
-        alias: {
-            '@': path.resolve(__dirname, 'src')
-        }
+    plugins: [tailwindcss(), reactRouter(), tsconfigPaths()],
+    build: {
+        cssMinify: true,
+        ssr: false
     },
-    plugins: [react()],
     css: {
-        postcss: postcss
-    },
-    ssgOptions: {
-        mock: true,
-        crittersOptions: false
+        postcss: {
+            plugins: [
+                autoprefixer()
+            ]
+        }
     },
     server: {
         headers: {

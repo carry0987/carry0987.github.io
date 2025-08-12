@@ -1,4 +1,4 @@
-import { RepoProps } from '@/type/repo';
+import type { RepoProps } from '@/lib/type/repo';
 
 export const Repo = ({ name, description, language, html_url }: RepoProps) => {
     return (

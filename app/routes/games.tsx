@@ -1,9 +1,14 @@
-import { RepoInfo } from '@/interface/interfaces';
-import { Background } from '@/view/component/background';
-import { Repo } from '@/view/component/repo';
+import type { RepoInfo } from '@/lib/interface/interfaces';
+import { Background } from '@/component/background';
+import { Repo } from '@/component/repo';
+import type { Route } from './+types/games';
 
 // Import the images
 import githubLogo from '@/assets/github.svg';
+
+export function meta({}: Route.MetaArgs) {
+    return [{ title: 'Game List' }, { name: 'description', content: 'List of games' }];
+}
 
 export default function GameList() {
     const currentYear = new Date().getFullYear();
