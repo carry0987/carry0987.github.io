@@ -167,13 +167,19 @@ class Main {
 }
 
 export default function ShotBallMain() {
-    // Set oncontextmenu to prevent right click for body
-    document.body.addEventListener('contextmenu', (e) => {
-        e.preventDefault();
-    });
-
     useEffect(() => {
+        // Set oncontextmenu to prevent right click for body
+        const handler = (e: MouseEvent) => {
+            e.preventDefault();
+        };
+        document.body.addEventListener('contextmenu', handler);
+
+        // Render the game
         new Main();
+
+        return () => {
+            document.body.removeEventListener('contextmenu', handler);
+        };
     }, []);
 
     return (

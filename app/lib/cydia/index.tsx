@@ -4,7 +4,7 @@ import cydiaImage from '@/assets/cydia/Cydia.svg';
 // Import the CSS file
 import style from './style.module.scss';
 
-export default function Cydia() {
+export function Cydia() {
     const menu = {
         Home: './',
         Games: './games',

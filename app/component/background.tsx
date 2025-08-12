@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { Dot, WArea } from '@/interface/Background';
+import type { Dot, WArea } from '@/lib/interface/background';
 
 const Background: React.FC = () => {
     const canvasRef = useRef<HTMLCanvasElement>(null);

@@ -1,6 +1,6 @@
-import { UserInfo, RepoInfo } from '@/interface/interfaces';
-import { Background } from './component/background';
-import { Repo } from '@/view/component/repo';
+import type { UserInfo, RepoInfo } from '@/lib/interface/interfaces';
+import { Background } from '@/component/background';
+import { Repo } from '@/component/repo';
 import { throttle, fetchData } from '@carry0987/utils';
 import { DarkMode } from '@carry0987/darkmode';
 import { useEffect, useState } from 'react';
@@ -9,7 +9,7 @@ import { useEffect, useState } from 'react';
 import carry0987Logo from '@/assets/carry0987.jpg';
 import githubLogo from '@/assets/github.svg';
 
-export default function Home() {
+export default function IndexPage() {
     const [repoList, updateRepoList] = useState<RepoInfo[]>([]);
     const currentYear = new Date().getFullYear();
     const menu = {
@@ -208,23 +208,23 @@ export default function Home() {
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             {repoList.length > 0
                                 ? repoList.map((repo, index) => (
-                                    <Repo
-                                        key={index}
-                                        name={repo.name}
-                                        description={repo.description}
-                                        language={repo.language}
-                                        html_url={repo.html_url}
-                                    />
-                                ))
+                                      <Repo
+                                          key={index}
+                                          name={repo.name}
+                                          description={repo.description}
+                                          language={repo.language}
+                                          html_url={repo.html_url}
+                                      />
+                                  ))
                                 : defaultRepos.map((repo, index) => (
-                                    <Repo
-                                        key={index}
-                                        name={repo.name}
-                                        description={repo.description}
-                                        language={repo.language}
-                                        html_url={repo.html_url}
-                                    />
-                                ))}
+                                      <Repo
+                                          key={index}
+                                          name={repo.name}
+                                          description={repo.description}
+                                          language={repo.language}
+                                          html_url={repo.html_url}
+                                      />
+                                  ))}
                         </div>
                     </div>
                 </div>

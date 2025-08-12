@@ -8,11 +8,10 @@ pnpm-debug.log*
 lerna-debug.log*
 
 # Temporary files
-.vite-react-ssg-temp
 node_modules
-dist
-dist-ssr
-*.local
+# React Router
+/.react-router/
+/build/
 
 # Editor directories and files
 .vscode/*
