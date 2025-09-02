@@ -6,8 +6,8 @@ import style from './style.module.scss';
 
 export function Cydia() {
     const menu = {
-        Home: './',
-        Games: './games',
+        Home: '../',
+        Games: '../games',
         Script: 'https://github.com/carry0987/UserJS'
     };
 
