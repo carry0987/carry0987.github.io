@@ -13,8 +13,8 @@ export function meta({}: Route.MetaArgs) {
 export default function GameList() {
     const currentYear = new Date().getFullYear();
     const menu = {
-        Home: './',
-        Cydia: './cydia',
+        Home: '../',
+        Cydia: '../cydia',
         Script: 'https://github.com/carry0987/UserJS'
     };
     const gameRepos: RepoInfo[] = [
