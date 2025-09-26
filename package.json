@@ -11,32 +11,32 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@react-router/dev": "^7.8.2",
-    "@react-router/fs-routes": "^7.8.2",
-    "@react-router/node": "^7.8.2",
-    "isbot": "^5.1.30",
+    "@react-router/dev": "^7.9.2",
+    "@react-router/fs-routes": "^7.9.2",
+    "@react-router/node": "^7.9.2",
+    "isbot": "^5.1.31",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
-    "react-router": "^7.8.2"
+    "react-router": "^7.9.2"
   },
   "devDependencies": {
     "@adakrei/stats": "^1.0.1",
     "@carry0987/darkmode": "^1.2.1",
-    "@carry0987/utils": "^3.8.5",
+    "@carry0987/utils": "^3.8.6",
     "@tailwindcss/postcss": "^4.1.13",
     "@tailwindcss/vite": "^4.1.13",
     "@types/jquery": "^3.5.33",
-    "@types/node": "^24.3.1",
-    "@types/react": "^19.1.12",
+    "@types/node": "^24.5.2",
+    "@types/react": "^19.1.13",
     "@types/react-dom": "^19.1.9",
     "autoprefixer": "^10.4.21",
     "jquery": "^3.7.1",
     "postcss": "^8.5.6",
     "prettier": "^3.6.2",
-    "sass-embedded": "^1.92.1",
+    "sass-embedded": "^1.93.2",
     "tailwindcss": "^4.1.13",
     "typescript": "^5.9.2",
-    "vite": "^7.1.5",
+    "vite": "^7.1.7",
     "vite-tsconfig-paths": "^5.1.4"
   },
   "pnpm": {
