@@ -3,7 +3,7 @@ import { Stats } from '@adakrei/stats';
 import { useEffect } from 'react';
 
 // Import CSS
-import './style.scss';
+import './style.css';
 
 class Main {
     private balls: ShotBall[] = [];

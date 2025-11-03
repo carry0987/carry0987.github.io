@@ -2,7 +2,7 @@
 import cydiaImage from '@/assets/cydia/Cydia.svg';
 
 // Import the CSS file
-import style from './style.module.scss';
+import style from './style.module.css';
 
 export function Cydia() {
     const menu = {

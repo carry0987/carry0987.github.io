@@ -4,8 +4,7 @@
         "**/.server/**/*",
         "**/.client/**/*",
         ".react-router/types/**/*",
-        "vite.config.ts",
-        "tailwind.config.ts"
+        "vite.config.ts"
     ],
     "compilerOptions": {
         "lib": ["DOM", "DOM.Iterable", "ES2022"],
