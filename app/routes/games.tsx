@@ -1,3 +1,4 @@
+import { Link } from 'react-router';
 import type { RepoInfo } from '@/lib/interface/interfaces';
 import { Background } from '@/component/background';
 import { Repo } from '@/component/repo';
@@ -13,8 +14,8 @@ export function meta({}: Route.MetaArgs) {
 export default function GameList() {
     const currentYear = new Date().getFullYear();
     const menu = {
-        Home: '../',
-        Cydia: '../cydia',
+        Home: '/',
+        Cydia: '/cydia',
         Script: 'https://github.com/carry0987/UserJS'
     };
     const gameRepos: RepoInfo[] = [
@@ -22,7 +23,7 @@ export default function GameList() {
             name: 'BlackHole',
             full_name: '',
             description: 'A Funny Canvas Game',
-            html_url: './blackhole',
+            html_url: '/games/blackhole',
             archived: false,
             language: 'TypeScript'
         },
@@ -30,7 +31,7 @@ export default function GameList() {
             name: 'ShotBall',
             full_name: '',
             description: 'Use Canvas to creat gravity core',
-            html_url: './shotball',
+            html_url: '/games/shotball',
             archived: false,
             language: 'TypeScript'
         }
@@ -41,15 +42,20 @@ export default function GameList() {
             <Background />
             <div className="container mx-auto p-4 relative z-1">
                 <div className="bg-gray-800 text-white text-center flex justify-around rounded overflow-hidden">
-                    {Object.entries(menu).map(([text, link], index, array) => (
-                        <a
-                            key={index}
-                            href={link} // Use the link from the menu object
-                            target={link.startsWith('http') ? '_blank' : '_self'}
-                            className={`font-bold text-xl py-2 ${index !== array.length - 1 ? 'border-r border-gray-400' : ''} w-full hover:bg-blue-300 hover:text-black transition-colors duration-300`}>
-                            {text} {/* Display text from the menu object */}
-                        </a>
-                    ))}
+                    {Object.entries(menu).map(([text, link], index, array) => {
+                        const isExternal = link.startsWith('http');
+                        const className = `font-bold text-xl py-2 ${index !== array.length - 1 ? 'border-r border-gray-400' : ''} w-full hover:bg-blue-300 hover:text-black transition-colors duration-300`;
+
+                        return isExternal ? (
+                            <a key={index} href={link} target="_blank" rel="noopener noreferrer" className={className}>
+                                {text}
+                            </a>
+                        ) : (
+                            <Link key={index} to={link} className={className}>
+                                {text}
+                            </Link>
+                        );
+                    })}
                 </div>
                 <div className="flex flex-col lg:flex-row mt-4">
                     <div className="w-full lg:ml-4">

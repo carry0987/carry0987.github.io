@@ -7,7 +7,6 @@
     "lint": "prettier --write \"{src,app}/**/*.{ts,tsx,css,scss}\"",
     "dev": "react-router dev",
     "build": "react-router build",
-    "preview": "react-router preview",
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
