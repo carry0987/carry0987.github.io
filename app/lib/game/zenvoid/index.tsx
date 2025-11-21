@@ -23,6 +23,7 @@ export default function ZenVoidGame() {
     const gameRef = useRef<ZenVoid | null>(null);
     const [logs, setLogs] = useState<string[]>(['SYSTEM: SLOW_MOTION', 'SLAP_MODULE: READY']);
     const [themeName, setThemeName] = useState<string>('THEME: CYBERPUNK');
+    const [themeColor, setThemeColor] = useState<string>('#00ffff');
 
     useEffect(() => {
         if (!containerRef.current) return;
@@ -38,7 +39,14 @@ export default function ZenVoidGame() {
 
         game.setThemeCallback((name: string) => {
             setThemeName(`THEME: ${name}`);
+            // Update theme color when theme changes
+            const currentTheme = game.getCurrentTheme();
+            setThemeColor(`#${currentTheme.main.toString(16).padStart(6, '0')}`);
         });
+
+        // Set initial theme color
+        const initialTheme = game.getCurrentTheme();
+        setThemeColor(`#${initialTheme.main.toString(16).padStart(6, '0')}`);
 
         // Append canvas to container
         containerRef.current.appendChild(game.getCanvas());
@@ -58,7 +66,7 @@ export default function ZenVoidGame() {
     return (
         <>
             <div ref={containerRef} style={{ width: '100%', height: '100vh' }} />
-            <div id="ui-layer">
+            <div id="ui-layer" style={{ color: themeColor }}>
                 <div id="log-console" className="tech-text">
                     <div>SYSTEM: SLOW_MOTION</div>
                     <div>SLAP_MODULE: READY</div>
@@ -71,13 +79,15 @@ export default function ZenVoidGame() {
                 <div id="status-bar" className="tech-text">
                     <div>ENERGY</div>
                     <div className="bar-box">
-                        <div className="bar-fill"></div>
+                        <div
+                            className="bar-fill"
+                            style={{ boxShadow: `0 0 10px ${themeColor}`, background: themeColor }}></div>
                     </div>
                     <div id="theme-name">{themeName}</div>
                 </div>
                 <div id="controls-hint" className="tech-text">
                     <span className="key">滑鼠</span> 慵懶轉向 •{' '}
-                    <span className="key" style={{ color: 'cyan' }}>
+                    <span className="key" style={{ color: themeColor }}>
                         左鍵
                     </span>{' '}
                     巨型巴掌 • <span className="key">C</span> 換色 • <span className="key">Space</span> 稍微快一點

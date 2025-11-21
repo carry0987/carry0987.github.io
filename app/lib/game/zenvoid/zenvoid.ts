@@ -1,7 +1,14 @@
 import * as THREE from 'three';
 
+// --- Constants ---
+const STAR_COUNT = 6000;
+const FLOATING_OBJECTS_COUNT = 30;
+const TRASH_TALK_SPAWN_RATE = 0.008;
+const SYSTEM_MESSAGE_INTERVAL = 5000;
+const MAX_TEXT_SPRITES = 50; // Limit to prevent memory issues
+
 // --- Theme Configuration ---
-interface Theme {
+export interface Theme {
     name: string;
     bg: number;
     fog: number;
@@ -54,6 +61,16 @@ interface TextSprite extends THREE.Sprite {
     isSlap?: boolean;
 }
 
+/**
+ * ZenVoid - A relaxing cyberpunk-themed 3D experience with slap mechanics
+ *
+ * Features:
+ * - 5 different visual themes (CYBERPUNK, MATRIX, VAPORWAVE, GOLDEN, ICE)
+ * - Floating geometric objects and text sprites
+ * - Interactive camera controls (mouse movement, click for slap effect)
+ * - Keyboard shortcuts (Space for speed boost, C for theme change)
+ * - Memory-efficient sprite management with automatic cleanup
+ */
 export class ZenVoid {
     private scene: THREE.Scene;
     private camera: THREE.PerspectiveCamera;
@@ -72,8 +89,16 @@ export class ZenVoid {
     private shakeIntensity = 0;
 
     private animationId: number | null = null;
+    private systemMessageInterval: number | null = null;
     private logCallback?: (msg: string) => void;
     private themeCallback?: (name: string) => void;
+
+    // Event listener references for cleanup
+    private handleMouseMove!: (e: MouseEvent) => void;
+    private handleMouseDown!: () => void;
+    private handleKeyDown!: (e: KeyboardEvent) => void;
+    private handleKeyUp!: (e: KeyboardEvent) => void;
+    private handleResize!: () => void;
 
     constructor() {
         // --- 1. Initialize Scene ---
@@ -81,11 +106,12 @@ export class ZenVoid {
         this.scene.fog = new THREE.FogExp2(0x000000, 0.008);
 
         this.camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 2000);
-        this.camera.position.z = 10;
-        this.camera.position.y = 2;
+        // Camera position will be relative to holder, so keep it at origin
+        this.camera.position.set(0, 0, 0);
 
-        // Camera holder for shake effect
+        // Camera holder for shake effect - set the actual view position here
         this.cameraHolder = new THREE.Group();
+        this.cameraHolder.position.set(0, 2, 10);
         this.cameraHolder.add(this.camera);
         this.scene.add(this.cameraHolder);
 
@@ -110,10 +136,9 @@ export class ZenVoid {
 
     private createStarField(): THREE.Points {
         const starGeo = new THREE.BufferGeometry();
-        const starCount = 6000;
-        const starPos = new Float32Array(starCount * 3);
+        const starPos = new Float32Array(STAR_COUNT * 3);
 
-        for (let i = 0; i < starCount * 3; i += 3) {
+        for (let i = 0; i < STAR_COUNT * 3; i += 3) {
             starPos[i] = (Math.random() - 0.5) * 800;
             starPos[i + 1] = (Math.random() - 0.5) * 800;
             starPos[i + 2] = -Math.random() * 1000;
@@ -163,7 +188,7 @@ export class ZenVoid {
             blending: THREE.AdditiveBlending
         });
 
-        for (let i = 0; i < 30; i++) {
+        for (let i = 0; i < FLOATING_OBJECTS_COUNT; i++) {
             const mesh = new THREE.Mesh(geoms[Math.floor(Math.random() * geoms.length)], glowingMat.clone());
             this.resetObject(mesh);
             this.scene.add(mesh);
@@ -183,8 +208,8 @@ export class ZenVoid {
     private createTextTexture(message: string, color: string, isBold: boolean): THREE.CanvasTexture {
         const canvas = document.createElement('canvas');
         const ctx = canvas.getContext('2d')!;
-        canvas.width = 512;
-        canvas.height = 128;
+        canvas.width = 1536;
+        canvas.height = 384;
 
         const fontWeight = isBold ? '900' : 'bold';
         ctx.font = `${fontWeight} 60px Consolas, monospace`;
@@ -265,12 +290,12 @@ export class ZenVoid {
     }
 
     private setupEventListeners(): void {
-        const handleMouseMove = (e: MouseEvent) => {
+        this.handleMouseMove = (e: MouseEvent) => {
             this.mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
             this.mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
         };
 
-        const handleMouseDown = () => {
+        this.handleMouseDown = () => {
             this.spawnSlapText();
             this.shakeIntensity = 1.5;
             if (this.logCallback) {
@@ -278,7 +303,7 @@ export class ZenVoid {
             }
         };
 
-        const handleKeyDown = (e: KeyboardEvent) => {
+        this.handleKeyDown = (e: KeyboardEvent) => {
             if (e.code === 'Space') this.targetSpeed = 0.8;
             if (e.code === 'KeyC') {
                 this.currentThemeIdx = (this.currentThemeIdx + 1) % themes.length;
@@ -289,30 +314,38 @@ export class ZenVoid {
             }
         };
 
-        const handleKeyUp = (e: KeyboardEvent) => {
+        this.handleKeyUp = (e: KeyboardEvent) => {
             if (e.code === 'Space') this.targetSpeed = 0.05;
         };
 
-        const handleResize = () => {
+        this.handleResize = () => {
             this.camera.aspect = window.innerWidth / window.innerHeight;
             this.camera.updateProjectionMatrix();
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         };
 
-        document.addEventListener('mousemove', handleMouseMove);
-        document.addEventListener('mousedown', handleMouseDown);
-        document.addEventListener('keydown', handleKeyDown);
-        document.addEventListener('keyup', handleKeyUp);
-        window.addEventListener('resize', handleResize);
+        document.addEventListener('mousemove', this.handleMouseMove);
+        document.addEventListener('mousedown', this.handleMouseDown);
+        document.addEventListener('keydown', this.handleKeyDown);
+        document.addEventListener('keyup', this.handleKeyUp);
+        window.addEventListener('resize', this.handleResize);
+    }
+
+    private removeEventListeners(): void {
+        document.removeEventListener('mousemove', this.handleMouseMove);
+        document.removeEventListener('mousedown', this.handleMouseDown);
+        document.removeEventListener('keydown', this.handleKeyDown);
+        document.removeEventListener('keyup', this.handleKeyUp);
+        window.removeEventListener('resize', this.handleResize);
     }
 
     private startSystemMessages(): void {
-        setInterval(() => {
+        this.systemMessageInterval = window.setInterval(() => {
             const sysMsgs = ['CPU: CHILLING', 'GPU: RELAXED', 'SPEED: SLOW', 'MOOD: LAZY'];
             if (Math.random() > 0.7 && this.logCallback) {
                 this.logCallback(sysMsgs[Math.floor(Math.random() * sysMsgs.length)]);
             }
-        }, 5000);
+        }, SYSTEM_MESSAGE_INTERVAL);
     }
 
     private animate = (): void => {
@@ -332,7 +365,8 @@ export class ZenVoid {
             this.camera.position.y = (Math.random() - 0.5) * this.shakeIntensity;
             this.shakeIntensity -= 0.1;
         } else {
-            this.camera.position.set(0, 2, 10);
+            // Reset to local position within holder (holder already has y=2, z=10)
+            this.camera.position.set(0, 0, 0);
         }
 
         const moveScale = 5;
@@ -358,7 +392,7 @@ export class ZenVoid {
         });
 
         // Spawn trash talk
-        if (Math.random() < 0.008) {
+        if (Math.random() < TRASH_TALK_SPAWN_RATE && this.textSprites.length < MAX_TEXT_SPRITES) {
             this.spawnTrashTalk();
         }
 
@@ -379,6 +413,11 @@ export class ZenVoid {
             }
 
             if (sprite.position.z > 10 || sprite.material.opacity <= 0) {
+                // Properly dispose of sprite resources
+                if (sprite.material.map) {
+                    sprite.material.map.dispose();
+                }
+                sprite.material.dispose();
                 this.scene.remove(sprite);
                 this.textSprites.splice(i, 1);
             }
@@ -399,6 +438,14 @@ export class ZenVoid {
         return this.renderer.domElement;
     }
 
+    public getCurrentTheme(): Theme {
+        return themes[this.currentThemeIdx];
+    }
+
+    public getThemeList(): readonly Theme[] {
+        return themes;
+    }
+
     public start(): void {
         if (!this.animationId) {
             this.animate();
@@ -415,16 +462,30 @@ export class ZenVoid {
     public dispose(): void {
         this.stop();
 
+        // Clear system message interval
+        if (this.systemMessageInterval !== null) {
+            clearInterval(this.systemMessageInterval);
+            this.systemMessageInterval = null;
+        }
+
+        // Remove event listeners
+        this.removeEventListeners();
+
         // Cleanup geometries and materials
         this.objects.forEach((obj) => {
             obj.geometry.dispose();
             (obj.material as THREE.Material).dispose();
         });
 
+        // Cleanup text sprites and their textures
         this.textSprites.forEach((sprite) => {
-            sprite.material.map?.dispose();
+            if (sprite.material.map) {
+                sprite.material.map.dispose();
+            }
             sprite.material.dispose();
+            this.scene.remove(sprite);
         });
+        this.textSprites = [];
 
         this.starField.geometry.dispose();
         (this.starField.material as THREE.Material).dispose();
