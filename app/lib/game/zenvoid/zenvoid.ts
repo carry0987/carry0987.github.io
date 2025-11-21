@@ -402,7 +402,7 @@ export class ZenVoid {
             sprite.position.z += this.speed * moveScale;
 
             if (sprite.isSlap) {
-                sprite.material.opacity -= 0.02;
+                sprite.material.opacity -= 0.01;
                 sprite.scale.x += 0.5;
                 sprite.scale.y += 0.12;
             } else {
