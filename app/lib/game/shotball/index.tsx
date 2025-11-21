@@ -166,6 +166,20 @@ class Main {
     }
 }
 
+export function meta() {
+    return [
+        { title: 'Shotball' },
+        {
+            property: 'og:title',
+            content: 'Shotball'
+        },
+        {
+            name: 'description',
+            content: 'Use Canvas to creat gravity core'
+        }
+    ];
+}
+
 export default function ShotBallMain() {
     useEffect(() => {
         // Set oncontextmenu to prevent right click for body

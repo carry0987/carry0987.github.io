@@ -1,0 +1,88 @@
+import { ZenVoid } from './zenvoid';
+import { useEffect, useRef, useState } from 'react';
+
+// Import CSS
+import './style.css';
+
+export function meta() {
+    return [
+        { title: 'ZenVoid: Slap Edition' },
+        {
+            property: 'og:title',
+            content: 'ZenVoid: Slap Edition'
+        },
+        {
+            name: 'description',
+            content: 'ZenVoid - A relaxing slap game set in a cyberpunk universe.'
+        }
+    ];
+}
+
+export default function ZenVoidGame() {
+    const containerRef = useRef<HTMLDivElement>(null);
+    const gameRef = useRef<ZenVoid | null>(null);
+    const [logs, setLogs] = useState<string[]>(['SYSTEM: SLOW_MOTION', 'SLAP_MODULE: READY']);
+    const [themeName, setThemeName] = useState<string>('THEME: CYBERPUNK');
+
+    useEffect(() => {
+        if (!containerRef.current) return;
+
+        // Initialize game
+        const game = new ZenVoid();
+        gameRef.current = game;
+
+        // Setup callbacks
+        game.setLogCallback((msg: string) => {
+            setLogs((prev) => [msg, ...prev].slice(0, 6));
+        });
+
+        game.setThemeCallback((name: string) => {
+            setThemeName(`THEME: ${name}`);
+        });
+
+        // Append canvas to container
+        containerRef.current.appendChild(game.getCanvas());
+
+        // Start animation
+        game.start();
+
+        // Cleanup
+        return () => {
+            if (gameRef.current) {
+                gameRef.current.dispose();
+                gameRef.current = null;
+            }
+        };
+    }, []);
+
+    return (
+        <>
+            <div ref={containerRef} style={{ width: '100%', height: '100vh' }} />
+            <div id="ui-layer">
+                <div id="log-console" className="tech-text">
+                    <div>SYSTEM: SLOW_MOTION</div>
+                    <div>SLAP_MODULE: READY</div>
+                    <div id="dynamic-log">
+                        {logs.map((log, idx) => (
+                            <div key={idx}>&gt; {log}</div>
+                        ))}
+                    </div>
+                </div>
+                <div id="status-bar" className="tech-text">
+                    <div>ENERGY</div>
+                    <div className="bar-box">
+                        <div className="bar-fill"></div>
+                    </div>
+                    <div id="theme-name">{themeName}</div>
+                </div>
+                <div id="controls-hint" className="tech-text">
+                    <span className="key">滑鼠</span> 慵懶轉向 •{' '}
+                    <span className="key" style={{ color: 'cyan' }}>
+                        左鍵
+                    </span>{' '}
+                    巨型巴掌 • <span className="key">C</span> 換色 • <span className="key">Space</span> 稍微快一點
+                </div>
+            </div>
+        </>
+    );
+}

@@ -34,6 +34,14 @@ export default function GameList() {
             html_url: '/games/shotball',
             archived: false,
             language: 'TypeScript'
+        },
+        {
+            name: 'Zen Void',
+            full_name: '',
+            description: 'Slap Edition - A relaxing cyberpunk experience with slap mechanics',
+            html_url: '/games/zenvoid',
+            archived: false,
+            language: 'TypeScript'
         }
     ];
 

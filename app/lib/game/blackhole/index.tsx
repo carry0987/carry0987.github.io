@@ -253,6 +253,20 @@ class Main {
     }
 }
 
+export function meta() {
+    return [
+        { title: 'Blackhole' },
+        {
+            property: 'og:title',
+            content: 'Blackhole'
+        },
+        {
+            name: 'description',
+            content: 'A Funny Canvas Game'
+        }
+    ];
+}
+
 export default function BlackHoleMain() {
     useEffect(() => {
         // Set oncontextmenu to prevent right click for body
