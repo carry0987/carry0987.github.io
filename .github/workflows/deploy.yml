@@ -2,15 +2,18 @@ name: Deploy
 
 on:
   push:
-    branches: [master]
-
+    branches: [master, main]
+  pull_request:
+    branches: [master, main]
   workflow_dispatch:
 
 jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        node-version: [24]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
@@ -21,10 +24,10 @@ jobs:
         with:
           version: latest
 
-      - name: Setup Node
+      - name: Setup Node.js v${{ matrix.node-version }}
         uses: actions/setup-node@v6
         with:
-          node-version: 24
+          node-version: ${{ matrix.node-version }}
           cache: pnpm
 
       - name: Install dependencies
@@ -43,11 +46,9 @@ jobs:
     name: Deploy
     needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/master'
-
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
     permissions:
       contents: write
-
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
