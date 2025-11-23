@@ -3,6 +3,14 @@
   "version": "2.1.0",
   "type": "module",
   "private": true,
+  "description": "Personal website and portfolio of carry0987, showcasing software development projects and services.",
+  "keywords": ["carry0987", "software development", "web development", "custom software"],
+  "author": "carry0987",
+  "homepage": "https://carry0987.github.io",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/carry0987/carry0987.github.io"
+  },
   "scripts": {
     "lint": "prettier --write \"{src,app}/**/*.{ts,tsx,css,scss}\"",
     "dev": "react-router dev",
