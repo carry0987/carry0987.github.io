@@ -34,7 +34,7 @@
     "@tailwindcss/vite": "^4.1.17",
     "@types/jquery": "^3.5.33",
     "@types/node": "^24.10.1",
-    "@types/react": "^19.2.6",
+    "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.181.0",
     "jquery": "^3.7.1",
