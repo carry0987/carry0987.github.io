@@ -1,4 +1,5 @@
 import type { Route } from './+types/projects';
+import { Link } from 'react-router';
 import { Gamepad2, ArrowRight } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
@@ -72,9 +73,11 @@ export default function GamesPage() {
                                     ))}
                                 </div>
 
-                                <button className="w-full py-2 rounded-lg bg-white/5 hover:bg-purple-600 hover:text-white border border-white/10 hover:border-purple-500 transition-all duration-300 text-sm font-medium flex items-center justify-center gap-2 group-hover:bg-purple-600/20">
+                                <Link
+                                    to={game.playUrl}
+                                    className="w-full py-2 rounded-lg bg-white/5 hover:bg-purple-600 hover:text-white border border-white/10 hover:border-purple-500 transition-all duration-300 text-sm font-medium flex items-center justify-center gap-2 group-hover:bg-purple-600/20">
                                     Play Game <ArrowRight size={14} />
-                                </button>
+                                </Link>
                             </div>
                         </div>
 
