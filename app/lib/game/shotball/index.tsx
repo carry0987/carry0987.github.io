@@ -8,6 +8,8 @@ import './style.css';
 class Main {
     private balls: ShotBall[] = [];
     private canvas?: HTMLCanvasElement;
+    private animationId: number = 0;
+    private clickHandler?: (event: MouseEvent) => void;
 
     // Stats
     private stats: Stats;
@@ -97,7 +99,7 @@ class Main {
         // Update stats
         this.stats.update();
 
-        return this.RAF(this.animate);
+        this.animationId = this.RAF(this.animate);
     };
 
     private collision() {
@@ -149,7 +151,7 @@ class Main {
 
         const canvas = this.canvas;
 
-        canvas.addEventListener('click', (event) => {
+        this.clickHandler = (event: MouseEvent) => {
             let x = event.clientX + document.body.scrollLeft + document.documentElement.scrollLeft - canvas.offsetLeft;
             let y = event.clientY + document.body.scrollTop + document.documentElement.scrollTop - canvas.offsetTop;
 
@@ -158,7 +160,27 @@ class Main {
                 b.vx = (x - b.x) / 40;
                 b.vy = (y - b.y) / 40;
             });
-        });
+        };
+
+        canvas.addEventListener('click', this.clickHandler);
+    }
+
+    // Cleanup method
+    public dispose() {
+        // Cancel animation
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+
+        // Remove stats DOM
+        if (this.stats.dom && this.stats.dom.parentNode) {
+            this.stats.dom.parentNode.removeChild(this.stats.dom);
+        }
+
+        // Remove click listener
+        if (this.canvas && this.clickHandler) {
+            this.canvas.removeEventListener('click', this.clickHandler);
+        }
     }
 
     private getRandom(a: number, b: number) {
@@ -189,10 +211,11 @@ export default function ShotBallMain() {
         document.body.addEventListener('contextmenu', handler);
 
         // Render the game
-        new Main();
+        const game = new Main();
 
         return () => {
             document.body.removeEventListener('contextmenu', handler);
+            game.dispose();
         };
     }, []);
 

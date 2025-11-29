@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration } from 'react-router';
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from 'react-router';
 // Import type definitions for routes
 import type { Route } from './+types/root';
 // Import the CSS file
@@ -6,6 +6,9 @@ import './app.css';
 // Import components
 import { Navbar, Footer } from '@/component/ui';
 import { Background } from '@/component/background';
+
+// Game routes that should be fullscreen (no navbar, footer, background)
+const FULLSCREEN_ROUTES = ['/games/blackhole', '/games/shotball', '/games/zenvoid'];
 
 export const links: Route.LinksFunction = () => [
     { rel: 'dns-prefetch', href: 'https://carry0987.github.io' },
@@ -31,6 +34,29 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
+    const location = useLocation();
+    const isFullscreenRoute = FULLSCREEN_ROUTES.includes(location.pathname);
+
+    // Fullscreen layout for games (no navbar, footer, background)
+    if (isFullscreenRoute) {
+        return (
+            <html lang="zh-TW">
+                <head>
+                    <meta charSet="utf-8" />
+                    <meta name="viewport" content="width=device-width, initial-scale=1" />
+                    <Meta />
+                    <Links />
+                </head>
+                <body className="m-0 overflow-hidden bg-black">
+                    {children}
+                    <ScrollRestoration />
+                    <Scripts />
+                </body>
+            </html>
+        );
+    }
+
+    // Default layout with navbar, footer, and background
     return (
         <html lang="zh-TW" className="scroll-smooth">
             <head>
