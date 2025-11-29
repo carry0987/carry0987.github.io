@@ -90,6 +90,7 @@ export class ZenVoid {
 
     private animationId: number | null = null;
     private systemMessageInterval: number | null = null;
+    private eventListenersAttached = false;
     private logCallback?: (msg: string) => void;
     private themeCallback?: (name: string) => void;
 
@@ -99,6 +100,7 @@ export class ZenVoid {
     private handleKeyDown!: (e: KeyboardEvent) => void;
     private handleKeyUp!: (e: KeyboardEvent) => void;
     private handleResize!: () => void;
+    private handleVisibilityChange!: () => void;
 
     constructor() {
         // --- 1. Initialize Scene ---
@@ -124,14 +126,14 @@ export class ZenVoid {
         this.gridMesh = this.createGrid();
         this.createFloatingObjects();
 
-        // --- 3. Setup Event Listeners ---
-        this.setupEventListeners();
-
-        // --- 4. Apply Initial Theme ---
+        // --- 3. Apply Initial Theme ---
         this.applyTheme(0);
 
-        // --- 5. Start System Messages ---
+        // --- 4. Start System Messages ---
         this.startSystemMessages();
+
+        // Note: Event listeners will be set up when start() is called
+        // This ensures the canvas is in the DOM before attaching events
     }
 
     private createStarField(): THREE.Points {
@@ -290,6 +292,10 @@ export class ZenVoid {
     }
 
     private setupEventListeners(): void {
+        if (this.eventListenersAttached) return;
+
+        const canvas = this.renderer.domElement;
+
         this.handleMouseMove = (e: MouseEvent) => {
             this.mouseX = (e.clientX - window.innerWidth / 2) * 0.001;
             this.mouseY = (e.clientY - window.innerHeight / 2) * 0.001;
@@ -324,19 +330,42 @@ export class ZenVoid {
             this.renderer.setSize(window.innerWidth, window.innerHeight);
         };
 
-        document.addEventListener('mousemove', this.handleMouseMove);
-        document.addEventListener('mousedown', this.handleMouseDown);
+        this.handleVisibilityChange = () => {
+            if (document.visibilityState === 'visible') {
+                // Resume animation when page becomes visible
+                if (!this.animationId) {
+                    this.animate();
+                }
+            } else {
+                // Pause animation when page is hidden
+                this.stop();
+            }
+        };
+
+        // Use canvas for mouse events, document for keyboard events
+        canvas.addEventListener('mousemove', this.handleMouseMove);
+        canvas.addEventListener('mousedown', this.handleMouseDown);
         document.addEventListener('keydown', this.handleKeyDown);
         document.addEventListener('keyup', this.handleKeyUp);
+        document.addEventListener('visibilitychange', this.handleVisibilityChange);
         window.addEventListener('resize', this.handleResize);
+
+        this.eventListenersAttached = true;
     }
 
     private removeEventListeners(): void {
-        document.removeEventListener('mousemove', this.handleMouseMove);
-        document.removeEventListener('mousedown', this.handleMouseDown);
+        if (!this.eventListenersAttached) return;
+
+        const canvas = this.renderer.domElement;
+
+        canvas.removeEventListener('mousemove', this.handleMouseMove);
+        canvas.removeEventListener('mousedown', this.handleMouseDown);
         document.removeEventListener('keydown', this.handleKeyDown);
         document.removeEventListener('keyup', this.handleKeyUp);
+        document.removeEventListener('visibilitychange', this.handleVisibilityChange);
         window.removeEventListener('resize', this.handleResize);
+
+        this.eventListenersAttached = false;
     }
 
     private startSystemMessages(): void {
@@ -448,6 +477,8 @@ export class ZenVoid {
 
     public start(): void {
         if (!this.animationId) {
+            // Setup event listeners when starting (canvas should be in DOM by now)
+            this.setupEventListeners();
             this.animate();
         }
     }
