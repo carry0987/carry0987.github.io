@@ -17,8 +17,9 @@ export const Navbar = () => {
 
     // Sync currentPath with location.pathname on client-side
     useEffect(() => {
-        setCurrentPath(location.pathname);
-        console.log('Current Path:', location.pathname);
+        // Remove trailing slash for consistent comparison (but keep '/' as is)
+        const path = location.pathname === '/' ? '/' : location.pathname.replace(/\/$/, '');
+        setCurrentPath(path);
     }, [location.pathname]);
 
     // Close menu on route change
