@@ -1,56 +1,116 @@
 import type { Route } from './+types/projects';
-import { Code2, ExternalLink, Command } from 'lucide-react';
+import type { RepoInfo } from '@/lib/interface/interfaces';
+import { Code2, ExternalLink, Command, Pin } from 'lucide-react';
+import { fetchData } from '@carry0987/utils';
+import { useEffect, useState, useCallback } from 'react';
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: 'Projects | Carry' }, { name: 'description', content: 'A list of my projects' }];
 }
 
-const projects = [
+interface ProjectInfo {
+    title: string;
+    desc: string;
+    topic: string[];
+    link: string;
+    isPinned?: boolean;
+}
+
+// Pinned projects (fixed list)
+const pinnedProjects: ProjectInfo[] = [
+    {
+        title: 'PHP-I18n',
+        desc: 'A modern internationalization system featuring JSON-format language files and efficient PHP-based caching. Supports dynamic language switching and real-time cache updates, ideal for rapid development and deployment of multilingual websites and applications.',
+        topic: ['i18n', 'json', 'cookie', 'cache', 'php8', 'composer'],
+        link: 'https://github.com/carry0987/PHP-I18n',
+        isPinned: true
+    },
     {
         title: 'TemplateEngine',
-        desc: 'A lightweight and fast PHP template engine with caching abilities, template inheritance, and Redis/MySQL support.',
-        tech: ['PHP', 'Composer', 'Redis'],
-        type: 'Backend',
-        link: 'https://github.com/carry0987/TemplateEngine'
+        desc: 'A lightweight and fast PHP template engine, using Composer, featuring caching abilities, customizable cache lifetime, template inheritance, and support for Redis and MySQL.',
+        topic: ['redis', 'template-engine', 'pdo', 'xxhash', 'php8', 'composer'],
+        link: 'https://github.com/carry0987/TemplateEngine',
+        isPinned: true
     },
     {
-        title: 'MessageBoard',
-        desc: 'A simple messageboard using PHP, mysqli, and JavaScript.',
-        tech: ['PHP', 'MySQL', 'JS'],
-        type: 'Web',
-        link: 'https://github.com/carry0987/MessageBoard'
-    },
-    {
-        title: 'Raspberry-Pi-Repo',
-        desc: 'The repository for Raspberry Pi with various tools and scripts.',
-        tech: ['Shell', 'Linux', 'ARM'],
-        type: 'DevOps',
-        link: 'https://github.com/carry0987/Raspberry-Pi-Repo'
+        title: 'Paginator-JS',
+        desc: 'Advanced library for create and manage pagination.',
+        topic: ['react', 'pagination', 'typescript', 'preact', 'rollup', 'pnpm'],
+        link: 'https://github.com/carry0987/Paginator-JS',
+        isPinned: true
     },
     {
         title: 'Imgur-Upload',
-        desc: 'Pure JavaScript image upload to Imgur, no jQuery or PHP needed.',
-        tech: ['JavaScript', 'API', 'HTML5'],
-        type: 'Frontend',
-        link: 'https://github.com/carry0987/Imgur-Upload'
+        desc: 'A library for upload images to imgur, no dependencies, no need jQuery, PHP.',
+        topic: ['image', 'typescript', 'html5', 'javascript', 'api'],
+        link: 'https://github.com/carry0987/Imgur-Upload',
+        isPinned: true
     },
     {
-        title: 'CKEditor-Imgur',
-        desc: 'A plugin for CKEditor to upload images directly to Imgur.',
-        tech: ['JavaScript', 'CKEditor', 'API'],
-        type: 'Plugin',
-        link: 'https://github.com/carry0987/CKEditor-Imgur'
+        title: 'ImgCheckBox-JS',
+        desc: 'Seamlessly transform your images into interactive checkboxes with ImgCheckBox, a versatile and easy-to-use JavaScript library designed to enhance user interfaces by introducing customizable image-based selection functionality.',
+        topic: ['typescript', 'checkbox', 'imgcheckbox'],
+        link: 'https://github.com/carry0987/ImgCheckBox-JS',
+        isPinned: true
     },
     {
-        title: 'Web-Musicbox',
-        desc: 'HTML5 music player with playlist and cover display functionality.',
-        tech: ['HTML5', 'CSS', 'JavaScript'],
-        type: 'Web',
-        link: 'https://github.com/carry0987/Web-Musicbox'
+        title: 'Docker-Image',
+        desc: 'Explore my GitHub repository for Dockerfiles tailored to various development environments. Streamline your project setup and deployment processes, making development effortless. Activate the perfect development container for your needs now!.',
+        topic: ['docker-image', 'dockerfile', 'development', 'containers'],
+        link: 'https://github.com/carry0987/Docker-Image',
+        isPinned: true
     }
 ];
 
+// Get pinned project URLs for filtering
+const pinnedUrls = new Set(pinnedProjects.map((p) => p.link));
+
+// Convert RepoInfo from REST API to ProjectInfo
+const convertRepoToProject = (repo: RepoInfo): ProjectInfo => {
+    const topics = (repo.topics as string[]) || [];
+    const topic = repo.language ? [repo.language, ...topics] : topics;
+    return {
+        title: repo.name,
+        desc: repo.description || 'No description available',
+        topic: topic.slice(0, 5), // Limit to 5 tags
+        link: repo.html_url,
+        isPinned: false
+    };
+};
+
 export default function ProjectsPage() {
+    const [projects, setProjects] = useState<ProjectInfo[]>(pinnedProjects);
+
+    // Fetch repos using REST API with topics
+    const fetchRepos = useCallback(async () => {
+        try {
+            const repoList = await fetchData<RepoInfo[]>({
+                url: 'https://api.github.com/users/carry0987/repos',
+                method: 'GET',
+                data: {
+                    sort: 'pushed',
+                    direction: 'desc',
+                    per_page: 12
+                }
+            });
+            if (repoList && repoList.length > 0) {
+                // Filter out repos that are already in pinned list
+                const filteredRepos = repoList
+                    .filter((repo) => !pinnedUrls.has(repo.html_url))
+                    .map(convertRepoToProject);
+                // Combine pinned projects with fetched repos
+                setProjects([...pinnedProjects, ...filteredRepos]);
+            }
+        } catch (error) {
+            console.error('Failed to fetch repo list:', error);
+        }
+    }, []);
+
+    // Initial fetch
+    useEffect(() => {
+        fetchRepos();
+    }, [fetchRepos]);
+
     return (
         <div className="animate-slide-up">
             <div className="flex items-center gap-4 mb-12">
@@ -76,10 +136,17 @@ export default function ProjectsPage() {
                                 <div className="p-2 bg-tech-500/10 rounded-lg text-tech-400 group-hover:scale-110 transition-transform duration-300">
                                     <Command size={24} />
                                 </div>
-                                <ExternalLink
-                                    size={20}
-                                    className="text-slate-500 group-hover:text-white transition-colors"
-                                />
+                                <div className="flex items-center gap-2">
+                                    {project.isPinned && (
+                                        <span title="Pinned Repository">
+                                            <Pin size={16} className="text-yellow-500" />
+                                        </span>
+                                    )}
+                                    <ExternalLink
+                                        size={20}
+                                        className="text-slate-500 group-hover:text-white transition-colors"
+                                    />
+                                </div>
                             </div>
 
                             <h3 className="text-xl font-bold text-white mb-2 group-hover:text-tech-400 transition-colors">
@@ -89,7 +156,7 @@ export default function ProjectsPage() {
                             <p className="text-slate-400 text-sm leading-relaxed mb-6 grow">{project.desc}</p>
 
                             <div className="flex flex-wrap gap-2 pt-4 border-t border-white/5">
-                                {project.tech.map((t) => (
+                                {project.topic.map((t) => (
                                     <span
                                         key={t}
                                         className="text-xs font-mono text-slate-500 group-hover:text-tech-400/80 transition-colors">
