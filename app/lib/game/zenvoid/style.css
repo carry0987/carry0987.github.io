@@ -1,96 +1,93 @@
-body {
-    margin: 0;
-    overflow: hidden;
-    background-color: #000;
-    font-family: 'Consolas', monospace;
-}
-canvas {
-    display: block;
-}
-
-/* UI Layer */
-#ui-layer {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    pointer-events: none;
-    padding: 20px;
-    box-sizing: border-box;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-}
-
-.tech-text {
-    color: rgba(255, 255, 255, 0.6);
-    font-size: 12px;
-    text-shadow: 0 0 5px currentColor;
-    line-height: 1.5;
-}
-
-#log-console {
-    width: 300px;
-    height: 150px;
-    overflow: hidden;
-    border-left: 2px solid rgba(255, 255, 255, 0.3);
-    padding-left: 10px;
-    background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), transparent);
-}
-
-#status-bar {
-    display: flex;
-    gap: 20px;
-    align-items: center;
-}
-
-.bar-box {
-    width: 100px;
-    height: 4px;
-    background: #333;
-    position: relative;
-}
-.bar-fill {
-    position: absolute;
-    top: 0;
-    left: 0;
-    height: 100%;
-    width: 50%;
-    background: currentColor;
-    box-shadow: 0 0 10px currentColor;
-    animation: fluctuate 2s infinite;
-}
-
-@keyframes fluctuate {
-    0% {
-        width: 40%;
+@layer components {
+    canvas {
+        display: block;
     }
-    50% {
-        width: 60%;
-    }
-    100% {
-        width: 40%;
-    }
-}
 
-#controls-hint {
-    position: absolute;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    text-align: center;
-    opacity: 0.7;
-    font-size: 14px;
-}
+    /* UI Layer */
+    #ui-layer {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+        padding: 20px;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
 
-.key {
-    display: inline-block;
-    border: 1px solid rgba(255, 255, 255, 0.4);
-    padding: 2px 8px;
-    border-radius: 4px;
-    margin: 0 2px;
-    background: rgba(255, 255, 255, 0.1);
-    font-weight: bold;
-    color: #fff;
+    .tech-text {
+        color: rgba(255, 255, 255, 0.6);
+        font-size: 12px;
+        text-shadow: 0 0 5px currentColor;
+        line-height: 1.5;
+    }
+
+    #log-console {
+        width: 300px;
+        height: 150px;
+        overflow: hidden;
+        border-left: 2px solid rgba(255, 255, 255, 0.3);
+        padding-left: 10px;
+        background: linear-gradient(90deg, rgba(0, 0, 0, 0.5), transparent);
+    }
+
+    #status-bar {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+    }
+
+    .bar-box {
+        width: 100px;
+        height: 4px;
+        background: #333;
+        position: relative;
+    }
+
+    .bar-fill {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 50%;
+        background: currentColor;
+        box-shadow: 0 0 10px currentColor;
+        animation: fluctuate 2s infinite;
+    }
+
+    @keyframes fluctuate {
+        0% {
+            width: 40%;
+        }
+        50% {
+            width: 60%;
+        }
+        100% {
+            width: 40%;
+        }
+    }
+
+    #controls-hint {
+        position: absolute;
+        bottom: 30px;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        opacity: 0.7;
+        font-size: 14px;
+    }
+
+    .key {
+        display: inline-block;
+        border: 1px solid rgba(255, 255, 255, 0.4);
+        padding: 2px 8px;
+        border-radius: 4px;
+        margin: 0 2px;
+        background: rgba(255, 255, 255, 0.1);
+        font-weight: bold;
+        color: #fff;
+    }
 }

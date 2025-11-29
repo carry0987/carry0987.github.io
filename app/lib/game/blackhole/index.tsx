@@ -12,6 +12,8 @@ class Main {
     private target: BlackHole | null = null;
     private canvas?: HTMLCanvasElement;
     private bufferCanvas?: HTMLCanvasElement;
+    private animationId: number = 0;
+    private resizeHandler?: () => void;
 
     // Constants
     private readonly BH_SIZE = 15;
@@ -51,15 +53,16 @@ class Main {
         this.bufferCanvas.width = this.canvas.width = document.body.offsetWidth;
         this.bufferCanvas.height = this.canvas.height = document.body.offsetHeight;
 
-        window.addEventListener('resize', () => {
+        this.resizeHandler = () => {
             if (!this.canvas || !this.bufferCanvas) {
                 return;
             }
 
             this.bufferCanvas.width = this.canvas.width = document.body.offsetWidth;
+            this.bufferCanvas.height = this.canvas.height = document.body.offsetHeight;
+        };
 
-            return (this.bufferCanvas.height = this.canvas.height = document.body.offsetHeight);
-        });
+        window.addEventListener('resize', this.resizeHandler);
     }
 
     // Pre-render black hole image
@@ -229,8 +232,26 @@ class Main {
         // Update stats
         this.stats.update();
 
-        return this.RAF(this.animate);
+        this.animationId = this.RAF(this.animate);
     };
+
+    // Cleanup method
+    public dispose() {
+        // Cancel animation
+        if (this.animationId) {
+            cancelAnimationFrame(this.animationId);
+        }
+
+        // Remove stats DOM
+        if (this.stats.dom && this.stats.dom.parentNode) {
+            this.stats.dom.parentNode.removeChild(this.stats.dom);
+        }
+
+        // Remove resize listener
+        if (this.resizeHandler) {
+            window.removeEventListener('resize', this.resizeHandler);
+        }
+    }
 
     // Execute animation
     private execAnimate() {
@@ -276,10 +297,11 @@ export default function BlackHoleMain() {
         document.body.addEventListener('contextmenu', handler);
 
         // Render the game
-        new Main();
+        const game = new Main();
 
         return () => {
             document.body.removeEventListener('contextmenu', handler);
+            game.dispose();
         };
     }, []);
 

@@ -51,8 +51,11 @@ export default function ZenVoidGame() {
         // Append canvas to container
         containerRef.current.appendChild(game.getCanvas());
 
-        // Start animation
-        game.start();
+        // Start animation after a short delay to ensure DOM is ready
+        // Use requestAnimationFrame to ensure the canvas is properly mounted
+        requestAnimationFrame(() => {
+            game.start();
+        });
 
         // Cleanup
         return () => {
