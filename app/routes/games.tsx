@@ -9,22 +9,22 @@ export default function GamesPage() {
     const games = [
         {
             title: 'BlackHole',
-            desc: 'A Funny Canvas Game.',
-            tech: ['Canvas', 'React', 'State'],
+            desc: 'An interactive particle simulation where black holes attract and consume particles with mesmerizing visual effects.',
+            tech: ['Canvas', 'Particle System', 'Physics'],
             genre: '2D',
             playUrl: '/games/blackhole'
         },
         {
             title: 'ShotBall',
-            desc: 'Use Canvas to creat gravity core.',
-            tech: ['React', 'Framer Motion'],
+            desc: 'A physics-based gravity simulation with colorful bouncing balls affected by realistic gravitational forces.',
+            tech: ['Canvas', 'Physics Engine', 'Animation'],
             genre: '2D',
             playUrl: '/games/shotball'
         },
         {
             title: 'Zen Void',
-            desc: 'Slap Edition - A relaxing cyberpunk experience with slap mechanics.',
-            tech: ['React', 'Hooks'],
+            desc: 'A relaxing cyberpunk experience with floating objects, dynamic themes, and ambient slap interactions.',
+            tech: ['Three.js', 'WebGL', '3D Graphics'],
             genre: '3D',
             playUrl: '/games/zenvoid'
         }
