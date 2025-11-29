@@ -70,7 +70,7 @@ export default function IndexPage() {
         {
             name: 'Web-Musicbox',
             full_name: 'carry0987/Web-Musicbox',
-            description: 'HTML5 musicplayer , playlist and cover',
+            description: 'HTML5 musicplayer, playlist and cover',
             html_url: 'https://github.com/carry0987/Web-Musicbox',
             archived: false,
             language: 'Javascript'
