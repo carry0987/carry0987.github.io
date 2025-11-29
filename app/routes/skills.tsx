@@ -9,12 +9,12 @@ const skillCategories = [
     {
         title: 'Frontend Core',
         icon: <Monitor className="text-tech-400" />,
-        skills: ['React', 'TypeScript', 'Nest.js', 'Tailwind CSS', 'HTML5/CSS3', 'React-Router']
+        skills: ['React', 'TypeScript', 'Nest.js', 'Next.js', 'Tailwind CSS', 'HTML5/CSS3', 'React-Router']
     },
     {
         title: 'Backend & Tools',
         icon: <Database className="text-purple-400" />,
-        skills: ['PHP', 'Python', 'Node.js', 'Express', 'PostgreSQL', 'MySQL', 'Git/GitHub', 'Docker', 'DevOps', 'K8s', 'Vite']
+        skills: ['PHP', 'Python', 'Node.js', 'WebGPU', 'WebGL', 'Express', 'PostgreSQL', 'MySQL', 'Git/GitHub', 'Docker', 'DevOps', 'K8s', 'Vite']
     },
     {
         title: 'UI/UX & Design',
