@@ -26,12 +26,15 @@ const skillCategories = [
 export default function SkillsPage() {
     return (
         <div className="animate-slide-up w-full">
-            <h2 className="text-3xl font-bold mb-8 flex items-center gap-3">
-                <Cpu className="text-tech-400" />
-                <span className="bg-clip-text text-transparent bg-linear-to-r from-white to-slate-500">
-                    Skills
-                </span>
-            </h2>
+            <div className="flex items-center gap-4 mb-12">
+                <h2 className="text-3xl font-bold text-white flex items-center gap-2">
+                    <span className="text-tech-400 font-mono">
+                        <Cpu />
+                    </span>{' '}
+                    Technical Arsenal
+                </h2>
+                <div className="h-px bg-slate-800 grow max-w-xs"></div>
+            </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {skillCategories.map((cat, idx) => (
@@ -59,7 +62,9 @@ export default function SkillsPage() {
                 <div className="absolute top-0 right-0 w-64 h-64 bg-tech-500/10 blur-[80px] -z-10" />
                 <h3 className="text-xl font-bold mb-4 text-white">Still Learning</h3>
                 <p className="text-slate-400 max-w-2xl leading-relaxed">
-                    Technology is advancing rapidly, and I am currently delving into <strong>Web3</strong> development and <strong>AI model integration</strong>. I believe that maintaining curiosity is the most important trait for an engineer.
+                    Technology is advancing rapidly, and I am currently delving into <strong>Web3</strong> development
+                    and <strong>AI model integration</strong>. I believe that maintaining curiosity is the most
+                    important trait for an engineer.
                 </p>
             </div>
         </div>
