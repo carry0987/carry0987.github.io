@@ -1,84 +1,66 @@
 import type { Route } from './+types/skills';
-import { Cpu, Sparkles } from 'lucide-react';
+import { Monitor, Database, Layers, Cpu } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: 'Skills | Carry' }, { name: 'description', content: 'My technical skills and expertise' }];
 }
 
-const skillGroups = [
+const skillCategories = [
     {
-        title: 'Frontend',
-        skills: [
-            { name: 'React', level: 90 },
-            { name: 'TypeScript', level: 85 },
-            { name: 'Tailwind CSS', level: 95 },
-            { name: 'Next.js', level: 80 },
-            { name: 'Framer Motion', level: 75 }
-        ]
+        title: 'Frontend Core',
+        icon: <Monitor className="text-tech-400" />,
+        skills: ['React', 'TypeScript', 'Next.js', 'Tailwind CSS', 'HTML5/CSS3', 'Redux/Zustand']
     },
     {
         title: 'Backend & Tools',
-        skills: [
-            { name: 'Node.js', level: 70 },
-            { name: 'PHP', level: 85 },
-            { name: 'PostgreSQL', level: 65 },
-            { name: 'Docker', level: 60 },
-            { name: 'Git', level: 90 }
-        ]
+        icon: <Database className="text-purple-400" />,
+        skills: ['Node.js', 'Express', 'PostgreSQL', 'Git/GitHub', 'Docker', 'Vite']
+    },
+    {
+        title: 'UI/UX & Design',
+        icon: <Layers className="text-pink-400" />,
+        skills: ['Figma', 'Responsive Design', 'Framer Motion', 'Accessibility', 'Design Systems']
     }
 ];
-
-const additionalSkills = ['Responsive Design', 'Web Accessibility', 'SEO Optimization', 'CI/CD Pipelines'];
 
 export default function SkillsPage() {
     return (
         <div className="animate-slide-up w-full">
-            <div className="flex items-center gap-4 mb-12">
-                <h2 className="text-3xl font-bold text-white flex items-center gap-2">
-                    <span className="text-tech-400 font-mono">
-                        <Cpu />
-                    </span>{' '}
-                    Technical Arsenal
-                </h2>
-                <div className="h-px bg-slate-800 grow max-w-xs"></div>
-            </div>
+            <h2 className="text-3xl font-bold mb-8 flex items-center gap-3">
+                <Cpu className="text-tech-400" />
+                <span className="bg-clip-text text-transparent bg-linear-to-r from-white to-slate-500">
+                    Skills
+                </span>
+            </h2>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-                {skillGroups.map((group, idx) => (
-                    <div key={idx} className="space-y-6">
-                        <h3 className="text-xl font-mono text-tech-400 flex items-center gap-2">
-                            <Sparkles size={16} /> {group.title}
-                        </h3>
-                        <div className="space-y-4">
-                            {group.skills.map((skill) => (
-                                <div key={skill.name} className="group">
-                                    <div className="flex justify-between mb-1">
-                                        <span className="text-slate-300 font-medium group-hover:text-white transition-colors">
-                                            {skill.name}
-                                        </span>
-                                        <span className="text-slate-500 text-xs font-mono">{skill.level}%</span>
-                                    </div>
-                                    <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full bg-linear-to-r from-tech-600 to-tech-400 rounded-full transform origin-left transition-transform duration-1000 ease-out group-hover:shadow-[0_0_10px_rgba(56,189,248,0.5)]"
-                                            style={{ width: `${skill.level}%` }}
-                                        />
-                                    </div>
-                                </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {skillCategories.map((cat, idx) => (
+                    <div
+                        key={idx}
+                        className="glass-panel p-6 rounded-2xl hover:-translate-y-1 transition-transform duration-300">
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="p-3 bg-white/5 rounded-lg border border-white/10">{cat.icon}</div>
+                            <h3 className="text-xl font-semibold text-slate-200">{cat.title}</h3>
+                        </div>
+                        <div className="flex flex-wrap gap-2">
+                            {cat.skills.map((skill) => (
+                                <span
+                                    key={skill}
+                                    className="px-3 py-1 text-sm rounded-md bg-slate-800/50 border border-slate-700 text-slate-300 hover:border-tech-500/50 hover:text-tech-400 transition-colors cursor-default">
+                                    {skill}
+                                </span>
                             ))}
                         </div>
                     </div>
                 ))}
             </div>
 
-            <div className="mt-16 grid grid-cols-2 md:grid-cols-4 gap-4">
-                {additionalSkills.map((item) => (
-                    <div
-                        key={item}
-                        className="p-4 border border-white/5 bg-white/2 rounded-lg text-center text-sm text-slate-400 hover:border-tech-500/30 hover:bg-tech-500/5 transition-colors cursor-default font-mono">
-                        {item}
-                    </div>
-                ))}
+            <div className="mt-12 glass-panel p-8 rounded-2xl border border-tech-500/20 relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-64 h-64 bg-tech-500/10 blur-[80px] -z-10" />
+                <h3 className="text-xl font-bold mb-4 text-white">Still Learning</h3>
+                <p className="text-slate-400 max-w-2xl leading-relaxed">
+                    Technology is advancing rapidly, and I am currently delving into <strong>Web3</strong> development and <strong>AI model integration</strong>. I believe that maintaining curiosity is the most important trait for an engineer.
+                </p>
             </div>
         </div>
     );
