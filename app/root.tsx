@@ -5,6 +5,7 @@ import type { Route } from './+types/root';
 import './app.css';
 // Import components
 import { Navbar, Footer } from '@/component/ui';
+import { Background } from '@/component/background';
 
 export const links: Route.LinksFunction = () => [
     { rel: 'dns-prefetch', href: 'https://carry0987.github.io' },
@@ -39,6 +40,17 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <Links />
             </head>
             <body className="min-h-screen flex flex-col bg-dark-bg text-slate-200 selection:bg-tech-500/30 selection:text-tech-100">
+                {/* Particle Background Animation */}
+                <Background
+                    lineColor="56, 189, 248"
+                    dotColor="56, 189, 248"
+                    density={8000}
+                    dotSize={1.2}
+                    maxDistance={8000}
+                    baseOpacity={0.15}
+                    lineWidth={0.4}
+                    speed={0.6}
+                />
                 {/* Grid Background */}
                 <div className="fixed inset-0 bg-grid-pattern pointer-events-none opacity-20" />
                 {/* Glow Effects */}
