@@ -14,7 +14,21 @@ const skillCategories = [
     {
         title: 'Backend & Tools',
         icon: <Database className="text-purple-400" />,
-        skills: ['PHP', 'Python', 'Node.js', 'WebGPU', 'WebGL', 'Express', 'PostgreSQL', 'MySQL', 'Git/GitHub', 'Docker', 'DevOps', 'K8s', 'Vite']
+        skills: [
+            'PHP',
+            'Python',
+            'Node.js',
+            'WebGPU',
+            'WebGL',
+            'Express',
+            'PostgreSQL',
+            'MySQL',
+            'Git/GitHub',
+            'Docker',
+            'DevOps',
+            'K8s',
+            'Vite'
+        ]
     },
     {
         title: 'UI/UX & Design',

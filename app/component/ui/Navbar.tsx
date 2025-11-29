@@ -13,6 +13,12 @@ const navLinks = [
 export const Navbar = () => {
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [currentPath, setCurrentPath] = useState<string | null>(null);
+
+    // Sync currentPath with location.pathname on client-side
+    useEffect(() => {
+        setCurrentPath(location.pathname);
+    }, [location.pathname]);
 
     // Close menu on route change
     useEffect(() => {
@@ -37,7 +43,7 @@ export const Navbar = () => {
             <div className="hidden md:flex fixed top-6 left-0 right-0 z-50 justify-center px-4">
                 <nav className="glass-nav px-2 py-2 rounded-full flex items-center gap-2">
                     {navLinks.map((link) => {
-                        const isActive = location.pathname === link.path;
+                        const isActive = currentPath === link.path;
                         const Icon = link.icon;
                         return (
                             <Link
@@ -83,7 +89,7 @@ export const Navbar = () => {
                     `}>
                     <div className="flex flex-col gap-2">
                         {navLinks.map((link) => {
-                            const isActive = location.pathname === link.path;
+                            const isActive = currentPath === link.path;
                             const Icon = link.icon;
                             return (
                                 <Link
