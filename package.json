@@ -4,7 +4,12 @@
   "type": "module",
   "private": true,
   "description": "Personal website and portfolio of carry0987, showcasing software development projects and services.",
-  "keywords": ["carry0987", "software development", "web development", "custom software"],
+  "keywords": [
+    "carry0987",
+    "software development",
+    "web development",
+    "custom software"
+  ],
   "author": "carry0987",
   "homepage": "https://carry0987.github.io",
   "repository": {
@@ -22,6 +27,7 @@
     "@react-router/fs-routes": "^7.9.6",
     "@react-router/node": "^7.9.6",
     "isbot": "^5.1.32",
+    "lucide-react": "^0.555.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router": "^7.9.6",

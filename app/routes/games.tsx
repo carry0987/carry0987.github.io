@@ -1,102 +1,88 @@
-import { Link } from 'react-router';
-import type { RepoInfo } from '@/lib/interface/interfaces';
-import { Background } from '@/component/background';
-import { Repo } from '@/component/repo';
-import type { Route } from './+types/games';
-
-// Import the images
-import githubLogo from '@/assets/github.svg';
+import type { Route } from './+types/projects';
+import { Gamepad2, ArrowRight } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
-    return [{ title: 'Game List' }, { name: 'description', content: 'List of games' }];
+    return [{ title: 'Games | Carry' }, { name: 'description', content: 'A list of my games' }];
 }
 
-export default function GameList() {
-    const currentYear = new Date().getFullYear();
-    const menu = {
-        Home: '/',
-        Cydia: '/cydia',
-        Script: 'https://github.com/carry0987/UserJS'
-    };
-    const gameRepos: RepoInfo[] = [
+export default function GamesPage() {
+    const games = [
         {
-            name: 'BlackHole',
-            full_name: '',
-            description: 'A Funny Canvas Game',
-            html_url: '/games/blackhole',
-            archived: false,
-            language: 'TypeScript'
+            title: 'BlackHole',
+            desc: 'A Funny Canvas Game.',
+            tech: ['Canvas', 'React', 'State'],
+            genre: '2D',
+            playUrl: '/games/blackhole'
         },
         {
-            name: 'ShotBall',
-            full_name: '',
-            description: 'Use Canvas to creat gravity core',
-            html_url: '/games/shotball',
-            archived: false,
-            language: 'TypeScript'
+            title: 'ShotBall',
+            desc: 'Use Canvas to creat gravity core.',
+            tech: ['React', 'Framer Motion'],
+            genre: '2D',
+            playUrl: '/games/shotball'
         },
         {
-            name: 'Zen Void',
-            full_name: '',
-            description: 'Slap Edition - A relaxing cyberpunk experience with slap mechanics',
-            html_url: '/games/zenvoid',
-            archived: false,
-            language: 'TypeScript'
+            title: 'Zen Void',
+            desc: 'Slap Edition - A relaxing cyberpunk experience with slap mechanics.',
+            tech: ['React', 'Hooks'],
+            genre: '3D',
+            playUrl: '/games/zenvoid'
         }
     ];
 
     return (
-        <>
-            <Background />
-            <div className="container mx-auto p-4 relative z-1">
-                <div className="bg-gray-800 text-white text-center flex justify-around rounded overflow-hidden">
-                    {Object.entries(menu).map(([text, link], index, array) => {
-                        const isExternal = link.startsWith('http');
-                        const className = `font-bold text-xl py-2 ${index !== array.length - 1 ? 'border-r border-gray-400' : ''} w-full hover:bg-blue-300 hover:text-black transition-colors duration-300`;
-
-                        return isExternal ? (
-                            <a key={index} href={link} target="_blank" rel="noopener noreferrer" className={className}>
-                                {text}
-                            </a>
-                        ) : (
-                            <Link key={index} to={link} className={className}>
-                                {text}
-                            </Link>
-                        );
-                    })}
-                </div>
-                <div className="flex flex-col lg:flex-row mt-4">
-                    <div className="w-full lg:ml-4">
-                        <div className="text-center font-bold text-xl mb-4">
-                            <span>Game List</span>
-                        </div>
-                        <div className="border-t-2 border-gray-300 my-1 mb-3"></div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {gameRepos.map((repo, index) => (
-                                <Repo
-                                    key={index}
-                                    name={repo.name}
-                                    description={repo.description}
-                                    language={repo.language}
-                                    html_url={repo.html_url}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                </div>
-                <div className="text-center mt-8">
-                    <a
-                        href="https://github.com/carry0987"
-                        className="text-blue-500"
-                        title="carry0987 GitHub"
-                        target="_blank">
-                        <img src={githubLogo} alt="Github" className="w-8 inline-block" />
-                    </a>
-                    <div className="text-gray-500">
-                        <span>&copy; {currentYear} carry0987. All rights reserved. Made by carry0987</span>
-                    </div>
-                </div>
+        <div className="animate-slide-up">
+            <div className="flex items-center gap-4 mb-12">
+                <h2 className="text-3xl font-bold text-white flex items-center gap-2">
+                    <span className="text-tech-400 font-mono">
+                        <Gamepad2 />
+                    </span>{' '}
+                    Game Lab
+                </h2>
+                <div className="h-px bg-slate-800 grow max-w-xs"></div>
             </div>
-        </>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {games.map((game, idx) => (
+                    <div
+                        key={idx}
+                        className="group relative bg-dark-card/50 border border-white/5 rounded-2xl overflow-hidden hover:border-purple-500/30 transition-all duration-300 hover:shadow-[0_0_30px_rgba(168,85,247,0.2)] flex flex-col h-full">
+                        <div className="p-6 flex flex-col grow">
+                            <div className="flex justify-between items-start mb-4">
+                                <div className="p-2 bg-purple-500/10 rounded-lg text-purple-400 group-hover:scale-110 transition-transform duration-300">
+                                    <Gamepad2 size={24} />
+                                </div>
+                                <span className="px-2 py-1 text-[10px] font-mono rounded-full bg-white/5 border border-white/10 text-slate-400 uppercase tracking-wider">
+                                    {game.genre}
+                                </span>
+                            </div>
+
+                            <h3 className="text-xl font-bold text-white mb-2 group-hover:text-purple-400 transition-colors">
+                                {game.title}
+                            </h3>
+
+                            <p className="text-slate-400 text-sm leading-relaxed mb-6 grow">{game.desc}</p>
+
+                            <div className="flex flex-col gap-4 mt-auto">
+                                <div className="flex flex-wrap gap-2">
+                                    {game.tech.map((t) => (
+                                        <span key={t} className="text-xs font-mono text-slate-500">
+                                            #{t}
+                                        </span>
+                                    ))}
+                                </div>
+
+                                <button className="w-full py-2 rounded-lg bg-white/5 hover:bg-purple-600 hover:text-white border border-white/10 hover:border-purple-500 transition-all duration-300 text-sm font-medium flex items-center justify-center gap-2 group-hover:bg-purple-600/20">
+                                    Play Game <ArrowRight size={14} />
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Purple Hover Gradient Overlay */}
+                        <div className="absolute inset-0 bg-linear-to-b from-transparent to-purple-900/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none" />
+                    </div>
+                ))}
+            </div>
+        </div>
     );
 }
