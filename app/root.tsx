@@ -1,4 +1,4 @@
-import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useLocation } from 'react-router';
+import { isRouteErrorResponse, Links, Meta, Outlet, Scripts, ScrollRestoration, useMatches } from 'react-router';
 // Import type definitions for routes
 import type { Route } from './+types/root';
 // Import the CSS file
@@ -6,9 +6,6 @@ import './app.css';
 // Import components
 import { Navbar, Footer } from '@/component/ui';
 import { Background } from '@/component/background';
-
-// Game routes that should be fullscreen (no navbar, footer, background)
-const FULLSCREEN_ROUTES = ['/games/blackhole', '/games/shotball', '/games/zenvoid'];
 
 export const links: Route.LinksFunction = () => [
     { rel: 'dns-prefetch', href: 'https://carry0987.github.io' },
@@ -34,8 +31,9 @@ export function meta({}: Route.MetaArgs) {
 }
 
 export function Layout({ children }: { children: React.ReactNode }) {
-    const location = useLocation();
-    const isFullscreenRoute = FULLSCREEN_ROUTES.includes(location.pathname);
+    const matches = useMatches();
+    // Check if any matched route has fullscreen handle
+    const isFullscreenRoute = matches.some((match) => (match.handle as { fullscreen?: boolean })?.fullscreen === true);
 
     // Fullscreen layout for games (no navbar, footer, background)
     if (isFullscreenRoute) {
@@ -83,7 +81,9 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-tech-600/10 rounded-full blur-[120px] pointer-events-none" />
                 <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
                 <Navbar />
-                <main className="grow pt-20 md:pt-32 px-6 max-w-5xl mx-auto w-full relative z-10 pb-20">{children}</main>
+                <main className="grow pt-20 md:pt-32 px-6 max-w-5xl mx-auto w-full relative z-10 pb-20">
+                    {children}
+                </main>
                 <Footer />
                 <ScrollRestoration />
                 <Scripts />

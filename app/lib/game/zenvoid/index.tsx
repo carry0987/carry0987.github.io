@@ -18,6 +18,9 @@ export function meta() {
     ];
 }
 
+// Mark this route as fullscreen (no navbar, footer, background)
+export const handle = { fullscreen: true };
+
 export default function ZenVoidGame() {
     const containerRef = useRef<HTMLDivElement>(null);
     const gameRef = useRef<ZenVoid | null>(null);

@@ -202,6 +202,9 @@ export function meta() {
     ];
 }
 
+// Mark this route as fullscreen (no navbar, footer, background)
+export const handle = { fullscreen: true };
+
 export default function ShotBallMain() {
     useEffect(() => {
         // Set oncontextmenu to prevent right click for body
