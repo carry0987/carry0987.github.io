@@ -18,6 +18,7 @@ export const Navbar = () => {
     // Sync currentPath with location.pathname on client-side
     useEffect(() => {
         setCurrentPath(location.pathname);
+        console.log('Current Path:', location.pathname);
     }, [location.pathname]);
 
     // Close menu on route change
