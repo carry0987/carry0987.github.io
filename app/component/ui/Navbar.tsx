@@ -1,5 +1,6 @@
+import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Terminal, Code2, Cpu, Gamepad2, Mail } from 'lucide-react';
+import { Terminal, Code2, Cpu, Gamepad2, Mail, Menu, X } from 'lucide-react';
 
 const navLinks = [
     { path: '/', label: 'Hello', icon: Terminal },
@@ -11,6 +12,24 @@ const navLinks = [
 
 export const Navbar = () => {
     const location = useLocation();
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+    // Close menu on route change
+    useEffect(() => {
+        setIsMenuOpen(false);
+    }, [location.pathname]);
+
+    // Prevent background scrolling when the menu is open
+    useEffect(() => {
+        if (isMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isMenuOpen]);
 
     return (
         <>
@@ -36,31 +55,55 @@ export const Navbar = () => {
                 </nav>
             </div>
 
-            {/* Mobile Navbar */}
-            <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 pb-safe">
-                <nav className="glass-nav mx-3 mb-3 px-2 py-2 rounded-2xl flex items-center justify-around">
-                    {navLinks.map((link) => {
-                        const isActive = location.pathname === link.path;
-                        const Icon = link.icon;
-                        return (
-                            <Link
-                                key={link.path}
-                                to={link.path}
-                                className={`
-                                    relative flex flex-col items-center gap-1 px-3 py-2 rounded-xl transition-all duration-300
-                                    ${isActive ? 'text-tech-400' : 'text-slate-400 active:text-slate-200'}
-                                `}>
-                                <div
+            {/* Mobile Hamburger Button */}
+            <div className="md:hidden fixed top-4 right-4 z-50">
+                <button
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                    className="glass-nav p-3 rounded-xl transition-all duration-300 text-slate-300 hover:text-tech-400"
+                    aria-label={isMenuOpen ? 'Close Menu' : 'Open Menu'}>
+                    {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                </button>
+            </div>
+
+            {/* Mobile Menu Overlay */}
+            <div
+                className={`
+                    md:hidden fixed inset-0 z-40 transition-all duration-300
+                    ${isMenuOpen ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'}
+                `}>
+                {/* Backdrop */}
+                <div className="absolute inset-0 bg-dark-bg/80 backdrop-blur-sm" onClick={() => setIsMenuOpen(false)} />
+
+                {/* Menu Panel */}
+                <nav
+                    className={`
+                        absolute top-20 left-4 right-4 glass-nav rounded-2xl p-4
+                        transition-all duration-300 transform
+                        ${isMenuOpen ? 'translate-y-0 opacity-100' : '-translate-y-4 opacity-0'}
+                    `}>
+                    <div className="flex flex-col gap-2">
+                        {navLinks.map((link) => {
+                            const isActive = location.pathname === link.path;
+                            const Icon = link.icon;
+                            return (
+                                <Link
+                                    key={link.path}
+                                    to={link.path}
                                     className={`
-                                    p-2 rounded-xl transition-all duration-300
-                                    ${isActive ? 'bg-tech-500/10 shadow-[0_0_10px_rgba(56,189,248,0.2)]' : ''}
-                                `}>
+                                        flex items-center gap-3 px-4 py-3 rounded-xl font-mono text-sm
+                                        transition-all duration-300
+                                        ${
+                                            isActive
+                                                ? 'bg-tech-500/10 text-tech-400 shadow-[0_0_10px_rgba(56,189,248,0.2)]'
+                                                : 'text-slate-400 hover:text-slate-200 hover:bg-white/5 active:bg-white/10'
+                                        }
+                                    `}>
                                     <Icon size={20} />
-                                </div>
-                                <span className="text-[10px] font-mono">{link.label}</span>
-                            </Link>
-                        );
-                    })}
+                                    <span>{link.label}</span>
+                                </Link>
+                            );
+                        })}
+                    </div>
                 </nav>
             </div>
         </>
