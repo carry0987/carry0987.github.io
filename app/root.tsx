@@ -83,7 +83,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
                 <div className="fixed top-[-10%] left-[-10%] w-[40%] h-[40%] bg-tech-600/10 rounded-full blur-[120px] pointer-events-none" />
                 <div className="fixed bottom-[-10%] right-[-10%] w-[40%] h-[40%] bg-purple-600/10 rounded-full blur-[120px] pointer-events-none" />
                 <Navbar />
-                <main className="grow pt-32 px-6 max-w-5xl mx-auto w-full relative z-10 pb-20">{children}</main>
+                <main className="grow pt-20 md:pt-32 px-6 max-w-5xl mx-auto w-full relative z-10 pb-20">{children}</main>
                 <Footer />
                 <ScrollRestoration />
                 <Scripts />
