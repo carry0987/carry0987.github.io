@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useMemo } from 'react';
-import type { Dot, WArea } from '@/lib/interface/background';
+import type { Dot, WArea } from '@/types/background';
 
 interface BackgroundProps {
     /** Line color in RGB format, e.g., "56, 189, 248" for tech-400 */

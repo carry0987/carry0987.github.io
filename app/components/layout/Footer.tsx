@@ -1,4 +1,4 @@
-import { GithubIcon, LinkedInIcon } from '@/component/ui/icons';
+import { GithubIcon, LinkedInIcon } from '@/components/icons';
 
 export const Footer = () => (
     <footer className="py-8 mt-auto border-t border-dark-border/50 bg-dark-bg/80 backdrop-blur text-center">

@@ -1,6 +1,6 @@
 import type { Route } from './+types/contact';
 import { Mail } from 'lucide-react';
-import { GithubIcon, LinkedInIcon } from '@/component/ui/icons';
+import { GithubIcon, LinkedInIcon } from '@/components/icons';
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: 'Contact | Carry' }, { name: 'description', content: 'Get in touch with me' }];

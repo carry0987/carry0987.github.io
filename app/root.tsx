@@ -4,8 +4,8 @@ import type { Route } from './+types/root';
 // Import the CSS file
 import './app.css';
 // Import components
-import { Navbar, Footer } from '@/component/ui';
-import { Background } from '@/component/background';
+import { Navbar, Footer } from '@/components/layout';
+import { Background } from '@/components/common';
 
 export const links: Route.LinksFunction = () => [
     { rel: 'dns-prefetch', href: 'https://carry0987.github.io' },

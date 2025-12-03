@@ -1,3 +1,4 @@
+// GitHub API types
 export interface UserInfo {
     avatar_url: string;
     bio: string;
@@ -14,5 +15,6 @@ export interface RepoInfo {
     description: string;
     archived: boolean;
     language: string;
+    topics?: string[];
     [key: string]: any;
 }

@@ -1,8 +1,8 @@
 import type { Route } from './+types/_index';
 import { Link } from 'react-router';
 import { Mail, ArrowRight } from 'lucide-react';
-import { GithubIcon, LinkedInIcon } from '@/component/ui/icons';
-import { Typewriter, SocialLink } from '@/component/ui';
+import { GithubIcon, LinkedInIcon } from '@/components/icons';
+import { Typewriter, SocialLink } from '@/components/ui';
 
 export function meta({}: Route.MetaArgs) {
     return [

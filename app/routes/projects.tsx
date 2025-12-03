@@ -1,5 +1,5 @@
 import type { Route } from './+types/projects';
-import type { RepoInfo } from '@/lib/interface/interfaces';
+import type { RepoInfo } from '@/types/github';
 import { Code2, ExternalLink, Command, Pin } from 'lucide-react';
 import { fetchData } from '@carry0987/utils';
 import { useEffect, useState, useCallback } from 'react';
