@@ -67,7 +67,7 @@ pnpm dev
 | Category | Technologies |
 |----------|--------------|
 | **Framework** | React 19, React Router 7 |
-| **Language** | TypeScript 5 |
+| **Language** | TypeScript |
 | **Styling** | Tailwind CSS 4 |
 | **Build Tool** | Vite 7 |
 | **3D Graphics** | Three.js |
