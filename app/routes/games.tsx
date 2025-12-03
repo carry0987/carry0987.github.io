@@ -1,4 +1,4 @@
-import type { Route } from './+types/projects';
+import type { Route } from './+types/games';
 import { Link } from 'react-router';
 import { Gamepad2, ArrowRight } from 'lucide-react';
 
