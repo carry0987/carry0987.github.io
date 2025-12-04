@@ -9,6 +9,8 @@ export default [
     route('/games/sky-metropolis', './features/games/sky-metropolis/index.tsx'),
     /* Tools */
     route('/tools/svg-generator', './features/tools/svg-generator/index.tsx'),
+    route('/tools/focusflow-widget', './features/tools/focusflow-widget/index.tsx'),
+    /* Other Routes */
     ...(await flatRoutes({
         ignoredRouteFiles: ['**/.*', '**/*.css', '**/*.scss']
     }))

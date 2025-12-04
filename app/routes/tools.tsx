@@ -1,6 +1,6 @@
 import type { Route } from './+types/tools';
 import { Link } from 'react-router';
-import { Wrench, ArrowRight, Image } from 'lucide-react';
+import { Wrench, ArrowRight, Image, Timer } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: 'Tools | Carry' }, { name: 'description', content: 'A collection of useful tools' }];
@@ -15,6 +15,14 @@ export default function ToolsPage() {
             category: 'AI',
             icon: Image,
             toolUrl: '/tools/svg-generator'
+        },
+        {
+            title: 'FocusFlow Widget',
+            desc: 'A productivity widget that tracks your active engagement sessions. Utilizes Page Visibility API to pause when you switch tabs.',
+            tech: ['React', 'Hooks', 'Visibility API'],
+            category: 'Productivity',
+            icon: Timer,
+            toolUrl: '/tools/focusflow-widget'
         }
     ];
 
