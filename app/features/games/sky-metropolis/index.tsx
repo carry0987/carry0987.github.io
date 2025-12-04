@@ -6,6 +6,9 @@ import IsoMap from './components/IsoMap';
 import UIOverlay from './components/UIOverlay';
 import StartScreen from './components/StartScreen';
 
+// Import CSS
+import './style.css';
+
 // Initialize empty grid with island shape generation for 3D visual interest
 const createInitialGrid = (): Grid => {
     const grid: Grid = [];

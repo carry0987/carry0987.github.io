@@ -23,6 +23,7 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
+    "@google/genai": "^1.31.0",
     "@react-router/dev": "^7.10.0",
     "@react-router/fs-routes": "^7.10.0",
     "@react-router/node": "^7.10.0",
@@ -38,7 +39,7 @@
   "devDependencies": {
     "@adakrei/stats": "^1.0.1",
     "@carry0987/darkmode": "^1.2.1",
-    "@carry0987/utils": "^3.9.1",
+    "@carry0987/utils": "^3.9.2",
     "@tailwindcss/vite": "^4.1.17",
     "@types/jquery": "^3.5.33",
     "@types/node": "^24.10.1",

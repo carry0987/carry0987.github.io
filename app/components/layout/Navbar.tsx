@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router';
-import { Terminal, Code2, Cpu, Gamepad2, Mail, Menu, X } from 'lucide-react';
+import { Terminal, Code2, Cpu, Gamepad2, Wrench, Mail, Menu, X } from 'lucide-react';
 
 const navLinks = [
     { path: '/', label: 'Hello', icon: Terminal },
     { path: '/projects', label: 'Projects', icon: Code2 },
     { path: '/skills', label: 'Skills', icon: Cpu },
     { path: '/games', label: 'Games', icon: Gamepad2 },
+    { path: '/tools', label: 'Tools', icon: Wrench },
     { path: '/contact', label: 'Contact', icon: Mail }
 ];
 
