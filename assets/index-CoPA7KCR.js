@@ -298,4 +298,4 @@ void main() {
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
-        `})]})}const t1=wp(Pv);export{t1 as default};
+        `})]})}const t1={fullscreen:!0},a1=wp(Pv);export{a1 as default,t1 as handle};
