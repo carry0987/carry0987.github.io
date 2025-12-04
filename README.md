@@ -22,9 +22,9 @@ A modern, responsive personal portfolio website built with **React Router v7**, 
 - **Home** - Introduction with animated typewriter and social links
 - **Projects** - Pinned projects + live GitHub repos fetched via REST API
 - **Skills** - Technical skill showcase organized by category
-- **Games** - Browser-based game collection (BlackHole, ShotBall, Zen Void)
+- **Games** - Browser-based game collection (BlackHole, ShotBall, Zen Void, Sky Metropolis)
+- **Tools** - AI-powered tools (SVG Generator)
 - **Contact** - Contact information and social media links
-- **Cydia** - iOS Cydia repository page
 
 ### Games
 | Game | Description | Tech Stack |
@@ -32,6 +32,12 @@ A modern, responsive personal portfolio website built with **React Router v7**, 
 | **BlackHole** | Interactive particle simulation with black hole physics | Canvas, Particle System |
 | **ShotBall** | Physics-based gravity simulation with bouncing balls | Canvas, Physics Engine |
 | **Zen Void** | Relaxing 3D cyberpunk experience with multiple themes | Three.js, WebGL |
+| **Sky Metropolis** | Isometric city builder with economy simulation | React Three Fiber, Three.js |
+
+### Tools
+| Tool | Description | Tech Stack |
+|------|-------------|------------|
+| **SVG Generator** | AI-powered SVG artwork generator using Google Gemini | Google Gemini API, React |
 
 ## 🚀 Getting Started
 
@@ -67,10 +73,11 @@ pnpm dev
 | Category | Technologies |
 |----------|--------------|
 | **Framework** | React 19, React Router 7 |
-| **Language** | TypeScript |
+| **Language** | TypeScript 5 |
 | **Styling** | Tailwind CSS 4 |
 | **Build Tool** | Vite 7 |
-| **3D Graphics** | Three.js |
+| **3D Graphics** | Three.js, React Three Fiber |
+| **AI Integration** | Google Gemini API |
 | **Icons** | Lucide React |
 | **Package Manager** | pnpm |
 
@@ -93,6 +100,22 @@ pnpm dev
 - Mouse-controlled camera movement
 - Keyboard shortcuts (Space for speed boost, C for theme change)
 - "Slap" interaction with floating text
+
+### Sky Metropolis
+- Isometric 3D city building game
+- Multiple building types: Residential, Commercial, Industrial, Parks
+- Economy simulation with income and population mechanics
+- Real-time day progression system
+- Interactive tile-based placement
+
+## 🔧 Tools Features
+
+### SVG Generator
+- AI-powered SVG generation using Google Gemini
+- Custom prompt input for artwork creation
+- Live preview of generated SVG
+- Download functionality for generated artwork
+- Secure API key storage in localStorage
 
 ## 📄 License
 
