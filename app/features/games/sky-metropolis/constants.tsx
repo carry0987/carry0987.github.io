@@ -5,7 +5,7 @@ export const GRID_SIZE = 15;
 
 // Game Settings
 export const TICK_RATE_MS = 2000; // Game loop updates every 2 seconds
-export const INITIAL_MONEY = 1000;
+export const INITIAL_MONEY = 1000000;
 
 export const BUILDINGS: Record<BuildingType, BuildingConfig> = {
     [BuildingType.None]: {
