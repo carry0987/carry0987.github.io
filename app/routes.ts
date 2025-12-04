@@ -5,6 +5,7 @@ export default [
     route('/games/blackhole', './features/games/blackhole/index.tsx'),
     route('/games/shotball', './features/games/shotball/index.tsx'),
     route('/games/zenvoid', './features/games/zenvoid/index.tsx'),
+    route('/games/sky-metropolis', './features/games/sky-metropolis/index.tsx'),
     ...(await flatRoutes({
         ignoredRouteFiles: ['**/.*', '**/*.css', '**/*.scss']
     }))

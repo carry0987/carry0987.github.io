@@ -28,6 +28,13 @@ export default function GamesPage() {
             tech: ['Three.js', 'WebGL', '3D Graphics'],
             genre: '3D',
             playUrl: '/games/zenvoid'
+        },
+        {
+            title: 'Sky Metropolis',
+            desc: 'Build your dream city in the clouds with this isometric city builder featuring AI-powered goals and dynamic news events.',
+            tech: ['Three.js', 'WebGL', 'AI'],
+            genre: '3D',
+            playUrl: '/games/sky-metropolis'
         }
     ];
 
