@@ -20,7 +20,7 @@ const App: React.FC = () => {
 
     // Load API key from localStorage on mount
     useEffect(() => {
-        const savedKey = getLocalValue(API_KEY_STORAGE_KEY);
+        const savedKey = getLocalValue<string>(API_KEY_STORAGE_KEY);
         if (savedKey) {
             setApiKey(savedKey);
         }
