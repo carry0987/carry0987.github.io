@@ -31,8 +31,8 @@ export default function GamesPage() {
         },
         {
             title: 'Sky Metropolis',
-            desc: 'Build your dream city in the clouds with this isometric city builder featuring AI-powered goals and dynamic news events.',
-            tech: ['Three.js', 'WebGL', 'AI'],
+            desc: 'Build your dream city in the clouds with this isometric city builder featuring goals and dynamic news events.',
+            tech: ['Three.js', 'WebGL'],
             genre: '3D',
             playUrl: '/games/sky-metropolis'
         }
