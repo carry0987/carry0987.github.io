@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Key, Eye, EyeOff, Check, ExternalLink } from 'lucide-react';
 
 interface ApiKeyInputProps {
@@ -10,6 +10,12 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ apiKey, onApiKeyChange
     const [showKey, setShowKey] = useState(false);
     const [inputValue, setInputValue] = useState(apiKey);
     const [isEditing, setIsEditing] = useState(!apiKey);
+
+    // Sync inputValue and isEditing when apiKey prop changes (e.g., from localStorage)
+    useEffect(() => {
+        setInputValue(apiKey);
+        setIsEditing(!apiKey);
+    }, [apiKey]);
 
     const handleSave = () => {
         onApiKeyChange(inputValue.trim());
