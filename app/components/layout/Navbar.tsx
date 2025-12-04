@@ -23,6 +23,15 @@ export const Navbar = () => {
         setCurrentPath(path);
     }, [location.pathname]);
 
+    // Check if a nav link is active (exact match for '/', prefix match for others)
+    const isLinkActive = (linkPath: string): boolean => {
+        if (currentPath === null) return false;
+        if (linkPath === '/') {
+            return currentPath === '/';
+        }
+        return currentPath === linkPath || currentPath.startsWith(linkPath + '/');
+    };
+
     // Close menu on route change
     useEffect(() => {
         setIsMenuOpen(false);
@@ -46,7 +55,7 @@ export const Navbar = () => {
             <div className="hidden md:flex fixed top-6 left-0 right-0 z-50 justify-center px-4">
                 <nav className="glass-nav px-2 py-2 rounded-full flex items-center gap-2">
                     {navLinks.map((link) => {
-                        const isActive = currentPath === link.path;
+                        const isActive = isLinkActive(link.path);
                         const Icon = link.icon;
                         return (
                             <Link
@@ -92,7 +101,7 @@ export const Navbar = () => {
                     `}>
                     <div className="flex flex-col gap-2">
                         {navLinks.map((link) => {
-                            const isActive = currentPath === link.path;
+                            const isActive = isLinkActive(link.path);
                             const Icon = link.icon;
                             return (
                                 <Link
