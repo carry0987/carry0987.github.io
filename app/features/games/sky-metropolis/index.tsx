@@ -212,4 +212,7 @@ function App() {
     );
 }
 
+// Mark this route as fullscreen (no navbar, footer, background)
+export const handle = { fullscreen: true };
+
 export default App;
