@@ -192,7 +192,7 @@ const App: React.FC = () => {
                 <div className="pointer-events-auto bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl transform transition-all hover:bg-black/50 hover:border-white/20">
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold mb-1 bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-pink-500">
-                            Particle Flow
+                            Gesture Flow
                         </h1>
                         <p className="text-xs text-gray-400 font-mono tracking-wider">WEBGL REACTIVE SYSTEM</p>
                     </div>
@@ -352,15 +352,14 @@ export const handle = { fullscreen: true };
 
 export function meta() {
     return [
-        { title: 'Hand Controlled Particle Flow' },
+        { title: 'Gesture Flow' },
         {
             property: 'og:title',
-            content: 'Hand Controlled Particle Flow'
+            content: 'Gesture Flow'
         },
         {
             name: 'description',
-            content:
-                'Hand Controlled Particle Flow - Control mesmerizing particle effects using hand gestures via webcam.'
+            content: 'Gesture Flow - Control mesmerizing particle effects using hand gestures or mouse.'
         }
     ];
 }
