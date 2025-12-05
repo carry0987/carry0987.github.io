@@ -119,6 +119,40 @@ const App: React.FC = () => {
         setLoading(false);
     }, []);
 
+    // Check camera availability periodically
+    useEffect(() => {
+        const checkCameraAvailability = async () => {
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const hasCamera = devices.some((device) => device.kind === 'videoinput');
+
+                if (hasCamera !== cameraAvailable) {
+                    setCameraAvailable(hasCamera);
+                    // If camera becomes unavailable, auto switch to mouse control
+                    if (!hasCamera) {
+                        setUseMouseControl(true);
+                    }
+                }
+            } catch (err) {
+                console.warn('Failed to enumerate devices:', err);
+            }
+        };
+
+        // Initial check
+        checkCameraAvailability();
+
+        // Listen for device changes (plug/unplug)
+        const handleDeviceChange = () => {
+            checkCameraAvailability();
+        };
+
+        navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
+
+        return () => {
+            navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
+        };
+    }, [cameraAvailable]);
+
     const handleHandUpdate = (data: HandData) => {
         // Update ref for 3D loop
         handDataRef.current = data;
@@ -198,15 +232,18 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Control Mode Toggle */}
-                    {cameraAvailable && (
-                        <div className="flex items-center space-x-2 mb-4">
+                    <div className="flex flex-col space-y-2 mb-4">
+                        <div className="flex items-center space-x-2">
                             <button
-                                onClick={() => setUseMouseControl(false)}
+                                onClick={() => cameraAvailable && setUseMouseControl(false)}
                                 className={`flex-1 flex items-center justify-center p-2 rounded-lg transition-all text-xs ${
-                                    !useMouseControl
+                                    !useMouseControl && cameraAvailable
                                         ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
-                                        : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
-                                } border`}>
+                                        : !cameraAvailable
+                                          ? 'bg-orange-500/10 border-orange-500/30 text-orange-400/60 cursor-not-allowed'
+                                          : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
+                                } border`}
+                                disabled={!cameraAvailable}>
                                 <VideoCameraIcon className="w-4 h-4 mr-1" />
                                 Camera
                             </button>
@@ -221,7 +258,12 @@ const App: React.FC = () => {
                                 Mouse
                             </button>
                         </div>
-                    )}
+                        {!cameraAvailable && (
+                            <p className="text-[10px] text-orange-400 text-center">
+                                Camera unavailable - using mouse control
+                            </p>
+                        )}
+                    </div>
 
                     {/* Status Indicator */}
                     <div className="flex items-center space-x-3 mb-8 bg-white/5 p-3 rounded-lg border border-white/5">
