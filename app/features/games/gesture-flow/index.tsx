@@ -11,7 +11,10 @@ import {
     CubeIcon,
     GlobeAltIcon,
     VideoCameraIcon,
-    CursorArrowRaysIcon
+    CursorArrowRaysIcon,
+    Bars3Icon,
+    XMarkIcon,
+    HandRaisedIcon
 } from '@heroicons/react/24/solid';
 
 // Import necessary styles
@@ -29,6 +32,7 @@ const App: React.FC = () => {
     const [loading, setLoading] = useState(true);
     const [useMouseControl, setUseMouseControl] = useState(false);
     const [cameraAvailable, setCameraAvailable] = useState(true);
+    const [panelOpen, setPanelOpen] = useState(false);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
 
     // Hand State (Mutable Ref to avoid React render loop lag)
@@ -92,26 +96,99 @@ const App: React.FC = () => {
         setUiHandState({ detected: false, state: 'Mouse outside' });
     }, [useMouseControl]);
 
-    // Setup mouse event listeners
+    // Touch control handlers
+    const handleTouchMove = useCallback(
+        (e: TouchEvent) => {
+            if (!useMouseControl || !canvasContainerRef.current) return;
+            e.preventDefault();
+
+            const touch = e.touches[0];
+            const rect = canvasContainerRef.current.getBoundingClientRect();
+            const x = ((touch.clientX - rect.left) / rect.width - 0.5) * 2 * 3;
+            const y = -((touch.clientY - rect.top) / rect.height - 0.5) * 2 * 2;
+
+            handDataRef.current = {
+                ...handDataRef.current,
+                position: { x, y, z: 0 },
+                isPresent: true,
+                isOpen: false,
+                pinchStrength: 1
+            };
+            setUiHandState({ detected: true, state: 'Touch (Implode)' });
+        },
+        [useMouseControl]
+    );
+
+    const handleTouchStart = useCallback(
+        (e: TouchEvent) => {
+            if (!useMouseControl || !canvasContainerRef.current) return;
+
+            const touch = e.touches[0];
+            const rect = canvasContainerRef.current.getBoundingClientRect();
+            const x = ((touch.clientX - rect.left) / rect.width - 0.5) * 2 * 3;
+            const y = -((touch.clientY - rect.top) / rect.height - 0.5) * 2 * 2;
+
+            handDataRef.current = {
+                ...handDataRef.current,
+                position: { x, y, z: 0 },
+                isPresent: true,
+                isOpen: false,
+                pinchStrength: 1
+            };
+            setUiHandState({ detected: true, state: 'Touch (Implode)' });
+        },
+        [useMouseControl]
+    );
+
+    const handleTouchEnd = useCallback(() => {
+        if (!useMouseControl) return;
+        handDataRef.current = {
+            ...handDataRef.current,
+            isOpen: true,
+            pinchStrength: 0,
+            isPresent: false
+        };
+        setUiHandState({ detected: false, state: 'Touch to control' });
+    }, [useMouseControl]);
+
+    // Setup mouse and touch event listeners
     useEffect(() => {
         const container = canvasContainerRef.current;
         if (!container || !useMouseControl) return;
 
+        // Mouse events
         container.addEventListener('mousemove', handleMouseMove);
         container.addEventListener('mousedown', handleMouseDown);
         container.addEventListener('mouseup', handleMouseUp);
         container.addEventListener('mouseleave', handleMouseLeave);
 
-        // Set initial state for mouse control
-        setUiHandState({ detected: false, state: 'Move mouse to control' });
+        // Touch events
+        container.addEventListener('touchstart', handleTouchStart, { passive: false });
+        container.addEventListener('touchmove', handleTouchMove, { passive: false });
+        container.addEventListener('touchend', handleTouchEnd);
+
+        // Set initial state for mouse/touch control
+        setUiHandState({ detected: false, state: 'Move/Touch to control' });
 
         return () => {
             container.removeEventListener('mousemove', handleMouseMove);
             container.removeEventListener('mousedown', handleMouseDown);
             container.removeEventListener('mouseup', handleMouseUp);
             container.removeEventListener('mouseleave', handleMouseLeave);
+            container.removeEventListener('touchstart', handleTouchStart);
+            container.removeEventListener('touchmove', handleTouchMove);
+            container.removeEventListener('touchend', handleTouchEnd);
         };
-    }, [useMouseControl, handleMouseMove, handleMouseDown, handleMouseUp, handleMouseLeave]);
+    }, [
+        useMouseControl,
+        handleMouseMove,
+        handleMouseDown,
+        handleMouseUp,
+        handleMouseLeave,
+        handleTouchStart,
+        handleTouchMove,
+        handleTouchEnd
+    ]);
 
     const handleCameraError = useCallback(() => {
         setCameraAvailable(false);
@@ -221,8 +298,8 @@ const App: React.FC = () => {
                 </div>
             )}
 
-            {/* Main UI Controls */}
-            <div className="absolute top-0 right-0 h-full w-80 p-6 z-40 pointer-events-none flex flex-col justify-center">
+            {/* Main UI Controls - Desktop */}
+            <div className="hidden md:flex absolute top-0 right-0 h-full w-80 p-6 z-40 pointer-events-none flex-col justify-center">
                 <div className="pointer-events-auto bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl transform transition-all hover:bg-black/50 hover:border-white/20">
                     <div className="mb-6">
                         <h1 className="text-2xl font-bold mb-1 bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-pink-500">
@@ -365,13 +442,13 @@ const App: React.FC = () => {
                     <div className="mt-8 pt-6 border-t border-white/10 text-[10px] text-gray-600 leading-relaxed text-center">
                         {useMouseControl ? (
                             <>
-                                Instructions (Mouse):
+                                Instructions (Mouse/Touch):
                                 <br />
-                                Move mouse to control position
+                                Move to control position
                                 <br />
-                                Click & hold to implode particles
+                                Click/Touch & hold to implode
                                 <br />
-                                Release to explode particles
+                                Release to explode
                             </>
                         ) : (
                             <>
@@ -382,6 +459,170 @@ const App: React.FC = () => {
                                 Close fist to implode particles
                             </>
                         )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile UI Controls */}
+            <div className="md:hidden absolute bottom-0 left-0 right-0 z-40">
+                {/* Toggle Button */}
+                <button
+                    onClick={() => setPanelOpen(!panelOpen)}
+                    className="absolute bottom-4 right-4 w-12 h-12 bg-black/60 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center shadow-lg z-50">
+                    {panelOpen ? (
+                        <XMarkIcon className="w-6 h-6 text-white" />
+                    ) : (
+                        <Bars3Icon className="w-6 h-6 text-white" />
+                    )}
+                </button>
+
+                {/* Mobile Panel */}
+                <div
+                    className={`transform transition-transform duration-300 ease-out ${
+                        panelOpen ? 'translate-y-0' : 'translate-y-full'
+                    }`}>
+                    <div className="bg-black/70 backdrop-blur-xl border-t border-white/10 rounded-t-3xl p-4 pb-8 shadow-2xl max-h-[70vh] overflow-y-auto">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <h1 className="text-lg font-bold bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-pink-500">
+                                    Gesture Flow
+                                </h1>
+                                <p className="text-[10px] text-gray-400 font-mono">WEBGL REACTIVE SYSTEM</p>
+                            </div>
+                            {/* Status */}
+                            <div className="flex items-center space-x-2 bg-white/5 px-3 py-2 rounded-lg">
+                                <div
+                                    className={`w-2 h-2 rounded-full ${uiHandState.detected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
+                                <span className="text-xs text-white">{uiHandState.state}</span>
+                            </div>
+                        </div>
+
+                        {/* Control Mode Toggle */}
+                        <div className="flex items-center space-x-2 mb-4">
+                            <button
+                                onClick={() => cameraAvailable && setUseMouseControl(false)}
+                                className={`flex-1 flex items-center justify-center p-2.5 rounded-xl transition-all text-xs ${
+                                    !useMouseControl && cameraAvailable
+                                        ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
+                                        : !cameraAvailable
+                                          ? 'bg-orange-500/10 border-orange-500/30 text-orange-400/60'
+                                          : 'bg-white/5 border-transparent text-gray-400'
+                                } border`}
+                                disabled={!cameraAvailable}>
+                                <VideoCameraIcon className="w-4 h-4 mr-1" />
+                                Camera
+                            </button>
+                            <button
+                                onClick={() => setUseMouseControl(true)}
+                                className={`flex-1 flex items-center justify-center p-2.5 rounded-xl transition-all text-xs ${
+                                    useMouseControl
+                                        ? 'bg-purple-500/20 border-purple-500/50 text-purple-400'
+                                        : 'bg-white/5 border-transparent text-gray-400'
+                                } border`}>
+                                <HandRaisedIcon className="w-4 h-4 mr-1" />
+                                Touch
+                            </button>
+                        </div>
+                        {!cameraAvailable && (
+                            <p className="text-[10px] text-orange-400 text-center mb-4">
+                                Camera unavailable - using touch control
+                            </p>
+                        )}
+
+                        {/* Shape Selectors - Horizontal scroll */}
+                        <div className="mb-4">
+                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">
+                                Model
+                            </span>
+                            <div className="flex space-x-2 overflow-x-auto pb-2 -mx-1 px-1">
+                                <button
+                                    onClick={() =>
+                                        setConfig((prev) => ({
+                                            ...prev,
+                                            shape: ShapeType.NEBULA,
+                                            color: THEME_COLORS.primary
+                                        }))
+                                    }
+                                    className={`flex-shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.NEBULA ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'bg-white/5 border-transparent text-gray-400'} border`}>
+                                    <SparklesIcon className="w-4 h-4 mr-1.5" />
+                                    <span className="text-xs">Nebula</span>
+                                </button>
+                                <button
+                                    onClick={() =>
+                                        setConfig((prev) => ({
+                                            ...prev,
+                                            shape: ShapeType.HEART,
+                                            color: THEME_COLORS.secondary
+                                        }))
+                                    }
+                                    className={`flex-shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.HEART ? 'bg-pink-500/20 border-pink-500/50 text-pink-400' : 'bg-white/5 border-transparent text-gray-400'} border`}>
+                                    <HeartIcon className="w-4 h-4 mr-1.5" />
+                                    <span className="text-xs">Heart</span>
+                                </button>
+                                <button
+                                    onClick={() =>
+                                        setConfig((prev) => ({ ...prev, shape: ShapeType.SATURN, color: '#f59e0b' }))
+                                    }
+                                    className={`flex-shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.SATURN ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'bg-white/5 border-transparent text-gray-400'} border`}>
+                                    <GlobeAltIcon className="w-4 h-4 mr-1.5" />
+                                    <span className="text-xs">Saturn</span>
+                                </button>
+                                <button
+                                    onClick={() =>
+                                        setConfig((prev) => ({ ...prev, shape: ShapeType.SPHERE, color: '#ffffff' }))
+                                    }
+                                    className={`flex-shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.SPHERE ? 'bg-white/20 border-white/50 text-white' : 'bg-white/5 border-transparent text-gray-400'} border`}>
+                                    <CubeIcon className="w-4 h-4 mr-1.5" />
+                                    <span className="text-xs">Cube</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* Sliders */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <div className="flex justify-between text-[10px] text-gray-400">
+                                    <span>Density</span>
+                                    <span>{(config.count / 1000).toFixed(1)}k</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="1000"
+                                    max="20000"
+                                    step="1000"
+                                    value={config.count}
+                                    onChange={(e) =>
+                                        setConfig((prev) => ({ ...prev, count: parseInt(e.target.value) }))
+                                    }
+                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <div className="flex justify-between text-[10px] text-gray-400">
+                                    <span>Size</span>
+                                    <span>{config.size.toFixed(2)}</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0.01"
+                                    max="0.2"
+                                    step="0.01"
+                                    value={config.size}
+                                    onChange={(e) =>
+                                        setConfig((prev) => ({ ...prev, size: parseFloat(e.target.value) }))
+                                    }
+                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                                />
+                            </div>
+                        </div>
+
+                        {/* Instructions */}
+                        <div className="mt-4 pt-3 border-t border-white/10 text-[9px] text-gray-500 text-center">
+                            {useMouseControl
+                                ? 'Touch & drag to control • Hold to implode • Release to explode'
+                                : 'Open palm to explode • Close fist to implode'}
+                        </div>
                     </div>
                 </div>
             </div>
