@@ -5,7 +5,7 @@ import ParticleScene from './components/ParticleScene';
 import HandTracker from './components/HandTracker';
 import { ShapeType, THEME_COLORS } from './types';
 import type { HandData, ParticleConfig } from './types';
-import { SparklesIcon, HeartIcon, CubeIcon, SunIcon, VideoCameraIcon } from '@heroicons/react/24/solid';
+import { SparklesIcon, HeartIcon, CubeIcon, GlobeAltIcon, VideoCameraIcon } from '@heroicons/react/24/solid';
 
 // Import necessary styles
 import './style.css';
@@ -151,7 +151,7 @@ const App: React.FC = () => {
                                     setConfig((prev) => ({ ...prev, shape: ShapeType.SATURN, color: '#f59e0b' }))
                                 }
                                 className={`flex items-center justify-center p-3 rounded-xl transition-all ${config.shape === ShapeType.SATURN ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'} border`}>
-                                <SunIcon className="w-5 h-5 mr-2" />
+                                <GlobeAltIcon className="w-5 h-5 mr-2" />
                                 <span className="text-sm">Saturn</span>
                             </button>
                             <button
