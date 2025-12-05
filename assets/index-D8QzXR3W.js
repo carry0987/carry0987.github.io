@@ -287,4 +287,4 @@ void main() {
         ::-webkit-scrollbar-track { background: rgba(0,0,0,0.2); }
         ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
         ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.3); }
-        `})]})}const to={fullscreen:!0},ro=dn(Ka);export{ro as default,to as handle};
+        `})]})}const to={fullscreen:!0};function ro(){return[{title:"Sky Metropolis"},{property:"og:title",content:"Sky Metropolis"},{name:"description",content:"Sky Metropolis - A city building simulation game with isometric 3D graphics."}]}const no=dn(Ka);export{no as default,to as handle,ro as meta};
