@@ -5,9 +5,10 @@ import type { HandData } from '../types';
 interface HandTrackerProps {
     onHandUpdate: (data: HandData) => void;
     onCameraReady: () => void;
+    onCameraError: () => void;
 }
 
-const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady }) => {
+const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady, onCameraError }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [error, setError] = useState<string | null>(null);
     const lastVideoTimeRef = useRef<number>(-1);
@@ -93,6 +94,7 @@ const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady }
                 }
             }
             setError(msg);
+            onCameraError();
         }
     };
 

@@ -1,11 +1,18 @@
-import React, { useState, useRef, Suspense } from 'react';
+import React, { useState, useRef, useEffect, useCallback, Suspense } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
 import ParticleScene from './components/ParticleScene';
 import HandTracker from './components/HandTracker';
 import { ShapeType, THEME_COLORS } from './types';
 import type { HandData, ParticleConfig } from './types';
-import { SparklesIcon, HeartIcon, CubeIcon, GlobeAltIcon, VideoCameraIcon } from '@heroicons/react/24/solid';
+import {
+    SparklesIcon,
+    HeartIcon,
+    CubeIcon,
+    GlobeAltIcon,
+    VideoCameraIcon,
+    CursorArrowRaysIcon
+} from '@heroicons/react/24/solid';
 
 // Import necessary styles
 import './style.css';
@@ -20,6 +27,9 @@ const App: React.FC = () => {
     });
 
     const [loading, setLoading] = useState(true);
+    const [useMouseControl, setUseMouseControl] = useState(false);
+    const [cameraAvailable, setCameraAvailable] = useState(true);
+    const canvasContainerRef = useRef<HTMLDivElement>(null);
 
     // Hand State (Mutable Ref to avoid React render loop lag)
     const handDataRef = useRef<HandData>({
@@ -34,6 +44,80 @@ const App: React.FC = () => {
         detected: false,
         state: 'Waiting...'
     });
+
+    // Mouse control handler
+    const handleMouseMove = useCallback(
+        (e: MouseEvent) => {
+            if (!useMouseControl || !canvasContainerRef.current) return;
+
+            const rect = canvasContainerRef.current.getBoundingClientRect();
+            const x = ((e.clientX - rect.left) / rect.width - 0.5) * 2 * 3;
+            const y = -((e.clientY - rect.top) / rect.height - 0.5) * 2 * 2;
+
+            handDataRef.current = {
+                ...handDataRef.current,
+                position: { x, y, z: 0 },
+                isPresent: true
+            };
+        },
+        [useMouseControl]
+    );
+
+    const handleMouseDown = useCallback(() => {
+        if (!useMouseControl) return;
+        handDataRef.current = {
+            ...handDataRef.current,
+            isOpen: false,
+            pinchStrength: 1
+        };
+        setUiHandState({ detected: true, state: 'Click (Implode)' });
+    }, [useMouseControl]);
+
+    const handleMouseUp = useCallback(() => {
+        if (!useMouseControl) return;
+        handDataRef.current = {
+            ...handDataRef.current,
+            isOpen: true,
+            pinchStrength: 0
+        };
+        setUiHandState({ detected: true, state: 'Release (Explode)' });
+    }, [useMouseControl]);
+
+    const handleMouseLeave = useCallback(() => {
+        if (!useMouseControl) return;
+        handDataRef.current = {
+            ...handDataRef.current,
+            isPresent: false
+        };
+        setUiHandState({ detected: false, state: 'Mouse outside' });
+    }, [useMouseControl]);
+
+    // Setup mouse event listeners
+    useEffect(() => {
+        const container = canvasContainerRef.current;
+        if (!container || !useMouseControl) return;
+
+        container.addEventListener('mousemove', handleMouseMove);
+        container.addEventListener('mousedown', handleMouseDown);
+        container.addEventListener('mouseup', handleMouseUp);
+        container.addEventListener('mouseleave', handleMouseLeave);
+
+        // Set initial state for mouse control
+        setUiHandState({ detected: false, state: 'Move mouse to control' });
+
+        return () => {
+            container.removeEventListener('mousemove', handleMouseMove);
+            container.removeEventListener('mousedown', handleMouseDown);
+            container.removeEventListener('mouseup', handleMouseUp);
+            container.removeEventListener('mouseleave', handleMouseLeave);
+        };
+    }, [useMouseControl, handleMouseMove, handleMouseDown, handleMouseUp, handleMouseLeave]);
+
+    const handleCameraError = useCallback(() => {
+        setCameraAvailable(false);
+        setUseMouseControl(true);
+        setLoading(false);
+    }, []);
 
     const handleHandUpdate = (data: HandData) => {
         // Update ref for 3D loop
@@ -54,7 +138,7 @@ const App: React.FC = () => {
     return (
         <div className="w-full h-screen relative bg-black overflow-hidden text-white select-none">
             {/* 3D Scene */}
-            <div className="absolute inset-0 z-0">
+            <div ref={canvasContainerRef} className="absolute inset-0 z-0">
                 <Canvas camera={{ position: [0, 0, 6], fov: 60 }} dpr={[1, 2]}>
                     <Suspense fallback={null}>
                         <color attach="background" args={['#050505']} />
@@ -84,7 +168,13 @@ const App: React.FC = () => {
             </div>
 
             {/* Hand Tracker Logic (Hidden or Minimised) */}
-            <HandTracker onHandUpdate={handleHandUpdate} onCameraReady={() => setLoading(false)} />
+            {!useMouseControl && (
+                <HandTracker
+                    onHandUpdate={handleHandUpdate}
+                    onCameraReady={() => setLoading(false)}
+                    onCameraError={handleCameraError}
+                />
+            )}
 
             {/* Loading Overlay */}
             {loading && (
@@ -107,6 +197,32 @@ const App: React.FC = () => {
                         <p className="text-xs text-gray-400 font-mono tracking-wider">WEBGL REACTIVE SYSTEM</p>
                     </div>
 
+                    {/* Control Mode Toggle */}
+                    {cameraAvailable && (
+                        <div className="flex items-center space-x-2 mb-4">
+                            <button
+                                onClick={() => setUseMouseControl(false)}
+                                className={`flex-1 flex items-center justify-center p-2 rounded-lg transition-all text-xs ${
+                                    !useMouseControl
+                                        ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
+                                        : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
+                                } border`}>
+                                <VideoCameraIcon className="w-4 h-4 mr-1" />
+                                Camera
+                            </button>
+                            <button
+                                onClick={() => setUseMouseControl(true)}
+                                className={`flex-1 flex items-center justify-center p-2 rounded-lg transition-all text-xs ${
+                                    useMouseControl
+                                        ? 'bg-purple-500/20 border-purple-500/50 text-purple-400'
+                                        : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
+                                } border`}>
+                                <CursorArrowRaysIcon className="w-4 h-4 mr-1" />
+                                Mouse
+                            </button>
+                        </div>
+                    )}
+
                     {/* Status Indicator */}
                     <div className="flex items-center space-x-3 mb-8 bg-white/5 p-3 rounded-lg border border-white/5">
                         <div
@@ -115,7 +231,11 @@ const App: React.FC = () => {
                             <span className="text-xs text-gray-400 uppercase">Status</span>
                             <span className="text-sm font-medium text-white">{uiHandState.state}</span>
                         </div>
-                        <VideoCameraIcon className="w-5 h-5 text-gray-500 ml-auto" />
+                        {useMouseControl ? (
+                            <CursorArrowRaysIcon className="w-5 h-5 text-purple-500 ml-auto" />
+                        ) : (
+                            <VideoCameraIcon className="w-5 h-5 text-gray-500 ml-auto" />
+                        )}
                     </div>
 
                     {/* Shape Selectors */}
@@ -201,11 +321,25 @@ const App: React.FC = () => {
                     </div>
 
                     <div className="mt-8 pt-6 border-t border-white/10 text-[10px] text-gray-600 leading-relaxed text-center">
-                        Instructions:
-                        <br />
-                        Open palm to explode particles
-                        <br />
-                        Close fist to implode particles
+                        {useMouseControl ? (
+                            <>
+                                Instructions (Mouse):
+                                <br />
+                                Move mouse to control position
+                                <br />
+                                Click & hold to implode particles
+                                <br />
+                                Release to explode particles
+                            </>
+                        ) : (
+                            <>
+                                Instructions (Camera):
+                                <br />
+                                Open palm to explode particles
+                                <br />
+                                Close fist to implode particles
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
