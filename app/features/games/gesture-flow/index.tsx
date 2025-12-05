@@ -440,7 +440,10 @@ const App: React.FC = () => {
                                 step="1000"
                                 value={config.count}
                                 onChange={(e) => setConfig((prev) => ({ ...prev, count: parseInt(e.target.value) }))}
-                                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                                className="range-slider-cyan"
+                                style={{
+                                    background: `linear-gradient(to right, #06b6d4 0%, #22d3ee ${((config.count - 1000) / (20000 - 1000)) * 100}%, #374151 ${((config.count - 1000) / (20000 - 1000)) * 100}%, #374151 100%)`
+                                }}
                             />
                         </div>
 
@@ -456,7 +459,10 @@ const App: React.FC = () => {
                                 step="0.01"
                                 value={config.size}
                                 onChange={(e) => setConfig((prev) => ({ ...prev, size: parseFloat(e.target.value) }))}
-                                className="w-full h-1 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                                className="range-slider-pink"
+                                style={{
+                                    background: `linear-gradient(to right, #ec4899 0%, #f472b6 ${((config.size - 0.01) / (0.2 - 0.01)) * 100}%, #374151 ${((config.size - 0.01) / (0.2 - 0.01)) * 100}%, #374151 100%)`
+                                }}
                             />
                         </div>
                     </div>
@@ -617,7 +623,10 @@ const App: React.FC = () => {
                                     onChange={(e) =>
                                         setConfig((prev) => ({ ...prev, count: parseInt(e.target.value) }))
                                     }
-                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-cyan-500"
+                                    className="range-slider-cyan"
+                                    style={{
+                                        background: `linear-gradient(to right, #06b6d4 0%, #22d3ee ${((config.count - 1000) / (20000 - 1000)) * 100}%, #374151 ${((config.count - 1000) / (20000 - 1000)) * 100}%, #374151 100%)`
+                                    }}
                                 />
                             </div>
                             <div className="space-y-1.5">
@@ -634,7 +643,10 @@ const App: React.FC = () => {
                                     onChange={(e) =>
                                         setConfig((prev) => ({ ...prev, size: parseFloat(e.target.value) }))
                                     }
-                                    className="w-full h-1.5 bg-gray-700 rounded-lg appearance-none cursor-pointer accent-pink-500"
+                                    className="range-slider-pink"
+                                    style={{
+                                        background: `linear-gradient(to right, #ec4899 0%, #f472b6 ${((config.size - 0.01) / (0.2 - 0.01)) * 100}%, #374151 ${((config.size - 0.01) / (0.2 - 0.01)) * 100}%, #374151 100%)`
+                                    }}
                                 />
                             </div>
                         </div>
