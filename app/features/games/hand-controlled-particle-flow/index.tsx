@@ -3,7 +3,8 @@ import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Stars } from '@react-three/drei';
 import ParticleScene from './components/ParticleScene';
 import HandTracker from './components/HandTracker';
-import { type HandData, ShapeType, type ParticleConfig, THEME_COLORS } from './types';
+import { ShapeType, THEME_COLORS } from './types';
+import type { HandData, ParticleConfig } from './types';
 import { SparklesIcon, HeartIcon, CubeIcon, SunIcon, VideoCameraIcon } from '@heroicons/react/24/solid';
 
 // Import necessary styles
