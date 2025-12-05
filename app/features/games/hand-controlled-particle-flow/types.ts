@@ -2,7 +2,7 @@ export enum ShapeType {
     NEBULA = 'NEBULA',
     HEART = 'HEART',
     SPHERE = 'SPHERE',
-    RING = 'RING'
+    SATURN = 'SATURN'
 }
 
 export interface HandData {

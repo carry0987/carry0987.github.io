@@ -148,11 +148,11 @@ const App: React.FC = () => {
                             </button>
                             <button
                                 onClick={() =>
-                                    setConfig((prev) => ({ ...prev, shape: ShapeType.RING, color: '#f59e0b' }))
+                                    setConfig((prev) => ({ ...prev, shape: ShapeType.SATURN, color: '#f59e0b' }))
                                 }
-                                className={`flex items-center justify-center p-3 rounded-xl transition-all ${config.shape === ShapeType.RING ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'} border`}>
+                                className={`flex items-center justify-center p-3 rounded-xl transition-all ${config.shape === ShapeType.SATURN ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'} border`}>
                                 <SunIcon className="w-5 h-5 mr-2" />
-                                <span className="text-sm">Ring</span>
+                                <span className="text-sm">Saturn</span>
                             </button>
                             <button
                                 onClick={() =>

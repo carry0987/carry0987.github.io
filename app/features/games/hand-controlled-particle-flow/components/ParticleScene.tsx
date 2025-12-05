@@ -52,7 +52,7 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
                 y *= r;
                 z *= r;
                 y += 1; // Center it visually
-            } else if (shape === ShapeType.RING) {
+            } else if (shape === ShapeType.SATURN) {
                 const t = Math.random() * Math.PI * 2;
                 const r = 3 + Math.random() * 1;
                 x = r * Math.cos(t);
