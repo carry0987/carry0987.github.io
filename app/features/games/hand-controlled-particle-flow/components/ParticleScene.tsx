@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { type HandData, ShapeType } from '../types';
 
 interface ParticleSceneProps {
-    handData: React.MutableRefObject<HandData>;
+    handData: React.RefObject<HandData>;
     count: number;
     size: number;
     shape: ShapeType;
@@ -159,13 +159,8 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
     return (
         <points ref={pointsRef}>
             <bufferGeometry>
-                <bufferAttribute
-                    attach="attributes-position"
-                    count={positions.length / 3}
-                    array={positions}
-                    itemSize={3}
-                />
-                <bufferAttribute attach="attributes-color" count={colors.length / 3} array={colors} itemSize={3} />
+                <bufferAttribute attach="attributes-position" args={[positions, 3]} />
+                <bufferAttribute attach="attributes-color" args={[colors, 3]} />
             </bufferGeometry>
             <pointsMaterial
                 size={size}

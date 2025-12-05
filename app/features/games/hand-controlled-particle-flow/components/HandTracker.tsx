@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { HandLandmarker, FilesetResolver, type NormalizedLandmark } from '@mediapipe/tasks-vision';
-import { type HandData } from '../types';
+import type { HandData } from '../types';
 
 interface HandTrackerProps {
     onHandUpdate: (data: HandData) => void;
@@ -59,13 +59,21 @@ const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady }
 
     const startWebcam = async () => {
         try {
-            const stream = await navigator.mediaDevices.getUserMedia({
-                video: {
-                    width: 640,
-                    height: 480,
-                    facingMode: 'user'
-                }
-            });
+            let stream: MediaStream;
+            // Try with preferred constraints first (User facing, specific resolution)
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        facingMode: 'user'
+                    }
+                });
+            } catch (err) {
+                console.warn('Preferred camera constraints failed, trying fallback...', err);
+                // Fallback to any available video device
+                stream = await navigator.mediaDevices.getUserMedia({ video: true });
+            }
 
             if (videoRef.current) {
                 videoRef.current.srcObject = stream;
@@ -76,7 +84,17 @@ const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady }
             }
         } catch (err) {
             console.error('Camera error:', err);
-            setError('Cannot access camera. Please allow permission.');
+            let msg = 'Cannot access camera. Please allow permission.';
+            if (err instanceof Error) {
+                if (err.name === 'NotFoundError' || err.message.includes('device not found')) {
+                    msg = 'Camera device not found. Please ensure a camera is connected.';
+                } else if (err.name === 'NotAllowedError') {
+                    msg = 'Camera permission denied. Please allow access in your browser settings.';
+                } else if (err.name === 'NotReadableError') {
+                    msg = 'Camera may be in use by another application.';
+                }
+            }
+            setError(msg);
         }
     };
 
@@ -87,19 +105,26 @@ const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady }
 
         if (videoRef.current.currentTime !== lastVideoTimeRef.current) {
             lastVideoTimeRef.current = videoRef.current.currentTime;
-            const results = handLandmarkerRef.current.detectForVideo(videoRef.current, startTimeMs);
+            // Ensure video has dimensions before detecting
+            if (videoRef.current.videoWidth > 0 && videoRef.current.videoHeight > 0) {
+                try {
+                    const results = handLandmarkerRef.current.detectForVideo(videoRef.current, startTimeMs);
 
-            if (results.landmarks && results.landmarks.length > 0) {
-                const landmarks = results.landmarks[0];
-                processLandmarks(landmarks);
-            } else {
-                // No hand detected
-                onHandUpdate({
-                    isPresent: false,
-                    isOpen: true,
-                    position: { x: 0, y: 0, z: 0 },
-                    pinchStrength: 0
-                });
+                    if (results.landmarks && results.landmarks.length > 0) {
+                        const landmarks = results.landmarks[0];
+                        processLandmarks(landmarks);
+                    } else {
+                        // No hand detected
+                        onHandUpdate({
+                            isPresent: false,
+                            isOpen: true,
+                            position: { x: 0, y: 0, z: 0 },
+                            pinchStrength: 0
+                        });
+                    }
+                } catch (e) {
+                    console.warn('Detection error (skipped frame):', e);
+                }
             }
         }
 
@@ -111,12 +136,12 @@ const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady }
 
         // 1. Calculate center (Wrist + Middle Finger Base)
         const wrist = landmarks[0];
-        const middleBase = landmarks[9];
+
         // Map to -1 to 1 range for 3D space
         // Flip X because webcam is mirrored
         const x = (0.5 - wrist.x) * 2 * 3; // Scale up for 3D scene coverage
         const y = -(wrist.y - 0.5) * 2 * 2; // Invert Y
-        const z = 0; // Keep Z separate or use wrist.z if accurate enough (usually noisy)
+        const z = 0; // Keep Z separate or use wrist.z if accurate enough
 
         // 2. Detect Open/Closed state
         // Measure distance between Wrist(0) and Middle Finger Tip(12)
@@ -124,7 +149,6 @@ const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady }
         const distance = Math.hypot(middleTip.x - wrist.x, middleTip.y - wrist.y);
 
         // Thresholds need tuning based on hand size, but ratio is safer
-        // Compare full finger length vs curled
         const isOpen = distance > 0.2; // Rough heuristic
 
         onHandUpdate({
@@ -138,7 +162,9 @@ const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady }
     return (
         <div className="fixed bottom-4 left-4 z-50">
             {error && (
-                <div className="bg-red-500/80 text-white p-2 rounded-lg text-sm mb-2 backdrop-blur-md">{error}</div>
+                <div className="bg-red-500/80 text-white p-2 rounded-lg text-sm mb-2 backdrop-blur-md max-w-xs">
+                    {error}
+                </div>
             )}
             <div className="relative w-32 h-24 rounded-lg overflow-hidden border border-white/20 shadow-lg bg-black/50">
                 <video
