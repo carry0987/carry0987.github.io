@@ -218,4 +218,18 @@ function App() {
 // Mark this route as fullscreen (no navbar, footer, background)
 export const handle = { fullscreen: true };
 
+export function meta() {
+    return [
+        { title: 'Sky Metropolis' },
+        {
+            property: 'og:title',
+            content: 'Sky Metropolis'
+        },
+        {
+            name: 'description',
+            content: 'Sky Metropolis - A city building simulation game with isometric 3D graphics.'
+        }
+    ];
+}
+
 export default App;

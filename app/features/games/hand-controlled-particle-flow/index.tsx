@@ -216,4 +216,19 @@ const App: React.FC = () => {
 // Mark this route as fullscreen (no navbar, footer, background)
 export const handle = { fullscreen: true };
 
+export function meta() {
+    return [
+        { title: 'Hand Controlled Particle Flow' },
+        {
+            property: 'og:title',
+            content: 'Hand Controlled Particle Flow'
+        },
+        {
+            name: 'description',
+            content:
+                'Hand Controlled Particle Flow - Control mesmerizing particle effects using hand gestures via webcam.'
+        }
+    ];
+}
+
 export default App;
