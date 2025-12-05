@@ -491,19 +491,19 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* Mobile UI Controls */}
-            <div className="md:hidden absolute bottom-0 left-0 right-0 z-40">
-                {/* Toggle Button */}
-                <button
-                    onClick={() => setPanelOpen(!panelOpen)}
-                    className="absolute bottom-4 right-4 w-12 h-12 bg-black/60 backdrop-blur-xl border border-white/20 rounded-full flex items-center justify-center shadow-lg z-50">
-                    {panelOpen ? (
-                        <XMarkIcon className="w-6 h-6 text-white" />
-                    ) : (
-                        <Bars3Icon className="w-6 h-6 text-white" />
-                    )}
-                </button>
+            {/* Mobile Toggle Button - Fixed position to stay above camera input */}
+            <button
+                onClick={() => setPanelOpen(!panelOpen)}
+                className={`md:hidden fixed right-4 w-12 h-12 bg-black/20 border border-white/20 rounded-full flex items-center justify-center shadow-lg z-60 transition-all duration-300 bottom-4`}>
+                {panelOpen ? (
+                    <XMarkIcon className="w-6 h-6 text-white" />
+                ) : (
+                    <Bars3Icon className="w-6 h-6 text-white" />
+                )}
+            </button>
 
+            {/* Mobile UI Controls */}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
                 {/* Mobile Panel */}
                 <div
                     className={`transform transition-transform duration-300 ease-out ${
