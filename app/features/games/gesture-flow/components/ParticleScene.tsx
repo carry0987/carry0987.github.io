@@ -15,6 +15,12 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
     const pointsRef = useRef<THREE.Points>(null);
     const { viewport } = useThree();
 
+    // Adjust size for mobile devices (smaller viewport width)
+    const isMobile = viewport.width < 6;
+    const adjustedSize = isMobile ? size * 0.6 : size;
+    // Scale factor for shapes on mobile
+    const shapeScale = isMobile ? 0.5 : 1;
+
     // Create buffers
     const { positions, originalPositions, colors, randoms } = useMemo(() => {
         const pos = new Float32Array(count * 3);
@@ -33,7 +39,7 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
                 // Sphere distribution
                 const theta = Math.random() * Math.PI * 2;
                 const phi = Math.acos(Math.random() * 2 - 1);
-                const r = Math.pow(Math.random(), 1 / 3) * 4; // Biased distribution
+                const r = Math.pow(Math.random(), 1 / 3) * 4 * shapeScale; // Biased distribution
                 x = r * Math.sin(phi) * Math.cos(theta);
                 y = r * Math.sin(phi) * Math.sin(theta);
                 z = r * Math.cos(phi);
@@ -42,24 +48,24 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
                 // x = 16sin^3(t)
                 // y = 13cos(t) - 5cos(2t) - 2cos(3t) - cos(4t)
                 const t = Math.random() * Math.PI * 2;
-                const scale = 0.15;
+                const scale = 0.15 * shapeScale;
                 x = scale * (16 * Math.pow(Math.sin(t), 3));
                 y = scale * (13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-                z = (Math.random() - 0.5) * 2; // Thickness
+                z = (Math.random() - 0.5) * 2 * shapeScale; // Thickness
                 // Randomize inside volume
                 const r = Math.random();
                 x *= r;
                 y *= r;
                 z *= r;
-                y += 1; // Center it visually
+                y += 1 * shapeScale; // Center it visually
             } else if (shape === ShapeType.SATURN) {
                 // Saturn: sphere (planet) + ring
                 const isRing = Math.random() < 0.4; // 40% particles form the ring
                 if (isRing) {
                     // Ring around the planet (tilted)
                     const t = Math.random() * Math.PI * 2;
-                    const ringRadius = 2.5 + Math.random() * 1.2; // Ring from 2.5 to 3.7 radius
-                    const ringThickness = (Math.random() - 0.5) * 0.15; // Thin ring
+                    const ringRadius = (2.5 + Math.random() * 1.2) * shapeScale; // Ring from 2.5 to 3.7 radius
+                    const ringThickness = (Math.random() - 0.5) * 0.15 * shapeScale; // Thin ring
                     x = ringRadius * Math.cos(t);
                     z = ringRadius * Math.sin(t);
                     y = ringThickness + x * 0.3; // Tilt the ring
@@ -67,16 +73,16 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
                     // Sphere (planet body)
                     const phi = Math.acos(2 * Math.random() - 1);
                     const theta = Math.random() * Math.PI * 2;
-                    const sphereRadius = 1.5 * Math.cbrt(Math.random()); // Filled sphere
+                    const sphereRadius = 1.5 * Math.cbrt(Math.random()) * shapeScale; // Filled sphere
                     x = sphereRadius * Math.sin(phi) * Math.cos(theta);
                     y = sphereRadius * Math.sin(phi) * Math.sin(theta);
                     z = sphereRadius * Math.cos(phi);
                 }
             } else {
                 // Cube / Default
-                x = (Math.random() - 0.5) * 4;
-                y = (Math.random() - 0.5) * 4;
-                z = (Math.random() - 0.5) * 4;
+                x = (Math.random() - 0.5) * 4 * shapeScale;
+                y = (Math.random() - 0.5) * 4 * shapeScale;
+                z = (Math.random() - 0.5) * 4 * shapeScale;
             }
 
             pos[i * 3] = x;
@@ -95,7 +101,7 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
             rands[i] = Math.random();
         }
         return { positions: pos, originalPositions: orig, colors: cols, randoms: rands };
-    }, [count, shape, color]); // Re-calculate when these change
+    }, [count, shape, color, shapeScale]); // Re-calculate when these change
 
     // Temporary vectors for calculation to avoid GC
     const tempVec3 = new THREE.Vector3();
@@ -177,7 +183,7 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
                 <bufferAttribute attach="attributes-color" args={[colors, 3]} />
             </bufferGeometry>
             <pointsMaterial
-                size={size}
+                size={adjustedSize}
                 vertexColors
                 transparent
                 opacity={0.8}
