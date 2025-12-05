@@ -544,7 +544,7 @@ const App: React.FC = () => {
                                             color: THEME_COLORS.primary
                                         }))
                                     }
-                                    className={`flex-shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.NEBULA ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'bg-white/5 border-transparent text-gray-400'} border`}>
+                                    className={`shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.NEBULA ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400' : 'bg-white/5 border-transparent text-gray-400'} border`}>
                                     <SparklesIcon className="w-4 h-4 mr-1.5" />
                                     <span className="text-xs">Nebula</span>
                                 </button>
@@ -556,7 +556,7 @@ const App: React.FC = () => {
                                             color: THEME_COLORS.secondary
                                         }))
                                     }
-                                    className={`flex-shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.HEART ? 'bg-pink-500/20 border-pink-500/50 text-pink-400' : 'bg-white/5 border-transparent text-gray-400'} border`}>
+                                    className={`shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.HEART ? 'bg-pink-500/20 border-pink-500/50 text-pink-400' : 'bg-white/5 border-transparent text-gray-400'} border`}>
                                     <HeartIcon className="w-4 h-4 mr-1.5" />
                                     <span className="text-xs">Heart</span>
                                 </button>
@@ -564,7 +564,7 @@ const App: React.FC = () => {
                                     onClick={() =>
                                         setConfig((prev) => ({ ...prev, shape: ShapeType.SATURN, color: '#f59e0b' }))
                                     }
-                                    className={`flex-shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.SATURN ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'bg-white/5 border-transparent text-gray-400'} border`}>
+                                    className={`shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.SATURN ? 'bg-amber-500/20 border-amber-500/50 text-amber-400' : 'bg-white/5 border-transparent text-gray-400'} border`}>
                                     <GlobeAltIcon className="w-4 h-4 mr-1.5" />
                                     <span className="text-xs">Saturn</span>
                                 </button>
@@ -572,7 +572,7 @@ const App: React.FC = () => {
                                     onClick={() =>
                                         setConfig((prev) => ({ ...prev, shape: ShapeType.SPHERE, color: '#ffffff' }))
                                     }
-                                    className={`flex-shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.SPHERE ? 'bg-white/20 border-white/50 text-white' : 'bg-white/5 border-transparent text-gray-400'} border`}>
+                                    className={`shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all ${config.shape === ShapeType.SPHERE ? 'bg-white/20 border-white/50 text-white' : 'bg-white/5 border-transparent text-gray-400'} border`}>
                                     <CubeIcon className="w-4 h-4 mr-1.5" />
                                     <span className="text-xs">Cube</span>
                                 </button>
