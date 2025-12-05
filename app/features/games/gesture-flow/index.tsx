@@ -190,7 +190,11 @@ const App: React.FC = () => {
         handleTouchEnd
     ]);
 
+    // Track if camera error has occurred (permission denied, etc.)
+    const cameraErrorOccurredRef = useRef(false);
+
     const handleCameraError = useCallback(() => {
+        cameraErrorOccurredRef.current = true;
         setCameraAvailable(false);
         setUseMouseControl(true);
         setLoading(false);
@@ -199,6 +203,11 @@ const App: React.FC = () => {
     // Check camera availability periodically
     useEffect(() => {
         const checkCameraAvailability = async () => {
+            // If camera error occurred (permission denied, etc.), don't auto-restore
+            if (cameraErrorOccurredRef.current) {
+                return;
+            }
+
             try {
                 const devices = await navigator.mediaDevices.enumerateDevices();
                 const hasCamera = devices.some((device) => device.kind === 'videoinput');
@@ -220,6 +229,9 @@ const App: React.FC = () => {
 
         // Listen for device changes (plug/unplug)
         const handleDeviceChange = () => {
+            // Reset error state on device change to allow re-detection
+            // This handles the case when user plugs in a new camera
+            cameraErrorOccurredRef.current = false;
             checkCameraAvailability();
         };
 
