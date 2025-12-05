@@ -74,9 +74,9 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
                 }
             } else {
                 // Cube / Default
-                x = (Math.random() - 0.5) * 8;
-                y = (Math.random() - 0.5) * 8;
-                z = (Math.random() - 0.5) * 8;
+                x = (Math.random() - 0.5) * 4;
+                y = (Math.random() - 0.5) * 4;
+                z = (Math.random() - 0.5) * 4;
             }
 
             pos[i * 3] = x;
