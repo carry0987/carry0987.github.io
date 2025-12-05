@@ -109,10 +109,10 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFileSelected, isUploading,
         <div className="w-full max-w-2xl mx-auto mb-8 relative">
             {/* Full screen overlay when dragging */}
             {isDragActive && !isUploading && (
-                <div className="fixed inset-0 z-50 bg-indigo-600/10 backdrop-blur-sm border-4 border-indigo-600 border-dashed m-4 rounded-3xl flex items-center justify-center pointer-events-none">
-                    <div className="bg-white p-6 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce">
-                        <UploadCloud className="w-10 h-10 text-indigo-600" />
-                        <span className="text-2xl font-bold text-indigo-900">Drop image to upload!</span>
+                <div className="fixed inset-0 z-50 bg-tech-600/10 backdrop-blur-sm border-4 border-tech-500 border-dashed m-4 rounded-3xl flex items-center justify-center pointer-events-none">
+                    <div className="bg-dark-card p-6 rounded-2xl shadow-xl flex items-center gap-4 animate-bounce border border-tech-500/30">
+                        <UploadCloud className="w-10 h-10 text-tech-400" />
+                        <span className="text-2xl font-bold text-white">Drop image to upload!</span>
                     </div>
                 </div>
             )}
@@ -125,11 +125,11 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFileSelected, isUploading,
           flex flex-col items-center justify-center min-h-80
           ${
               isDragActive
-                  ? 'border-indigo-500 bg-indigo-50 scale-[1.02] shadow-xl ring-4 ring-indigo-200'
-                  : 'border-slate-300 hover:border-indigo-400 hover:bg-slate-50 bg-white hover:shadow-lg'
+                  ? 'border-tech-500 bg-tech-500/10 scale-[1.02] shadow-xl ring-4 ring-tech-500/20'
+                  : 'border-white/20 hover:border-tech-400/50 hover:bg-dark-card/50 bg-dark-card/30 hover:shadow-lg'
           }
-          ${isUploading ? 'border-indigo-200 cursor-default' : ''}
-          ${error ? 'border-red-300 bg-red-50' : ''}
+          ${isUploading ? 'border-tech-500/30 cursor-default' : ''}
+          ${error ? 'border-red-500/50 bg-red-500/10' : ''}
         `}>
                 <input
                     type="file"
@@ -141,27 +141,27 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFileSelected, isUploading,
                 />
 
                 {isUploading ? (
-                    <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-white">
+                    <div className="flex flex-col items-center justify-center w-full h-full absolute inset-0 bg-dark-card">
                         {previewUrl && (
                             <div className="absolute inset-0 z-0">
                                 <img
                                     src={previewUrl}
                                     alt="Uploading preview"
-                                    className="w-full h-full object-cover opacity-30 blur-sm scale-105"
+                                    className="w-full h-full object-cover opacity-20 blur-sm scale-105"
                                 />
-                                <div className="absolute inset-0 bg-indigo-900/10" />
+                                <div className="absolute inset-0 bg-dark-card/50" />
                             </div>
                         )}
 
-                        <div className="relative z-10 bg-white/90 backdrop-blur-md p-8 rounded-2xl shadow-lg border border-indigo-100 flex flex-col items-center">
+                        <div className="relative z-10 bg-dark-card/90 backdrop-blur-md p-8 rounded-2xl shadow-lg border border-tech-500/30 flex flex-col items-center">
                             <div className="relative">
-                                <div className="w-16 h-16 border-4 border-indigo-100 border-t-indigo-600 rounded-full animate-spin"></div>
+                                <div className="w-16 h-16 border-4 border-tech-500/20 border-t-tech-500 rounded-full animate-spin"></div>
                                 <div className="absolute inset-0 flex items-center justify-center">
-                                    <UploadCloud className="w-6 h-6 text-indigo-600" />
+                                    <UploadCloud className="w-6 h-6 text-tech-400" />
                                 </div>
                             </div>
-                            <h3 className="text-lg font-bold text-slate-800 mt-4">Uploading...</h3>
-                            <p className="text-sm text-slate-500 mt-1">Hold tight, almost there!</p>
+                            <h3 className="text-lg font-bold text-white mt-4">Uploading...</h3>
+                            <p className="text-sm text-slate-400 mt-1">Hold tight, almost there!</p>
                         </div>
                     </div>
                 ) : (
@@ -169,47 +169,49 @@ export const DropZone: React.FC<DropZoneProps> = ({ onFileSelected, isUploading,
                         <div
                             className={`
                w-24 h-24 rounded-full flex items-center justify-center mb-6 transition-all duration-500
-               ${isDragActive ? 'bg-indigo-100 scale-110 rotate-3' : 'bg-slate-50 group-hover:bg-indigo-50 group-hover:scale-105'}
-               ${error ? 'bg-red-100' : ''}
+               ${isDragActive ? 'bg-tech-500/20 scale-110 rotate-3' : 'bg-white/5 group-hover:bg-tech-500/10 group-hover:scale-105'}
+               ${error ? 'bg-red-500/20' : ''}
              `}>
                             {error ? (
-                                <AlertCircle className="w-10 h-10 text-red-500" />
+                                <AlertCircle className="w-10 h-10 text-red-400" />
                             ) : (
                                 <UploadCloud
-                                    className={`w-12 h-12 transition-colors duration-300 ${isDragActive ? 'text-indigo-600' : 'text-slate-400 group-hover:text-indigo-500'}`}
+                                    className={`w-12 h-12 transition-colors duration-300 ${isDragActive ? 'text-tech-400' : 'text-slate-500 group-hover:text-tech-400'}`}
                                 />
                             )}
                         </div>
 
                         {error ? (
-                            <div className="text-red-600 mb-2 font-medium bg-red-100 px-4 py-2 rounded-lg">{error}</div>
+                            <div className="text-red-400 mb-2 font-medium bg-red-500/20 px-4 py-2 rounded-lg">
+                                {error}
+                            </div>
                         ) : (
-                            <h3 className="text-2xl font-bold text-slate-800 mb-2">
+                            <h3 className="text-2xl font-bold text-white mb-2">
                                 {isDragActive ? "Drop it like it's hot!" : 'Drag & Drop your image'}
                             </h3>
                         )}
 
-                        <p className="text-slate-500 mb-8 max-w-sm mx-auto leading-relaxed text-base">
+                        <p className="text-slate-400 mb-8 max-w-sm mx-auto leading-relaxed text-base">
                             Supports JPG, PNG, GIF up to 10MB.
                             <br />
                             Or{' '}
-                            <span className="text-indigo-600 font-semibold underline decoration-indigo-300 underline-offset-4 decoration-2">
+                            <span className="text-tech-400 font-semibold underline decoration-tech-500/50 underline-offset-4 decoration-2">
                                 browse
                             </span>{' '}
                             to choose a file.
                         </p>
 
                         <div className="flex gap-2">
-                            <span className="px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-500 border border-slate-200">
+                            <span className="px-3 py-1 bg-white/5 rounded-full text-xs font-semibold text-slate-400 border border-white/10">
                                 JPG
                             </span>
-                            <span className="px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-500 border border-slate-200">
+                            <span className="px-3 py-1 bg-white/5 rounded-full text-xs font-semibold text-slate-400 border border-white/10">
                                 PNG
                             </span>
-                            <span className="px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-500 border border-slate-200">
+                            <span className="px-3 py-1 bg-white/5 rounded-full text-xs font-semibold text-slate-400 border border-white/10">
                                 GIF
                             </span>
-                            <span className="px-3 py-1 bg-slate-100 rounded-full text-xs font-semibold text-slate-500 border border-slate-200">
+                            <span className="px-3 py-1 bg-white/5 rounded-full text-xs font-semibold text-slate-400 border border-white/10">
                                 WEBP
                             </span>
                         </div>

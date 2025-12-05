@@ -1,18 +1,15 @@
-body {
-    font-family: 'Inter', sans-serif;
-}
 /* Custom scrollbar for better aesthetics */
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
 }
 ::-webkit-scrollbar-track {
-    background: #f1f5f9;
+    background: rgb(15 23 42);
 }
 ::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
+    background: rgb(51 65 85);
     border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-    background: #94a3b8;
+    background: rgb(71 85 105);
 }
