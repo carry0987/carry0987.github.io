@@ -213,7 +213,6 @@ const App: React.FC = () => {
     );
 };
 
-
 // Mark this route as fullscreen (no navbar, footer, background)
 export const handle = { fullscreen: true };
 
