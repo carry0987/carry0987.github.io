@@ -20,7 +20,7 @@ const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady }
         const setupMediaPipe = async () => {
             try {
                 const vision = await FilesetResolver.forVisionTasks(
-                    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@0.10.0/wasm'
+                    'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-visionwasm'
                 );
 
                 if (!isMounted) return;
