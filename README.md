@@ -29,7 +29,7 @@ A modern, responsive personal portfolio website built with **React Router v7**, 
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Node.js 18+
+- Node.js 22+
 - pnpm (recommended) or npm
 
 ### Installation
