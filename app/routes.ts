@@ -7,6 +7,7 @@ export default [
     route('/games/shotball', './features/games/shotball/index.tsx'),
     route('/games/zenvoid', './features/games/zenvoid/index.tsx'),
     route('/games/sky-metropolis', './features/games/sky-metropolis/index.tsx'),
+    route('/games/hand-controlled-particle-flow', './features/games/hand-controlled-particle-flow/index.tsx'),
     /* Tools */
     route('/tools/svg-generator', './features/tools/svg-generator/index.tsx'),
     route('/tools/focusflow-widget', './features/tools/focusflow-widget/index.tsx'),

@@ -35,6 +35,13 @@ export default function GamesPage() {
             tech: ['Three.js', 'WebGL'],
             genre: '3D',
             playUrl: '/games/sky-metropolis'
+        },
+        {
+            title: 'Hand Controlled Particle Flow',
+            desc: 'An interactive 3D particle system controlled by your hand gestures through webcam tracking.',
+            tech: ['Three.js', 'MediaPipe', 'Hand Tracking'],
+            genre: '3D',
+            playUrl: '/games/hand-controlled-particle-flow'
         }
     ];
 
