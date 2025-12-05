@@ -202,6 +202,16 @@ const App: React.FC = () => {
 
     // Check camera availability periodically
     useEffect(() => {
+        // Check if mediaDevices API is available (requires secure context: HTTPS or localhost)
+        if (!navigator.mediaDevices) {
+            console.warn('mediaDevices API not available (requires HTTPS or localhost)');
+            cameraErrorOccurredRef.current = true;
+            setCameraAvailable(false);
+            setUseMouseControl(true);
+            setLoading(false);
+            return;
+        }
+
         const checkCameraAvailability = async () => {
             // If camera error occurred (permission denied, etc.), don't auto-restore
             if (cameraErrorOccurredRef.current) {

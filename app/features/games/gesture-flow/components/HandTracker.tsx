@@ -57,6 +57,13 @@ const HandTracker: React.FC<HandTrackerProps> = ({ onHandUpdate, onCameraReady, 
     }, []);
 
     const startWebcam = async () => {
+        // Check if mediaDevices API is available (requires secure context: HTTPS or localhost)
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+            setError('Camera API not available. Please use HTTPS or localhost.');
+            onCameraError();
+            return;
+        }
+
         try {
             let stream: MediaStream;
             // Try with preferred constraints first (User facing, specific resolution)
