@@ -1,6 +1,6 @@
 import type { Route } from './+types/tools';
 import { Link } from 'react-router';
-import { Wrench, ArrowRight, Image, Timer } from 'lucide-react';
+import { Wrench, ArrowRight, Image, Timer, Upload } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: 'Tools | Carry' }, { name: 'description', content: 'A collection of useful tools' }];
@@ -23,6 +23,14 @@ export default function ToolsPage() {
             category: 'Productivity',
             icon: Timer,
             toolUrl: '/tools/focusflow-widget'
+        },
+        {
+            title: 'Imgur Drop',
+            desc: 'Drag and drop images to upload them instantly to Imgur. Get shareable links with just one click.',
+            tech: ['React', 'Imgur API', 'Drag & Drop'],
+            category: 'Utility',
+            icon: Upload,
+            toolUrl: '/tools/imgur-drop'
         }
     ];
 
