@@ -22,22 +22,9 @@ A modern, responsive personal portfolio website built with **React Router v7**, 
 - **Home** - Introduction with animated typewriter and social links
 - **Projects** - Pinned projects + live GitHub repos fetched via REST API
 - **Skills** - Technical skill showcase organized by category
-- **Games** - Browser-based game collection (BlackHole, ShotBall, Zen Void, Sky Metropolis)
-- **Tools** - AI-powered tools (SVG Generator)
+- **Games** - Browser-based game collection
+- **Tools** - Utility tools collection
 - **Contact** - Contact information and social media links
-
-### Games
-| Game | Description | Tech Stack |
-|------|-------------|------------|
-| **BlackHole** | Interactive particle simulation with black hole physics | Canvas, Particle System |
-| **ShotBall** | Physics-based gravity simulation with bouncing balls | Canvas, Physics Engine |
-| **Zen Void** | Relaxing 3D cyberpunk experience with multiple themes | Three.js, WebGL |
-| **Sky Metropolis** | Isometric city builder with economy simulation | React Three Fiber, Three.js |
-
-### Tools
-| Tool | Description | Tech Stack |
-|------|-------------|------------|
-| **SVG Generator** | AI-powered SVG artwork generator using Google Gemini | Google Gemini API, React |
 
 ## 🚀 Getting Started
 
@@ -80,42 +67,6 @@ pnpm dev
 | **AI Integration** | Google Gemini API |
 | **Icons** | Lucide React |
 | **Package Manager** | pnpm |
-
-## 🎮 Game Features
-
-### BlackHole
-- Multiple black holes with gravitational attraction
-- Particle spawning and absorption physics
-- Click to create new black holes
-- Collision detection and merging mechanics
-
-### ShotBall
-- Physics-based ball simulation
-- Gravity and bounce effects
-- Interactive spawning system
-
-### Zen Void
-- 5 visual themes: Cyberpunk, Matrix, Vaporwave, Golden, Ice
-- Floating geometric objects and text sprites
-- Mouse-controlled camera movement
-- Keyboard shortcuts (Space for speed boost, C for theme change)
-- "Slap" interaction with floating text
-
-### Sky Metropolis
-- Isometric 3D city building game
-- Multiple building types: Residential, Commercial, Industrial, Parks
-- Economy simulation with income and population mechanics
-- Real-time day progression system
-- Interactive tile-based placement
-
-## 🔧 Tools Features
-
-### SVG Generator
-- AI-powered SVG generation using Google Gemini
-- Custom prompt input for artwork creation
-- Live preview of generated SVG
-- Download functionality for generated artwork
-- Secure API key storage in localStorage
 
 ## 📄 License
 
