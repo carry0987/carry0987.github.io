@@ -53,11 +53,25 @@ const ParticleScene: React.FC<ParticleSceneProps> = ({ handData, count, size, sh
                 z *= r;
                 y += 1; // Center it visually
             } else if (shape === ShapeType.SATURN) {
-                const t = Math.random() * Math.PI * 2;
-                const r = 3 + Math.random() * 1;
-                x = r * Math.cos(t);
-                z = r * Math.sin(t);
-                y = (Math.random() - 0.5) * 1;
+                // Saturn: sphere (planet) + ring
+                const isRing = Math.random() < 0.4; // 40% particles form the ring
+                if (isRing) {
+                    // Ring around the planet (tilted)
+                    const t = Math.random() * Math.PI * 2;
+                    const ringRadius = 2.5 + Math.random() * 1.2; // Ring from 2.5 to 3.7 radius
+                    const ringThickness = (Math.random() - 0.5) * 0.15; // Thin ring
+                    x = ringRadius * Math.cos(t);
+                    z = ringRadius * Math.sin(t);
+                    y = ringThickness + x * 0.3; // Tilt the ring
+                } else {
+                    // Sphere (planet body)
+                    const phi = Math.acos(2 * Math.random() - 1);
+                    const theta = Math.random() * Math.PI * 2;
+                    const sphereRadius = 1.5 * Math.cbrt(Math.random()); // Filled sphere
+                    x = sphereRadius * Math.sin(phi) * Math.cos(theta);
+                    y = sphereRadius * Math.sin(phi) * Math.sin(theta);
+                    z = sphereRadius * Math.cos(phi);
+                }
             } else {
                 // Cube / Default
                 x = (Math.random() - 0.5) * 8;
