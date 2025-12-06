@@ -1,5 +1,5 @@
-import React, { useRef, useMemo } from 'react';
-import { Canvas, useFrame } from '@react-three/fiber';
+import React, { useRef, useMemo, useState, useEffect, useCallback } from 'react';
+import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Environment, Grid } from '@react-three/drei';
 import * as THREE from 'three';
 import type { PoseResults, Landmark, AvatarConfig } from '../types';
@@ -235,10 +235,86 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
     );
 };
 
+// Component to handle visibility-based rendering control
+const SceneController: React.FC<{ isPaused: boolean }> = ({ isPaused }) => {
+    const { gl, scene } = useThree();
+
+    useEffect(() => {
+        if (isPaused) {
+            // Stop the render loop when paused
+            gl.setAnimationLoop(null);
+        } else {
+            // Resume rendering - the Canvas will handle this automatically
+            // by re-enabling the animation loop
+        }
+    }, [isPaused, gl]);
+
+    // Cleanup on unmount
+    useEffect(() => {
+        return () => {
+            // Dispose of all geometries and materials in the scene
+            scene.traverse((object) => {
+                if (object instanceof THREE.Mesh) {
+                    object.geometry?.dispose();
+                    if (Array.isArray(object.material)) {
+                        object.material.forEach((mat) => mat.dispose());
+                    } else if (object.material) {
+                        object.material.dispose();
+                    }
+                }
+            });
+            // Dispose of render target and other WebGL resources
+            gl.dispose();
+        };
+    }, [gl, scene]);
+
+    return null;
+};
+
 const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults, config }) => {
+    const [isPaused, setIsPaused] = useState(false);
+    const canvasRef = useRef<HTMLCanvasElement>(null);
+
+    // Handle page visibility change
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            const isVisible = document.visibilityState === 'visible';
+            setIsPaused(!isVisible);
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, []);
+
+    // Callback to dispose resources when component unmounts or visibility changes
+    const onCreated = useCallback((state: { gl: THREE.WebGLRenderer }) => {
+        // Store reference to renderer for potential manual cleanup
+        const { gl } = state;
+
+        // Configure renderer for better performance
+        gl.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    }, []);
+
     return (
         <div className="w-full h-full bg-slate-900 relative">
-            <Canvas shadows camera={{ position: [0, 2, 6], fov: 50 }}>
+            {/* Paused overlay */}
+            {isPaused && (
+                <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/60 backdrop-blur-sm">
+                    <div className="text-center">
+                        <div className="text-cyan-400 text-lg font-semibold">Paused</div>
+                        <div className="text-gray-400 text-sm">3D rendering suspended</div>
+                    </div>
+                </div>
+            )}
+            <Canvas
+                ref={canvasRef}
+                shadows
+                camera={{ position: [0, 2, 6], fov: 50 }}
+                frameloop={isPaused ? 'never' : 'always'}
+                onCreated={onCreated}>
+                <SceneController isPaused={isPaused} />
                 <fog attach="fog" args={['#0f172a', 5, 20]} />
                 <ambientLight intensity={0.5} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />
