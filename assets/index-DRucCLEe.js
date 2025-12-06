@@ -1,4 +1,4 @@
-import{a as w,p as h,w as e1}from"./chunk-FGUA77HG-CzwAwkYg.js";import{b as to,v as t1,u as r1,C as n1}from"./constants-CdPJUcTm.js";import{g as ro,A as no,V as At,y as s1,z as i1}from"./three.module-BciEV48b.js";import{u as o1,O as a1,F as sn,a as Gs,b as Vs,c as c1,d as h1}from"./XMarkIcon-BcuXx82K.js";class l1 extends i1{constructor(){super({uniforms:{time:{value:0},fade:{value:1}},vertexShader:`
+import{a as w,p as h,w as e1}from"./chunk-FGUA77HG-CzwAwkYg.js";import{b as to,v as t1,u as r1,C as n1}from"./constants-CdPJUcTm.js";import{g as ro,A as no,V as At,y as s1,z as i1}from"./three.module-BciEV48b.js";import{u as o1,O as a1,F as sn,a as Gs,b as Vs,c as c1,d as h1}from"./XMarkIcon-DiGB7ag0.js";class l1 extends i1{constructor(){super({uniforms:{time:{value:0},fade:{value:1}},vertexShader:`
       uniform float time;
       attribute float size;
       varying vec3 vColor;
