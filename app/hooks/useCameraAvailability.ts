@@ -32,12 +32,25 @@ export function useCameraAvailability(options: UseCameraAvailabilityOptions = {}
     const [cameraEnabled, setCameraEnabled] = useState(true);
     const cameraErrorOccurredRef = useRef(false);
 
+    // Store callbacks in refs to avoid triggering re-renders
+    const onCameraUnavailableRef = useRef(onCameraUnavailable);
+    const onCameraErrorRef = useRef(onCameraError);
+
+    // Update refs when callbacks change
+    useEffect(() => {
+        onCameraUnavailableRef.current = onCameraUnavailable;
+    }, [onCameraUnavailable]);
+
+    useEffect(() => {
+        onCameraErrorRef.current = onCameraError;
+    }, [onCameraError]);
+
     const handleCameraError = useCallback(() => {
         cameraErrorOccurredRef.current = true;
         setCameraAvailable(false);
         setCameraEnabled(false);
-        onCameraError?.();
-    }, [onCameraError]);
+        onCameraErrorRef.current?.();
+    }, []);
 
     useEffect(() => {
         // Check if mediaDevices API is available (requires secure context: HTTPS or localhost)
@@ -46,7 +59,7 @@ export function useCameraAvailability(options: UseCameraAvailabilityOptions = {}
             cameraErrorOccurredRef.current = true;
             setCameraAvailable(false);
             setCameraEnabled(false);
-            onCameraUnavailable?.();
+            onCameraUnavailableRef.current?.();
             return;
         }
 
@@ -64,7 +77,7 @@ export function useCameraAvailability(options: UseCameraAvailabilityOptions = {}
                     if (hasCamera !== prev) {
                         if (!hasCamera) {
                             setCameraEnabled(false);
-                            onCameraUnavailable?.();
+                            onCameraUnavailableRef.current?.();
                         }
                         return hasCamera;
                     }
@@ -91,7 +104,7 @@ export function useCameraAvailability(options: UseCameraAvailabilityOptions = {}
         return () => {
             navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
         };
-    }, [onCameraUnavailable]);
+    }, []);
 
     return {
         cameraAvailable,
