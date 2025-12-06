@@ -12,8 +12,24 @@ interface PoseSensorProps {
 const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive, onCameraReady, onCameraError }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [loading, setLoading] = useState(true);
+    const [isPaused, setIsPaused] = useState(false);
     const requestRef = useRef<number>(0);
     const poseRef = useRef<Pose | null>(null);
+    const isPageVisibleRef = useRef(true);
+
+    // Handle page visibility change to pause/resume pose detection
+    useEffect(() => {
+        const handleVisibilityChange = () => {
+            const isVisible = document.visibilityState === 'visible';
+            isPageVisibleRef.current = isVisible;
+            setIsPaused(!isVisible);
+        };
+
+        document.addEventListener('visibilitychange', handleVisibilityChange);
+        return () => {
+            document.removeEventListener('visibilitychange', handleVisibilityChange);
+        };
+    }, []);
 
     useEffect(() => {
         if (!isActive) return;
@@ -58,7 +74,8 @@ const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive, onCam
         const loop = async () => {
             if (!isActive || !videoElement) return;
 
-            if (videoElement.readyState >= 2 && !isProcessing && poseRef.current) {
+            // Skip processing if page is not visible
+            if (isPageVisibleRef.current && videoElement.readyState >= 2 && !isProcessing && poseRef.current) {
                 isProcessing = true;
                 try {
                     await poseRef.current.send({ image: videoElement });
@@ -113,6 +130,12 @@ const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive, onCam
 
     return (
         <div className="fixed bottom-4 left-4 z-50">
+            {/* Paused indicator */}
+            {isPaused && (
+                <div className="bg-yellow-500/80 text-white p-2 rounded-lg text-sm mb-2 backdrop-blur-md max-w-xs">
+                    Paused (tab not visible)
+                </div>
+            )}
             {/* Error message */}
             {!loading && !videoRef.current?.srcObject && (
                 <div className="bg-red-500/80 text-white p-2 rounded-lg text-sm mb-2 backdrop-blur-md max-w-xs">
