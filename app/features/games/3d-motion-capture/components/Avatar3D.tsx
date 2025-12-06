@@ -162,17 +162,22 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
         return Array.from({ length: 33 }, () => new THREE.Vector3());
     }, []);
 
+    // Target height for the figure in 3D units (head to feet)
+    const targetHeight = 2.0;
+
     useFrame(() => {
-        // First pass: calculate the lowest point (feet) to anchor the figure to ground
-        // Use ankle landmarks (27 = left ankle, 28 = right ankle)
+        // Calculate body height from head (nose) to feet (ankles) in MediaPipe coords
+        const noseY = landmarks[0]?.y ?? 0.17;
         const leftAnkleY = landmarks[27]?.y ?? 0.83;
         const rightAnkleY = landmarks[28]?.y ?? 0.83;
-        const lowestY = Math.max(leftAnkleY, rightAnkleY); // Higher value = lower position in MP coords
+        const lowestY = Math.max(leftAnkleY, rightAnkleY);
 
-        // Calculate offset to place feet at ground level (3D y = 0)
-        // Formula: ((0.5 - lowestY) * 3 + offset) * scale = 0
-        // Solving for offset: offset = (lowestY - 0.5) * 3
-        const groundOffset = (lowestY - 0.5) * 3;
+        // Height in MP coords (higher y value = lower position)
+        const bodyHeightMP = lowestY - noseY;
+
+        // Calculate scale factor to normalize body height
+        // Avoid division by zero
+        const heightScale = bodyHeightMP > 0.1 ? targetHeight / (bodyHeightMP * 3) : 1;
 
         landmarks.forEach((l, i) => {
             if (i < 33) {
@@ -180,12 +185,15 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
                 // MediaPipe: x (0-1 left to right), y (0-1 top to bottom), z (depth)
                 // Three.js: x (left-right), y (up-down), z (forward-back)
                 //
-                // x: flip for mirror effect
-                // y: invert and apply dynamic offset to keep feet on ground
+                // x: flip for mirror effect, apply height normalization
+                // y: invert, normalize height, and anchor feet to ground
                 // z: invert for ThreeJS camera orientation
-                const x = (0.5 - l.x) * 3 * config.scale;
-                const y = ((0.5 - l.y) * 3 + groundOffset) * config.scale;
-                const z = -l.z * 2 * config.scale;
+                const rawY = (0.5 - l.y) * 3 * heightScale;
+                const feetY = (0.5 - lowestY) * 3 * heightScale;
+
+                const x = (0.5 - l.x) * 3 * heightScale * config.scale;
+                const y = (rawY - feetY) * config.scale; // Anchor feet to y=0
+                const z = -l.z * 2 * heightScale * config.scale;
 
                 // Smoothly interpolate for less jitter (use config smoothing)
                 lerpVector(vectors[i], new THREE.Vector3(x, y, z), config.smoothing);

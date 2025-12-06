@@ -210,7 +210,7 @@ const App: React.FC = () => {
                                         : !cameraAvailable
                                           ? 'bg-orange-500/10 border-orange-500/30 text-orange-400/60 cursor-not-allowed'
                                           : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
-                                } border`}
+                                } border cursor-pointer`}
                                 disabled={!cameraAvailable}>
                                 <VideoCameraIcon className="w-4 h-4 mr-1" />
                                 Camera
@@ -224,7 +224,7 @@ const App: React.FC = () => {
                                     !cameraEnabled
                                         ? 'bg-purple-500/20 border-purple-500/50 text-purple-400'
                                         : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
-                                } border`}>
+                                } border cursor-pointer`}>
                                 <CursorArrowRaysIcon className="w-4 h-4 mr-1" />
                                 Static
                             </button>
@@ -267,7 +267,7 @@ const App: React.FC = () => {
                                         config.colorScheme === scheme
                                             ? `bg-opacity-20 border-opacity-50`
                                             : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
-                                    } border`}
+                                    } border cursor-pointer`}
                                     style={{
                                         backgroundColor:
                                             config.colorScheme === scheme
@@ -332,7 +332,7 @@ const App: React.FC = () => {
                     {/* Reset Button */}
                     <button
                         onClick={handleResetPose}
-                        className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-900/50 hover:bg-cyan-700/50 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all">
+                        className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-900/50 hover:bg-cyan-700/50 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all cursor-pointer">
                         <ArrowPathIcon className="w-4 h-4" />
                         Reset Pose
                     </button>
@@ -507,7 +507,7 @@ const App: React.FC = () => {
                         {/* Reset Button */}
                         <button
                             onClick={handleResetPose}
-                            className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-900/50 hover:bg-cyan-700/50 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all text-sm">
+                            className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-900/50 hover:bg-cyan-700/50 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all text-sm cursor-pointer">
                             <ArrowPathIcon className="w-4 h-4" />
                             Reset Pose
                         </button>
