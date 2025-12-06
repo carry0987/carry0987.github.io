@@ -163,6 +163,17 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
     }, []);
 
     useFrame(() => {
+        // First pass: calculate the lowest point (feet) to anchor the figure to ground
+        // Use ankle landmarks (27 = left ankle, 28 = right ankle)
+        const leftAnkleY = landmarks[27]?.y ?? 0.83;
+        const rightAnkleY = landmarks[28]?.y ?? 0.83;
+        const lowestY = Math.max(leftAnkleY, rightAnkleY); // Higher value = lower position in MP coords
+
+        // Calculate offset to place feet at ground level (3D y = 0)
+        // Formula: ((0.5 - lowestY) * 3 + offset) * scale = 0
+        // Solving for offset: offset = (lowestY - 0.5) * 3
+        const groundOffset = (lowestY - 0.5) * 3;
+
         landmarks.forEach((l, i) => {
             if (i < 33) {
                 // Mapping:
@@ -170,10 +181,10 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
                 // Three.js: x (left-right), y (up-down), z (forward-back)
                 //
                 // x: flip for mirror effect
-                // y: invert (MP 0=top, Three.js positive=up) and offset to center the figure
+                // y: invert and apply dynamic offset to keep feet on ground
                 // z: invert for ThreeJS camera orientation
                 const x = (0.5 - l.x) * 3 * config.scale;
-                const y = ((0.5 - l.y) * 3 + 1) * config.scale;
+                const y = ((0.5 - l.y) * 3 + groundOffset) * config.scale;
                 const z = -l.z * 2 * config.scale;
 
                 // Smoothly interpolate for less jitter (use config smoothing)
