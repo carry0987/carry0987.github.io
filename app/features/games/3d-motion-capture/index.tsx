@@ -75,7 +75,7 @@ const generateNeutralPose = (): Landmark[] => {
 const App: React.FC = () => {
     const [poseData, setPoseData] = useState<PoseResults | null>({ poseLandmarks: generateNeutralPose() });
     const [loading, setLoading] = useState(true);
-    const [cameraEnabled, setCameraEnabled] = useState(false);
+    const [cameraEnabled, setCameraEnabled] = useState(true); // Default to camera mode
     const [cameraAvailable, setCameraAvailable] = useState(true);
     const [panelOpen, setPanelOpen] = useState(false);
 
@@ -112,7 +112,7 @@ const App: React.FC = () => {
     const handleCameraError = useCallback(() => {
         cameraErrorOccurredRef.current = true;
         setCameraAvailable(false);
-        setCameraEnabled(false);
+        setCameraEnabled(false); // Switch to static mode on error
         setLoading(false);
     }, []);
 
@@ -122,6 +122,7 @@ const App: React.FC = () => {
             console.warn('mediaDevices API not available (requires HTTPS or localhost)');
             cameraErrorOccurredRef.current = true;
             setCameraAvailable(false);
+            setCameraEnabled(false); // Switch to static mode
             setLoading(false);
             return;
         }
@@ -136,7 +137,7 @@ const App: React.FC = () => {
                 if (hasCamera !== cameraAvailable) {
                     setCameraAvailable(hasCamera);
                     if (!hasCamera) {
-                        setCameraEnabled(false);
+                        setCameraEnabled(false); // Switch to static mode if no camera
                     }
                 }
             } catch (err) {
@@ -145,7 +146,7 @@ const App: React.FC = () => {
         };
 
         checkCameraAvailability();
-        setLoading(false);
+        // Don't set loading to false here - let the camera ready callback handle it
 
         const handleDeviceChange = () => {
             cameraErrorOccurredRef.current = false;
@@ -187,8 +188,17 @@ const App: React.FC = () => {
                 <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-sm transition-opacity duration-500">
                     <div className="w-16 h-16 border-4 border-t-cyan-500 border-r-transparent border-b-cyan-500 border-l-transparent rounded-full animate-spin mb-4"></div>
                     <h2 className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-purple-500">
-                        Initializing 3D Scene...
+                        Initializing Vision Core...
                     </h2>
+                    <p className="text-gray-400 mt-2 text-sm">Please allow camera access to interact</p>
+                </div>
+            )}
+
+            {/* Camera Unavailable Warning */}
+            {!loading && !cameraAvailable && (
+                <div className="absolute top-4 left-1/2 transform -translate-x-1/2 z-50 bg-orange-500/20 backdrop-blur-md border border-orange-500/50 rounded-lg px-4 py-2 text-orange-400 text-sm flex items-center space-x-2">
+                    <VideoCameraIcon className="w-4 h-4" />
+                    <span>Camera unavailable - using static mode</span>
                 </div>
             )}
 
