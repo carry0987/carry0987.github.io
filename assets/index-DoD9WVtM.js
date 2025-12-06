@@ -1,0 +1,62 @@
+const __vite__mapDeps=(i,m=__vite__mapDeps,d=(m.f||(m.f=["assets/pose-BnXWvipQ.js","assets/chunk-FGUA77HG-CzwAwkYg.js"])))=>i.map(i=>d[i]);
+import{a as l,p as e,w as _,R as L}from"./chunk-FGUA77HG-CzwAwkYg.js";import{e as D,b,_ as y,v as T,C as A}from"./constants-CdPJUcTm.js";import{s as G,E as F}from"./Environment-DcPxxB4s.js";import{E as O,V as p,j as V,g as P,J as I}from"./three.module-BciEV48b.js";import{O as B}from"./OrbitControls-D054PsfG.js";const $=G({cellSize:.5,sectionSize:1,fadeDistance:100,fadeStrength:1,fadeFrom:1,cellThickness:.5,sectionThickness:1,cellColor:new P,sectionColor:new P,infiniteGrid:!1,followCamera:!1,worldCamProjPosition:new p,worldPlanePosition:new p},`
+    varying vec3 localPosition;
+    varying vec4 worldPosition;
+
+    uniform vec3 worldCamProjPosition;
+    uniform vec3 worldPlanePosition;
+    uniform float fadeDistance;
+    uniform bool infiniteGrid;
+    uniform bool followCamera;
+
+    void main() {
+      localPosition = position.xzy;
+      if (infiniteGrid) localPosition *= 1.0 + fadeDistance;
+      
+      worldPosition = modelMatrix * vec4(localPosition, 1.0);
+      if (followCamera) {
+        worldPosition.xyz += (worldCamProjPosition - worldPlanePosition);
+        localPosition = (inverse(modelMatrix) * worldPosition).xyz;
+      }
+
+      gl_Position = projectionMatrix * viewMatrix * worldPosition;
+    }
+  `,`
+    varying vec3 localPosition;
+    varying vec4 worldPosition;
+
+    uniform vec3 worldCamProjPosition;
+    uniform float cellSize;
+    uniform float sectionSize;
+    uniform vec3 cellColor;
+    uniform vec3 sectionColor;
+    uniform float fadeDistance;
+    uniform float fadeStrength;
+    uniform float fadeFrom;
+    uniform float cellThickness;
+    uniform float sectionThickness;
+
+    float getGrid(float size, float thickness) {
+      vec2 r = localPosition.xz / size;
+      vec2 grid = abs(fract(r - 0.5) - 0.5) / fwidth(r);
+      float line = min(grid.x, grid.y) + 1.0 - thickness;
+      return 1.0 - min(line, 1.0);
+    }
+
+    void main() {
+      float g1 = getGrid(cellSize, cellThickness);
+      float g2 = getGrid(sectionSize, sectionThickness);
+
+      vec3 from = worldCamProjPosition*vec3(fadeFrom);
+      float dist = distance(from, worldPosition.xyz);
+      float d = 1.0 - min(dist / fadeDistance, 1.0);
+      vec3 color = mix(cellColor, sectionColor, min(1.0, sectionThickness * g2));
+
+      gl_FragColor = vec4(color, (g1 + g2) * pow(d, fadeStrength));
+      gl_FragColor.a = mix(0.75 * gl_FragColor.a, gl_FragColor.a, g2);
+      if (gl_FragColor.a <= 0.0) discard;
+
+      #include <tonemapping_fragment>
+      #include <${T>=154?"colorspace_fragment":"encodings_fragment"}>
+    }
+  `),U=l.forwardRef(({args:s,cellColor:r="#000000",sectionColor:o="#2080ff",cellSize:c=.5,sectionSize:d=1,followCamera:a=!1,infiniteGrid:t=!1,fadeDistance:i=100,fadeStrength:m=1,fadeFrom:n=1,cellThickness:f=.5,sectionThickness:x=1,side:u=V,...h},w)=>{D({GridMaterial:$});const g=l.useRef(null);l.useImperativeHandle(w,()=>g.current,[]);const v=new O,k=new p(0,1,0),E=new p(0,0,0);b(M=>{v.setFromNormalAndCoplanarPoint(k,E).applyMatrix4(g.current.matrixWorld);const j=g.current.material,S=j.uniforms.worldCamProjPosition,z=j.uniforms.worldPlanePosition;v.projectPoint(M.camera.position,S.value),z.value.set(0,0,0).applyMatrix4(g.current.matrixWorld)});const N={cellSize:c,sectionSize:d,cellColor:r,sectionColor:o,cellThickness:f,sectionThickness:x},R={fadeDistance:i,fadeStrength:m,fadeFrom:n,infiniteGrid:t,followCamera:a};return l.createElement("mesh",y({ref:g,frustumCulled:!1},h),l.createElement("gridMaterial",y({transparent:!0,"extensions-derivatives":!0,side:u},N,R)),l.createElement("planeGeometry",{args:s}))}),W="modulepreload",q=function(s){return"/"+s},C={},H=function(r,o,c){let d=Promise.resolve();if(o&&o.length>0){let m=function(n){return Promise.all(n.map(f=>Promise.resolve(f).then(x=>({status:"fulfilled",value:x}),x=>({status:"rejected",reason:x}))))};document.getElementsByTagName("link");const t=document.querySelector("meta[property=csp-nonce]"),i=t?.nonce||t?.getAttribute("nonce");d=m(o.map(n=>{if(n=q(n),n in C)return;C[n]=!0;const f=n.endsWith(".css"),x=f?'[rel="stylesheet"]':"";if(document.querySelector(`link[href="${n}"]${x}`))return;const u=document.createElement("link");if(u.rel=f?"stylesheet":W,f||(u.as="script"),u.crossOrigin="",u.href=n,i&&u.setAttribute("nonce",i),document.head.appendChild(u),f)return new Promise((h,w)=>{u.addEventListener("load",h),u.addEventListener("error",()=>w(new Error(`Unable to preload CSS for ${n}`)))})}))}function a(t){const i=new Event("vite:preloadError",{cancelable:!0});if(i.payload=t,window.dispatchEvent(i),!i.defaultPrevented)throw t}return d.then(t=>{for(const i of t||[])i.status==="rejected"&&a(i.reason);return r().catch(a)})},J=[[11,12],[11,13],[13,15],[12,14],[14,16],[11,23],[12,24],[23,24],[23,25],[25,27],[24,26],[26,28],[0,11],[0,12]],K=(s,r,o)=>{s.lerp(r,o)},X=({start:s,end:r})=>{const o=l.useRef(null);return b(()=>{if(o.current){const c=s.distanceTo(r);if(c<.01){o.current.scale.set(0,0,0);return}o.current.position.lerpVectors(s,r,.5),o.current.lookAt(r),o.current.rotateX(Math.PI/2),o.current.scale.set(1,c,1)}}),e.jsxs("mesh",{ref:o,children:[e.jsx("cylinderGeometry",{args:[.06,.06,1,8]}),e.jsx("meshStandardMaterial",{color:"#00e5ff",emissive:"#0044aa",metalness:.8,roughness:.2})]})},Q=({position:s})=>{const r=l.useRef(null);return b(()=>{r.current&&r.current.position.copy(s)}),e.jsxs("mesh",{ref:r,children:[e.jsx("sphereGeometry",{args:[.08,16,16]}),e.jsx("meshStandardMaterial",{color:"#ffffff",metalness:.5,roughness:.1})]})},Y=({nose:s,leftEar:r,rightEar:o,mouthLeft:c,mouthRight:d})=>{const a=l.useRef(null);return b(()=>{if(a.current){a.current.position.copy(s),new p(0,0,1);const t=new p().subVectors(o,r).normalize(),i=new p(0,1,0),m=new I,n=new p().crossVectors(t,i).normalize(),f=new p().crossVectors(n,t).normalize();m.makeBasis(t,f,n)}}),e.jsxs("group",{ref:a,children:[e.jsxs("mesh",{children:[e.jsx("sphereGeometry",{args:[.25,32,32]}),e.jsx("meshStandardMaterial",{color:"#e0f2fe",transparent:!0,opacity:.9})]}),e.jsxs("mesh",{position:[-.1,.05,.2],children:[e.jsx("sphereGeometry",{args:[.04,16,16]}),e.jsx("meshBasicMaterial",{color:"black"})]}),e.jsxs("mesh",{position:[.1,.05,.2],children:[e.jsx("sphereGeometry",{args:[.04,16,16]}),e.jsx("meshBasicMaterial",{color:"black"})]})]})},Z=({landmarks:s})=>{const r=l.useMemo(()=>Array.from({length:33},()=>new p),[]);return b(()=>{s.forEach((o,c)=>{if(c<33){const d=(.5-o.x)*3,a=(.5-o.y)*3+1,t=-o.z*2;K(r[c],new p(d,a,t),.3)}})}),s[0].visibility&&s[0].visibility<.5?null:e.jsxs("group",{children:[J.map(([o,c],d)=>e.jsx(X,{start:r[o],end:r[c]},`bone-${d}`)),[11,12,13,14,15,16,23,24,25,26,27,28].map(o=>e.jsx(Q,{position:r[o]},`joint-${o}`)),e.jsx(Y,{nose:r[0],leftEar:r[7],rightEar:r[8],mouthLeft:r[9],mouthRight:r[10]})]})},ee=({poseResults:s})=>e.jsxs("div",{className:"w-full h-full bg-slate-900 relative",children:[e.jsxs(A,{shadows:!0,camera:{position:[0,1,5],fov:50},children:[e.jsx("fog",{attach:"fog",args:["#0f172a",5,20]}),e.jsx("ambientLight",{intensity:.5}),e.jsx("spotLight",{position:[10,10,10],angle:.15,penumbra:1,intensity:1,castShadow:!0}),e.jsx("pointLight",{position:[-10,-10,-10],intensity:.5}),s&&s.poseLandmarks&&e.jsx(Z,{landmarks:s.poseLandmarks}),e.jsx(U,{infiniteGrid:!0,fadeDistance:30,sectionColor:"#4f46e5",cellColor:"#0f172a"}),e.jsx(F,{preset:"city"}),e.jsx(B,{enablePan:!1,maxPolarAngle:Math.PI/1.5,enableDamping:!0,dampingFactor:.03})]}),!s&&e.jsx("div",{className:"absolute inset-0 flex items-center justify-center pointer-events-none",children:e.jsx("p",{className:"text-cyan-500 animate-pulse text-xl",children:"Waiting for Pose Data..."})})]}),te=({onPoseDetected:s,isActive:r})=>{const o=l.useRef(null),[c,d]=l.useState(!0),a=l.useRef(0),t=l.useRef(null);return l.useEffect(()=>{if(!o.current)return;const i=o.current;let m=null,n=!1;const f=async()=>{const w=(await H(()=>import("./pose-BnXWvipQ.js").then(v=>v.p),__vite__mapDeps([0,1]))).Pose,g=new w({locateFile:v=>`/mediapipe/pose/${v}`});g.setOptions({modelComplexity:1,smoothLandmarks:!0,enableSegmentation:!1,minDetectionConfidence:.5,minTrackingConfidence:.5}),g.onResults(v=>{d(!1),v.poseLandmarks&&s({poseLandmarks:v.poseLandmarks})}),t.current=g,u()},x=async()=>{if(!(!r||!i)){if(i.readyState>=2&&!n&&t.current){n=!0;try{await t.current.send({image:i})}catch(h){console.error("Pose processing error:",h)}finally{n=!1}}a.current=requestAnimationFrame(x)}},u=async()=>{try{m=await navigator.mediaDevices.getUserMedia({video:{width:{ideal:640},height:{ideal:480},facingMode:"user"}}),o.current&&(o.current.srcObject=m,o.current.onloadedmetadata=()=>{o.current?.play().catch(h=>console.error("Play error:",h)),x()})}catch(h){console.error("Error accessing webcam:",h),d(!1)}};return r&&f(),()=>{a.current&&cancelAnimationFrame(a.current),m&&m.getTracks().forEach(h=>h.stop()),t.current&&(t.current.close(),t.current=null)}},[r,s]),e.jsxs("div",{className:"absolute top-4 right-4 w-32 h-24 sm:w-48 sm:h-36 bg-black rounded-lg overflow-hidden border-2 border-cyan-500/50 shadow-lg z-50",children:[e.jsx("video",{ref:o,className:"w-full h-full object-cover transform -scale-x-100",playsInline:!0,muted:!0}),c&&r&&e.jsx("div",{className:"absolute inset-0 flex items-center justify-center bg-black/80 text-xs text-cyan-400",children:"Init Vision..."})]})},oe=()=>{const[s,r]=l.useState(null),o=L.useRef([]),c=l.useCallback(a=>{r(a),o.current=a.poseLandmarks},[]),d=l.useCallback(()=>{const a=Array.from({length:33},()=>({x:.5,y:.5,z:0,visibility:1})),t=(i,m,n)=>{a[i]={x:m,y:n,z:0,visibility:1}};t(0,.5,.1),t(7,.55,.1),t(8,.45,.1),t(9,.52,.15),t(10,.48,.15),t(11,.6,.25),t(12,.4,.25),t(13,.65,.45),t(14,.35,.45),t(15,.7,.6),t(16,.3,.6),t(23,.55,.55),t(24,.45,.55),t(25,.55,.75),t(26,.45,.75),t(27,.55,.95),t(28,.45,.95),r({poseLandmarks:a})},[]);return e.jsxs("div",{className:"relative w-full h-screen bg-black overflow-hidden font-sans",children:[e.jsx("div",{className:"absolute inset-0 z-0",children:e.jsx(ee,{poseResults:s})}),e.jsx(te,{isActive:!0,onPoseDetected:c}),e.jsxs("div",{className:"absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-6",children:[e.jsxs("header",{className:"flex justify-between items-start pointer-events-auto",children:[e.jsxs("div",{children:[e.jsx("h1",{className:"text-4xl font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-600 tracking-tighter drop-shadow-sm",children:"MOTION CAPTURE"}),e.jsx("p",{className:"text-cyan-200/70 text-sm mt-1",children:"Real-time Pose to 3D Avatar"})]}),e.jsx("div",{className:"bg-black/40 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full",children:e.jsxs("div",{className:"flex items-center gap-2",children:[e.jsx("div",{className:`w-3 h-3 rounded-full ${s?"bg-green-500 animate-pulse":"bg-red-500"}`}),e.jsx("span",{className:"font-mono font-bold text-gray-300 text-sm",children:s?"TRACKING ACTIVE":"NO SKELETON DETECTED"})]})})]}),e.jsxs("footer",{className:"pointer-events-auto flex flex-col items-center gap-4 mb-4",children:[e.jsxs("button",{onClick:d,className:"px-6 py-2 bg-cyan-900/80 hover:bg-cyan-700/80 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] active:scale-95 flex items-center gap-2",children:[e.jsxs("svg",{xmlns:"http://www.w3.org/2000/svg",width:"16",height:"16",viewBox:"0 0 24 24",fill:"none",stroke:"currentColor",strokeWidth:"2",strokeLinecap:"round",strokeLinejoin:"round",children:[e.jsx("path",{d:"M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12"}),e.jsx("path",{d:"M3 3v9h9"})]}),"Reset Pose"]}),e.jsxs("div",{className:"bg-black/50 backdrop-blur-md p-4 rounded-xl border border-white/10 max-w-xl text-center",children:[e.jsxs("p",{className:"text-gray-300 text-sm",children:["Stand back so the camera can see your full body. ",e.jsx("br",{}),"The 3D Robot will mimic your movements in real-time."]}),e.jsx("div",{className:"mt-2 text-xs text-cyan-500/60 font-mono",children:"Powered by MediaPipe Pose & React Three Fiber"})]})]})]})]})},le={fullscreen:!0};function ce(){return[{title:"3D Motion Capture"},{property:"og:title",content:"3D Motion Capture"},{name:"description",content:"3D Motion Capture - Real-time pose detection that mirrors your movements onto a 3D robot avatar."}]}const de=_(oe);export{de as default,le as handle,ce as meta};
