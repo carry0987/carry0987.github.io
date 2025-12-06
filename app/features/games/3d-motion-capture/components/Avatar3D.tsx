@@ -13,6 +13,7 @@ interface Avatar3DProps {
 
 // Map MediaPipe landmarks to connections for "bones"
 // Format: [start_index, end_index]
+// Note: Neck uses special index -1 to represent shoulder midpoint
 const BONE_CONNECTIONS = [
     [11, 12], // Shoulders
     [11, 13],
@@ -26,8 +27,7 @@ const BONE_CONNECTIONS = [
     [25, 27], // Left Leg
     [24, 26],
     [26, 28], // Right Leg
-    [0, 11],
-    [0, 12] // Neck/Head approximate
+    [0, -1] // Neck: Head to shoulder midpoint (index -1 = virtual shoulder midpoint)
 ];
 
 // Define maximum bone lengths (in 3D units) to prevent unrealistic stretching
@@ -45,8 +45,7 @@ const BONE_MAX_LENGTHS: Record<string, number> = {
     '25-27': 0.6, // Lower leg
     '24-26': 0.6, // Upper leg
     '26-28': 0.6, // Lower leg
-    '0-11': 0.5, // Neck to shoulder
-    '0-12': 0.5 // Neck to shoulder
+    '0--1': 0.4 // Neck: Head to shoulder midpoint
 };
 
 // Get bone key for lookup
@@ -192,6 +191,9 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
         return Array.from({ length: 33 }, () => new THREE.Vector3());
     }, []);
 
+    // Virtual shoulder midpoint vector (index -1 in BONE_CONNECTIONS)
+    const shoulderMidpoint = useMemo(() => new THREE.Vector3(), []);
+
     // Target height for the figure in 3D units (head to feet)
     const targetHeight = 2.0;
 
@@ -271,6 +273,18 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
         // Shoulders width
         constrainBoneLength(11, 12, scaledMaxLengths['11-12'], vectors);
 
+        // Update shoulder midpoint (for neck bone)
+        shoulderMidpoint.lerpVectors(vectors[11], vectors[12], 0.5);
+
+        // Constrain neck length (head to shoulder midpoint)
+        const neckMaxLength = scaledMaxLengths['0--1'];
+        const neckDist = vectors[0].distanceTo(shoulderMidpoint);
+        if (neckDist > neckMaxLength) {
+            // Move head toward shoulder midpoint to maintain max neck length
+            const direction = new THREE.Vector3().subVectors(vectors[0], shoulderMidpoint).normalize();
+            vectors[0].copy(shoulderMidpoint).addScaledVector(direction, neckMaxLength);
+        }
+
         // Torso (shoulders to hips)
         constrainBoneLength(11, 23, scaledMaxLengths['11-23'], vectors);
         constrainBoneLength(12, 24, scaledMaxLengths['12-24'], vectors);
@@ -294,13 +308,18 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
     // Check if we have enough confidence (basic check using nose visibility)
     if (landmarks[0].visibility && landmarks[0].visibility < 0.5) return null;
 
+    // Helper to get vector by index (-1 = shoulder midpoint)
+    const getVector = (index: number): THREE.Vector3 => {
+        return index === -1 ? shoulderMidpoint : vectors[index];
+    };
+
     return (
         <group>
             {BONE_CONNECTIONS.map(([start, end], idx) => (
                 <Bone
                     key={`bone-${idx}`}
-                    start={vectors[start]}
-                    end={vectors[end]}
+                    start={getVector(start)}
+                    end={getVector(end)}
                     thickness={config.boneThickness}
                     colorScheme={config.colorScheme}
                 />
