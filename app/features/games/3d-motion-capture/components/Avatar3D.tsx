@@ -2,10 +2,12 @@ import React, { useRef, useMemo } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
 import { OrbitControls, Environment, Grid } from '@react-three/drei';
 import * as THREE from 'three';
-import type { PoseResults, Landmark } from '../types';
+import type { PoseResults, Landmark, AvatarConfig } from '../types';
+import { AVATAR_COLORS, AvatarColorScheme } from '../types';
 
 interface Avatar3DProps {
     poseResults: PoseResults | null;
+    config: AvatarConfig;
 }
 
 // Map MediaPipe landmarks to connections for "bones"
@@ -33,8 +35,14 @@ const lerpVector = (v1: THREE.Vector3, v2: THREE.Vector3, alpha: number) => {
 };
 
 // A generic "Bone" cylinder
-const Bone: React.FC<{ start: THREE.Vector3; end: THREE.Vector3 }> = ({ start, end }) => {
+const Bone: React.FC<{
+    start: THREE.Vector3;
+    end: THREE.Vector3;
+    thickness: number;
+    colorScheme: AvatarColorScheme;
+}> = ({ start, end, thickness, colorScheme }) => {
     const ref = useRef<THREE.Mesh>(null);
+    const colors = AVATAR_COLORS[colorScheme];
 
     useFrame(() => {
         if (ref.current) {
@@ -62,22 +70,28 @@ const Bone: React.FC<{ start: THREE.Vector3; end: THREE.Vector3 }> = ({ start, e
 
     return (
         <mesh ref={ref}>
-            <cylinderGeometry args={[0.06, 0.06, 1, 8]} />
-            <meshStandardMaterial color="#00e5ff" emissive="#0044aa" metalness={0.8} roughness={0.2} />
+            <cylinderGeometry args={[thickness, thickness, 1, 8]} />
+            <meshStandardMaterial color={colors.bone} emissive={colors.emissive} metalness={0.8} roughness={0.2} />
         </mesh>
     );
 };
 
 // A "Joint" sphere
-const Joint: React.FC<{ position: THREE.Vector3 }> = ({ position }) => {
+const Joint: React.FC<{ position: THREE.Vector3; size: number; colorScheme: AvatarColorScheme }> = ({
+    position,
+    size,
+    colorScheme
+}) => {
     const ref = useRef<THREE.Mesh>(null);
+    const colors = AVATAR_COLORS[colorScheme];
+
     useFrame(() => {
         if (ref.current) ref.current.position.copy(position);
     });
     return (
         <mesh ref={ref}>
-            <sphereGeometry args={[0.08, 16, 16]} />
-            <meshStandardMaterial color="#ffffff" metalness={0.5} roughness={0.1} />
+            <sphereGeometry args={[size, 16, 16]} />
+            <meshStandardMaterial color={colors.joint} metalness={0.5} roughness={0.1} />
         </mesh>
     );
 };
@@ -87,23 +101,23 @@ const Head = ({
     nose,
     leftEar,
     rightEar,
-    mouthLeft,
-    mouthRight
+    colorScheme
 }: {
     nose: THREE.Vector3;
     leftEar: THREE.Vector3;
     rightEar: THREE.Vector3;
     mouthLeft: THREE.Vector3;
     mouthRight: THREE.Vector3;
+    colorScheme: AvatarColorScheme;
 }) => {
     const groupRef = useRef<THREE.Group>(null);
+    const colors = AVATAR_COLORS[colorScheme];
 
     useFrame(() => {
         if (groupRef.current) {
             groupRef.current.position.copy(nose);
 
             // Simple rotation based on ears
-            const forward = new THREE.Vector3(0, 0, 1);
             const earVector = new THREE.Vector3().subVectors(rightEar, leftEar).normalize();
             const up = new THREE.Vector3(0, 1, 0);
 
@@ -123,7 +137,7 @@ const Head = ({
         <group ref={groupRef}>
             <mesh>
                 <sphereGeometry args={[0.25, 32, 32]} />
-                <meshStandardMaterial color="#e0f2fe" transparent opacity={0.9} />
+                <meshStandardMaterial color={colors.joint} transparent opacity={0.9} />
             </mesh>
             {/* Eyes */}
             <mesh position={[-0.1, 0.05, 0.2]}>
@@ -138,7 +152,7 @@ const Head = ({
     );
 };
 
-const Robot = ({ landmarks }: { landmarks: Landmark[] }) => {
+const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarConfig }) => {
     // Convert landmarks to Vector3s.
     // MP coords: x (0-1), y (0-1), z (approx meters).
     // We flip Y and scale to World units.
@@ -155,12 +169,12 @@ const Robot = ({ landmarks }: { landmarks: Landmark[] }) => {
                 // x: 0..1 -> -2..2 (flip X for mirror)
                 // y: 0..1 -> 2..-2 (flip Y)
                 // z: raw -> scale
-                const x = (0.5 - l.x) * 3;
-                const y = (0.5 - l.y) * 3 + 1; // +1 to lift up
-                const z = -l.z * 2; // Invert Z for ThreeJS camera
+                const x = (0.5 - l.x) * 3 * config.scale;
+                const y = ((0.5 - l.y) * 3 + 1) * config.scale; // +1 to lift up
+                const z = -l.z * 2 * config.scale; // Invert Z for ThreeJS camera
 
-                // Smoothly interpolate for less jitter
-                lerpVector(vectors[i], new THREE.Vector3(x, y, z), 0.3);
+                // Smoothly interpolate for less jitter (use config smoothing)
+                lerpVector(vectors[i], new THREE.Vector3(x, y, z), config.smoothing);
             }
         });
     });
@@ -171,10 +185,21 @@ const Robot = ({ landmarks }: { landmarks: Landmark[] }) => {
     return (
         <group>
             {BONE_CONNECTIONS.map(([start, end], idx) => (
-                <Bone key={`bone-${idx}`} start={vectors[start]} end={vectors[end]} />
+                <Bone
+                    key={`bone-${idx}`}
+                    start={vectors[start]}
+                    end={vectors[end]}
+                    thickness={config.boneThickness}
+                    colorScheme={config.colorScheme}
+                />
             ))}
             {[11, 12, 13, 14, 15, 16, 23, 24, 25, 26, 27, 28].map((idx) => (
-                <Joint key={`joint-${idx}`} position={vectors[idx]} />
+                <Joint
+                    key={`joint-${idx}`}
+                    position={vectors[idx]}
+                    size={config.jointSize}
+                    colorScheme={config.colorScheme}
+                />
             ))}
             <Head
                 nose={vectors[0]}
@@ -182,12 +207,13 @@ const Robot = ({ landmarks }: { landmarks: Landmark[] }) => {
                 rightEar={vectors[8]}
                 mouthLeft={vectors[9]}
                 mouthRight={vectors[10]}
+                colorScheme={config.colorScheme}
             />
         </group>
     );
 };
 
-const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults }) => {
+const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults, config }) => {
     return (
         <div className="w-full h-full bg-slate-900 relative">
             <Canvas shadows camera={{ position: [0, 1, 5], fov: 50 }}>
@@ -197,7 +223,9 @@ const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults }) => {
                 <pointLight position={[-10, -10, -10]} intensity={0.5} />
 
                 {/* Dynamic Character */}
-                {poseResults && poseResults.poseLandmarks && <Robot landmarks={poseResults.poseLandmarks} />}
+                {poseResults && poseResults.poseLandmarks && (
+                    <Robot landmarks={poseResults.poseLandmarks} config={config} />
+                )}
 
                 {/* Environment */}
                 <Grid infiniteGrid fadeDistance={30} sectionColor="#4f46e5" cellColor="#0f172a" />
@@ -207,14 +235,10 @@ const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults }) => {
                     maxPolarAngle={Math.PI / 1.5}
                     enableDamping={true}
                     dampingFactor={0.03}
+                    autoRotate={!poseResults}
+                    autoRotateSpeed={0.5}
                 />
             </Canvas>
-
-            {!poseResults && (
-                <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <p className="text-cyan-500 animate-pulse text-xl">Waiting for Pose Data...</p>
-                </div>
-            )}
         </div>
     );
 };

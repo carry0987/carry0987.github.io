@@ -1,16 +1,86 @@
-import React, { useState, useCallback } from 'react';
-import type { PoseResults, Landmark } from './types';
+import React, { useState, useCallback, useRef, useEffect } from 'react';
+import type { PoseResults, Landmark, AvatarConfig } from './types';
+import { AvatarColorScheme, AVATAR_COLORS } from './types';
 import Avatar3D from './components/Avatar3D';
 import PoseSensor from './components/PoseSensor';
+import {
+    VideoCameraIcon,
+    CursorArrowRaysIcon,
+    Bars3Icon,
+    XMarkIcon,
+    SparklesIcon,
+    FireIcon,
+    SunIcon,
+    CommandLineIcon,
+    ArrowPathIcon
+} from '@heroicons/react/24/solid';
 
 // Import styles
 import './style.css';
 
-const App: React.FC = () => {
-    const [poseData, setPoseData] = useState<PoseResults | null>(null);
+// Generate a neutral standing pose (A-pose)
+const generateNeutralPose = (): Landmark[] => {
+    const neutralLandmarks: Landmark[] = Array.from({ length: 33 }, () => ({
+        x: 0.5,
+        y: 0.5,
+        z: 0,
+        visibility: 1
+    }));
 
-    // Store the latest pose (optional, for future extensions)
-    const currentPoseRef = React.useRef<Landmark[]>([]);
+    const setL = (idx: number, x: number, y: number) => {
+        neutralLandmarks[idx] = { x, y, z: 0, visibility: 1 };
+    };
+
+    // Head
+    setL(0, 0.5, 0.1); // Nose
+    setL(7, 0.55, 0.1); // L Ear
+    setL(8, 0.45, 0.1); // R Ear
+    setL(9, 0.52, 0.15); // Mouth L
+    setL(10, 0.48, 0.15); // Mouth R
+
+    // Body
+    setL(11, 0.6, 0.25); // L Shoulder
+    setL(12, 0.4, 0.25); // R Shoulder
+
+    setL(13, 0.65, 0.45); // L Elbow
+    setL(14, 0.35, 0.45); // R Elbow
+
+    setL(15, 0.7, 0.6); // L Wrist
+    setL(16, 0.3, 0.6); // R Wrist
+
+    setL(23, 0.55, 0.55); // L Hip
+    setL(24, 0.45, 0.55); // R Hip
+
+    setL(25, 0.55, 0.75); // L Knee
+    setL(26, 0.45, 0.75); // R Knee
+
+    setL(27, 0.55, 0.95); // L Ankle
+    setL(28, 0.45, 0.95); // R Ankle
+
+    return neutralLandmarks;
+};
+
+const App: React.FC = () => {
+    const [poseData, setPoseData] = useState<PoseResults | null>({ poseLandmarks: generateNeutralPose() });
+    const [loading, setLoading] = useState(true);
+    const [cameraEnabled, setCameraEnabled] = useState(false);
+    const [cameraAvailable, setCameraAvailable] = useState(true);
+    const [panelOpen, setPanelOpen] = useState(false);
+
+    // Config state
+    const [config, setConfig] = useState<AvatarConfig>({
+        smoothing: 0.3,
+        scale: 1.0,
+        boneThickness: 0.06,
+        jointSize: 0.08,
+        colorScheme: AvatarColorScheme.CYAN
+    });
+
+    // Track if camera error has occurred
+    const cameraErrorOccurredRef = useRef(false);
+
+    // Store the latest pose
+    const currentPoseRef = useRef<Landmark[]>(generateNeutralPose());
 
     const handlePoseDetected = useCallback((results: PoseResults) => {
         setPoseData(results);
@@ -18,111 +88,430 @@ const App: React.FC = () => {
     }, []);
 
     const handleResetPose = useCallback(() => {
-        // Generate a neutral standing pose (A-pose ish)
-        // MediaPipe Coords: x (0-1), y (0-1), z (approx meters)
-        const neutralLandmarks: Landmark[] = Array.from({ length: 33 }, () => ({
-            x: 0.5,
-            y: 0.5,
-            z: 0,
-            visibility: 1
-        }));
-
-        const setL = (idx: number, x: number, y: number) => {
-            neutralLandmarks[idx] = { x, y, z: 0, visibility: 1 };
-        };
-
-        // Head
-        setL(0, 0.5, 0.1); // Nose
-        setL(7, 0.55, 0.1); // L Ear
-        setL(8, 0.45, 0.1); // R Ear
-        setL(9, 0.52, 0.15); // Mouth L
-        setL(10, 0.48, 0.15); // Mouth R
-
-        // Body
-        setL(11, 0.6, 0.25); // L Shoulder
-        setL(12, 0.4, 0.25); // R Shoulder
-
-        setL(13, 0.65, 0.45); // L Elbow
-        setL(14, 0.35, 0.45); // R Elbow
-
-        setL(15, 0.7, 0.6); // L Wrist
-        setL(16, 0.3, 0.6); // R Wrist
-
-        setL(23, 0.55, 0.55); // L Hip
-        setL(24, 0.45, 0.55); // R Hip
-
-        setL(25, 0.55, 0.75); // L Knee
-        setL(26, 0.45, 0.75); // R Knee
-
-        setL(27, 0.55, 0.95); // L Ankle
-        setL(28, 0.45, 0.95); // R Ankle
-
+        const neutralLandmarks = generateNeutralPose();
         setPoseData({ poseLandmarks: neutralLandmarks });
+        currentPoseRef.current = neutralLandmarks;
     }, []);
 
+    const handleCameraReady = useCallback(() => {
+        setLoading(false);
+    }, []);
+
+    const handleCameraError = useCallback(() => {
+        cameraErrorOccurredRef.current = true;
+        setCameraAvailable(false);
+        setCameraEnabled(false);
+        setLoading(false);
+    }, []);
+
+    // Check camera availability
+    useEffect(() => {
+        if (!navigator.mediaDevices) {
+            console.warn('mediaDevices API not available (requires HTTPS or localhost)');
+            cameraErrorOccurredRef.current = true;
+            setCameraAvailable(false);
+            setLoading(false);
+            return;
+        }
+
+        const checkCameraAvailability = async () => {
+            if (cameraErrorOccurredRef.current) return;
+
+            try {
+                const devices = await navigator.mediaDevices.enumerateDevices();
+                const hasCamera = devices.some((device) => device.kind === 'videoinput');
+
+                if (hasCamera !== cameraAvailable) {
+                    setCameraAvailable(hasCamera);
+                    if (!hasCamera) {
+                        setCameraEnabled(false);
+                    }
+                }
+            } catch (err) {
+                console.warn('Failed to enumerate devices:', err);
+            }
+        };
+
+        checkCameraAvailability();
+        setLoading(false);
+
+        const handleDeviceChange = () => {
+            cameraErrorOccurredRef.current = false;
+            checkCameraAvailability();
+        };
+
+        navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
+        return () => {
+            navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
+        };
+    }, [cameraAvailable]);
+
+    const colorSchemes = [
+        { scheme: AvatarColorScheme.CYAN, icon: SparklesIcon, label: 'Cyan' },
+        { scheme: AvatarColorScheme.NEON, icon: FireIcon, label: 'Neon' },
+        { scheme: AvatarColorScheme.SUNSET, icon: SunIcon, label: 'Sunset' },
+        { scheme: AvatarColorScheme.MATRIX, icon: CommandLineIcon, label: 'Matrix' }
+    ];
+
     return (
-        <div className="relative w-full h-screen bg-black overflow-hidden font-sans">
+        <div className="w-full h-screen relative bg-black overflow-hidden text-white select-none font-sans">
             {/* 3D Background/Avatar Layer */}
             <div className="absolute inset-0 z-0">
-                <Avatar3D poseResults={poseData} />
+                <Avatar3D poseResults={poseData} config={config} />
             </div>
 
             {/* Vision Sensor (Top Right) */}
-            <PoseSensor isActive={true} onPoseDetected={handlePoseDetected} />
+            {cameraEnabled && (
+                <PoseSensor
+                    isActive={cameraEnabled}
+                    onPoseDetected={handlePoseDetected}
+                    onCameraReady={handleCameraReady}
+                    onCameraError={handleCameraError}
+                />
+            )}
 
-            {/* UI Overlay */}
-            <div className="absolute inset-0 z-10 pointer-events-none flex flex-col justify-between p-6">
-                {/* Header */}
-                <header className="flex justify-between items-start pointer-events-auto">
-                    <div>
-                        <h1 className="text-4xl font-black text-transparent bg-clip-text bg-linear-to-r from-cyan-400 to-blue-600 tracking-tighter drop-shadow-sm">
-                            MOTION CAPTURE
+            {/* Loading Overlay */}
+            {loading && (
+                <div className="absolute inset-0 z-50 flex flex-col items-center justify-center bg-black/90 backdrop-blur-sm transition-opacity duration-500">
+                    <div className="w-16 h-16 border-4 border-t-cyan-500 border-r-transparent border-b-cyan-500 border-l-transparent rounded-full animate-spin mb-4"></div>
+                    <h2 className="text-xl font-bold bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-purple-500">
+                        Initializing 3D Scene...
+                    </h2>
+                </div>
+            )}
+
+            {/* Desktop Control Panel - Right Side */}
+            <div className="hidden md:flex absolute top-0 right-0 h-full w-80 p-6 z-40 pointer-events-none flex-col justify-center">
+                <div className="pointer-events-auto bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-6 shadow-2xl transform transition-all hover:bg-black/50 hover:border-white/20">
+                    {/* Header */}
+                    <div className="mb-6">
+                        <h1 className="text-2xl font-bold mb-1 bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-blue-600">
+                            Motion Capture
                         </h1>
-                        <p className="text-cyan-200/70 text-sm mt-1">Real-time Pose to 3D Avatar</p>
+                        <p className="text-xs text-gray-400 font-mono tracking-wider">3D POSE TRACKING SYSTEM</p>
                     </div>
 
-                    <div className="bg-black/40 backdrop-blur-md border border-white/10 px-4 py-2 rounded-full">
-                        <div className="flex items-center gap-2">
-                            <div
-                                className={`w-3 h-3 rounded-full ${poseData ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`}></div>
-                            <span className="font-mono font-bold text-gray-300 text-sm">
-                                {poseData ? 'TRACKING ACTIVE' : 'NO SKELETON DETECTED'}
+                    {/* Control Mode Toggle */}
+                    <div className="flex flex-col space-y-2 mb-4">
+                        <div className="flex items-center space-x-2">
+                            <button
+                                onClick={() => cameraAvailable && setCameraEnabled(true)}
+                                className={`flex-1 flex items-center justify-center p-2 rounded-lg transition-all text-xs ${
+                                    cameraEnabled && cameraAvailable
+                                        ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
+                                        : !cameraAvailable
+                                          ? 'bg-orange-500/10 border-orange-500/30 text-orange-400/60 cursor-not-allowed'
+                                          : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
+                                } border`}
+                                disabled={!cameraAvailable}>
+                                <VideoCameraIcon className="w-4 h-4 mr-1" />
+                                Camera
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setCameraEnabled(false);
+                                    handleResetPose();
+                                }}
+                                className={`flex-1 flex items-center justify-center p-2 rounded-lg transition-all text-xs ${
+                                    !cameraEnabled
+                                        ? 'bg-purple-500/20 border-purple-500/50 text-purple-400'
+                                        : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
+                                } border`}>
+                                <CursorArrowRaysIcon className="w-4 h-4 mr-1" />
+                                Static
+                            </button>
+                        </div>
+                        {!cameraAvailable && (
+                            <p className="text-[10px] text-orange-400 text-center">
+                                Camera unavailable - using static mode
+                            </p>
+                        )}
+                    </div>
+
+                    {/* Status Indicator */}
+                    <div className="flex items-center space-x-3 mb-8 bg-white/5 p-3 rounded-lg border border-white/5">
+                        <div
+                            className={`w-3 h-3 rounded-full ${
+                                cameraEnabled && poseData ? 'bg-green-500 animate-pulse' : 'bg-cyan-500'
+                            }`}></div>
+                        <div className="flex flex-col">
+                            <span className="text-xs text-gray-400 uppercase">Status</span>
+                            <span className="text-sm font-medium text-white">
+                                {cameraEnabled ? (poseData ? 'Tracking Active' : 'No Skeleton') : 'Static Pose'}
                             </span>
                         </div>
+                        {cameraEnabled ? (
+                            <VideoCameraIcon className="w-5 h-5 text-cyan-500 ml-auto" />
+                        ) : (
+                            <CursorArrowRaysIcon className="w-5 h-5 text-purple-500 ml-auto" />
+                        )}
                     </div>
-                </header>
 
-                {/* Footer Instructions */}
-                <footer className="pointer-events-auto flex flex-col items-center gap-4 mb-4">
+                    {/* Color Scheme Selectors */}
+                    <div className="space-y-4 mb-8">
+                        <span className="text-xs font-bold text-gray-500 uppercase tracking-widest">Color Scheme</span>
+                        <div className="grid grid-cols-2 gap-3">
+                            {colorSchemes.map(({ scheme, icon: Icon, label }) => (
+                                <button
+                                    key={scheme}
+                                    onClick={() => setConfig((prev) => ({ ...prev, colorScheme: scheme }))}
+                                    className={`flex items-center justify-center p-3 rounded-xl transition-all ${
+                                        config.colorScheme === scheme
+                                            ? `bg-opacity-20 border-opacity-50`
+                                            : 'bg-white/5 border-transparent hover:bg-white/10 text-gray-400'
+                                    } border`}
+                                    style={{
+                                        backgroundColor:
+                                            config.colorScheme === scheme
+                                                ? `${AVATAR_COLORS[scheme].bone}20`
+                                                : undefined,
+                                        borderColor:
+                                            config.colorScheme === scheme
+                                                ? `${AVATAR_COLORS[scheme].bone}80`
+                                                : undefined,
+                                        color: config.colorScheme === scheme ? AVATAR_COLORS[scheme].bone : undefined
+                                    }}>
+                                    <Icon className="w-5 h-5 mr-2" />
+                                    <span className="text-sm">{label}</span>
+                                </button>
+                            ))}
+                        </div>
+                    </div>
+
+                    {/* Sliders */}
+                    <div className="space-y-6">
+                        <div className="space-y-2">
+                            <div className="flex justify-between text-xs text-gray-400">
+                                <span>Smoothing</span>
+                                <span>{config.smoothing.toFixed(2)}</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0.1"
+                                max="0.9"
+                                step="0.05"
+                                value={config.smoothing}
+                                onChange={(e) =>
+                                    setConfig((prev) => ({ ...prev, smoothing: parseFloat(e.target.value) }))
+                                }
+                                className="range-slider-cyan"
+                                style={{
+                                    background: `linear-gradient(to right, #06b6d4 0%, #22d3ee ${((config.smoothing - 0.1) / (0.9 - 0.1)) * 100}%, #374151 ${((config.smoothing - 0.1) / (0.9 - 0.1)) * 100}%, #374151 100%)`
+                                }}
+                            />
+                        </div>
+
+                        <div className="space-y-2">
+                            <div className="flex justify-between text-xs text-gray-400">
+                                <span>Scale</span>
+                                <span>{config.scale.toFixed(1)}x</span>
+                            </div>
+                            <input
+                                type="range"
+                                min="0.5"
+                                max="2.0"
+                                step="0.1"
+                                value={config.scale}
+                                onChange={(e) => setConfig((prev) => ({ ...prev, scale: parseFloat(e.target.value) }))}
+                                className="range-slider-pink"
+                                style={{
+                                    background: `linear-gradient(to right, #ec4899 0%, #f472b6 ${((config.scale - 0.5) / (2.0 - 0.5)) * 100}%, #374151 ${((config.scale - 0.5) / (2.0 - 0.5)) * 100}%, #374151 100%)`
+                                }}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Reset Button */}
                     <button
                         onClick={handleResetPose}
-                        className="px-6 py-2 bg-cyan-900/80 hover:bg-cyan-700/80 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all shadow-[0_0_15px_rgba(6,182,212,0.3)] hover:shadow-[0_0_25px_rgba(6,182,212,0.5)] active:scale-95 flex items-center gap-2">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                            strokeLinecap="round"
-                            strokeLinejoin="round">
-                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 12" />
-                            <path d="M3 3v9h9" />
-                        </svg>
+                        className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-900/50 hover:bg-cyan-700/50 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all">
+                        <ArrowPathIcon className="w-4 h-4" />
                         Reset Pose
                     </button>
 
-                    <div className="bg-black/50 backdrop-blur-md p-4 rounded-xl border border-white/10 max-w-xl text-center">
-                        <p className="text-gray-300 text-sm">
-                            Stand back so the camera can see your full body. <br />
-                            The 3D Robot will mimic your movements in real-time.
-                        </p>
-                        <div className="mt-2 text-xs text-cyan-500/60 font-mono">
-                            Powered by MediaPipe Pose & React Three Fiber
+                    <div className="mt-6 pt-4 border-t border-white/10 text-[10px] text-gray-600 leading-relaxed text-center">
+                        {cameraEnabled ? (
+                            <>
+                                Stand back so the camera can see your full body.
+                                <br />
+                                The 3D Robot will mimic your movements.
+                            </>
+                        ) : (
+                            <>
+                                Enable camera to track your body movements.
+                                <br />
+                                Or enjoy the static robot pose.
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile Toggle Button */}
+            <button
+                onClick={() => setPanelOpen(!panelOpen)}
+                className={`md:hidden fixed right-4 w-12 h-12 bg-black/20 border border-white/20 rounded-full flex items-center justify-center shadow-lg z-60 transition-all duration-300 bottom-4`}>
+                {panelOpen ? (
+                    <XMarkIcon className="w-6 h-6 text-white" />
+                ) : (
+                    <Bars3Icon className="w-6 h-6 text-white" />
+                )}
+            </button>
+
+            {/* Mobile UI Controls */}
+            <div className="md:hidden fixed bottom-0 left-0 right-0 z-50">
+                <div
+                    className={`transform transition-transform duration-300 ease-out ${
+                        panelOpen ? 'translate-y-0' : 'translate-y-full'
+                    }`}>
+                    <div className="bg-black/70 backdrop-blur-xl border-t border-white/10 rounded-t-3xl p-4 pb-8 shadow-2xl max-h-[70vh] overflow-y-auto">
+                        {/* Header */}
+                        <div className="flex items-center justify-between mb-4">
+                            <div>
+                                <h1 className="text-lg font-bold bg-clip-text text-transparent bg-linear-to-r from-cyan-400 to-blue-600">
+                                    Motion Capture
+                                </h1>
+                                <p className="text-[10px] text-gray-400 font-mono">3D POSE TRACKING</p>
+                            </div>
+                            {/* Status */}
+                            <div className="flex items-center space-x-2 bg-white/5 px-3 py-2 rounded-lg">
+                                <div
+                                    className={`w-2 h-2 rounded-full ${
+                                        cameraEnabled && poseData ? 'bg-green-500 animate-pulse' : 'bg-cyan-500'
+                                    }`}></div>
+                                <span className="text-xs text-white">
+                                    {cameraEnabled ? (poseData ? 'Tracking' : 'No Skeleton') : 'Static'}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Control Mode Toggle */}
+                        <div className="flex items-center space-x-2 mb-4">
+                            <button
+                                onClick={() => cameraAvailable && setCameraEnabled(true)}
+                                className={`flex-1 flex items-center justify-center p-2.5 rounded-xl transition-all text-xs ${
+                                    cameraEnabled && cameraAvailable
+                                        ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
+                                        : !cameraAvailable
+                                          ? 'bg-orange-500/10 border-orange-500/30 text-orange-400/60'
+                                          : 'bg-white/5 border-transparent text-gray-400'
+                                } border`}
+                                disabled={!cameraAvailable}>
+                                <VideoCameraIcon className="w-4 h-4 mr-1" />
+                                Camera
+                            </button>
+                            <button
+                                onClick={() => {
+                                    setCameraEnabled(false);
+                                    handleResetPose();
+                                }}
+                                className={`flex-1 flex items-center justify-center p-2.5 rounded-xl transition-all text-xs ${
+                                    !cameraEnabled
+                                        ? 'bg-purple-500/20 border-purple-500/50 text-purple-400'
+                                        : 'bg-white/5 border-transparent text-gray-400'
+                                } border`}>
+                                <CursorArrowRaysIcon className="w-4 h-4 mr-1" />
+                                Static
+                            </button>
+                        </div>
+                        {!cameraAvailable && (
+                            <p className="text-[10px] text-orange-400 text-center mb-4">Camera unavailable</p>
+                        )}
+
+                        {/* Color Scheme Selectors */}
+                        <div className="mb-4">
+                            <span className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block">
+                                Color Scheme
+                            </span>
+                            <div className="flex space-x-2 overflow-x-auto pb-2 -mx-1 px-1">
+                                {colorSchemes.map(({ scheme, icon: Icon, label }) => (
+                                    <button
+                                        key={scheme}
+                                        onClick={() => setConfig((prev) => ({ ...prev, colorScheme: scheme }))}
+                                        className={`shrink-0 flex items-center justify-center px-4 py-2.5 rounded-xl transition-all border ${
+                                            config.colorScheme === scheme
+                                                ? ''
+                                                : 'bg-white/5 border-transparent text-gray-400'
+                                        }`}
+                                        style={{
+                                            backgroundColor:
+                                                config.colorScheme === scheme
+                                                    ? `${AVATAR_COLORS[scheme].bone}20`
+                                                    : undefined,
+                                            borderColor:
+                                                config.colorScheme === scheme
+                                                    ? `${AVATAR_COLORS[scheme].bone}80`
+                                                    : undefined,
+                                            color:
+                                                config.colorScheme === scheme ? AVATAR_COLORS[scheme].bone : undefined
+                                        }}>
+                                        <Icon className="w-4 h-4 mr-1.5" />
+                                        <span className="text-xs">{label}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
+
+                        {/* Sliders */}
+                        <div className="grid grid-cols-2 gap-4">
+                            <div className="space-y-1.5">
+                                <div className="flex justify-between text-[10px] text-gray-400">
+                                    <span>Smoothing</span>
+                                    <span>{config.smoothing.toFixed(2)}</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0.1"
+                                    max="0.9"
+                                    step="0.05"
+                                    value={config.smoothing}
+                                    onChange={(e) =>
+                                        setConfig((prev) => ({ ...prev, smoothing: parseFloat(e.target.value) }))
+                                    }
+                                    className="range-slider-cyan"
+                                    style={{
+                                        background: `linear-gradient(to right, #06b6d4 0%, #22d3ee ${((config.smoothing - 0.1) / (0.9 - 0.1)) * 100}%, #374151 ${((config.smoothing - 0.1) / (0.9 - 0.1)) * 100}%, #374151 100%)`
+                                    }}
+                                />
+                            </div>
+                            <div className="space-y-1.5">
+                                <div className="flex justify-between text-[10px] text-gray-400">
+                                    <span>Scale</span>
+                                    <span>{config.scale.toFixed(1)}x</span>
+                                </div>
+                                <input
+                                    type="range"
+                                    min="0.5"
+                                    max="2.0"
+                                    step="0.1"
+                                    value={config.scale}
+                                    onChange={(e) =>
+                                        setConfig((prev) => ({ ...prev, scale: parseFloat(e.target.value) }))
+                                    }
+                                    className="range-slider-pink"
+                                    style={{
+                                        background: `linear-gradient(to right, #ec4899 0%, #f472b6 ${((config.scale - 0.5) / (2.0 - 0.5)) * 100}%, #374151 ${((config.scale - 0.5) / (2.0 - 0.5)) * 100}%, #374151 100%)`
+                                    }}
+                                />
+                            </div>
+                        </div>
+
+                        {/* Reset Button */}
+                        <button
+                            onClick={handleResetPose}
+                            className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-900/50 hover:bg-cyan-700/50 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all text-sm">
+                            <ArrowPathIcon className="w-4 h-4" />
+                            Reset Pose
+                        </button>
+
+                        {/* Instructions */}
+                        <div className="mt-4 pt-3 border-t border-white/10 text-[9px] text-gray-500 text-center">
+                            {cameraEnabled
+                                ? 'Stand back so the camera can see your full body'
+                                : 'Enable camera to track your movements'}
                         </div>
                     </div>
-                </footer>
+                </div>
             </div>
         </div>
     );

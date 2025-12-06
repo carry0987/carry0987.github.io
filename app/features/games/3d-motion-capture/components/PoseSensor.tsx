@@ -5,15 +5,18 @@ import type { PoseResults } from '../types';
 interface PoseSensorProps {
     onPoseDetected: (results: PoseResults) => void;
     isActive: boolean;
+    onCameraReady?: () => void;
+    onCameraError?: () => void;
 }
 
-const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive }) => {
+const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive, onCameraReady, onCameraError }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
     const [loading, setLoading] = useState(true);
     const requestRef = useRef<number>(0);
     const poseRef = useRef<Pose | null>(null);
 
     useEffect(() => {
+        if (!isActive) return;
         if (!videoRef.current) return;
         const videoElement = videoRef.current;
 
@@ -41,6 +44,7 @@ const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive }) => 
 
             pose.onResults((results) => {
                 setLoading(false);
+                onCameraReady?.();
                 if (!results.poseLandmarks) return;
                 onPoseDetected({ poseLandmarks: results.poseLandmarks as PoseResults['poseLandmarks'] });
             });
@@ -87,12 +91,11 @@ const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive }) => 
             } catch (err) {
                 console.error('Error accessing webcam:', err);
                 setLoading(false);
+                onCameraError?.();
             }
         };
 
-        if (isActive) {
-            initPose();
-        }
+        initPose();
 
         return () => {
             if (requestRef.current) cancelAnimationFrame(requestRef.current);
@@ -104,17 +107,30 @@ const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive }) => 
                 poseRef.current = null;
             }
         };
-    }, [isActive, onPoseDetected]);
+    }, [isActive, onPoseDetected, onCameraReady, onCameraError]);
+
+    if (!isActive) return null;
 
     return (
-        <div className="absolute top-4 right-4 w-32 h-24 sm:w-48 sm:h-36 bg-black rounded-lg overflow-hidden border-2 border-cyan-500/50 shadow-lg z-50">
-            {/* Hidden video element for processing */}
-            <video ref={videoRef} className="w-full h-full object-cover transform -scale-x-100" playsInline muted />
-            {loading && isActive && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-xs text-cyan-400">
-                    Init Vision...
+        <div className="fixed bottom-4 left-4 z-50">
+            {/* Error message */}
+            {!loading && !videoRef.current?.srcObject && (
+                <div className="bg-red-500/80 text-white p-2 rounded-lg text-sm mb-2 backdrop-blur-md max-w-xs">
+                    Cannot access camera
                 </div>
             )}
+            {/* Video container */}
+            <div className="relative w-32 h-24 sm:w-48 sm:h-36 rounded-lg overflow-hidden border border-cyan-500/50 shadow-lg bg-black/50">
+                <video ref={videoRef} className="w-full h-full object-cover transform -scale-x-100" playsInline muted />
+                <div className="absolute top-1 left-1 text-[10px] text-white/70 bg-black/40 px-1 rounded">
+                    Pose Input
+                </div>
+                {loading && isActive && (
+                    <div className="absolute inset-0 flex items-center justify-center bg-black/80 text-xs text-cyan-400">
+                        Init Vision...
+                    </div>
+                )}
+            </div>
         </div>
     );
 };
