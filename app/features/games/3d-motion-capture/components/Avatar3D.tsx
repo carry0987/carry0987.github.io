@@ -166,12 +166,15 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
         landmarks.forEach((l, i) => {
             if (i < 33) {
                 // Mapping:
-                // x: 0..1 -> -2..2 (flip X for mirror)
-                // y: 0..1 -> 2..-2 (flip Y)
-                // z: raw -> scale
+                // MediaPipe: x (0-1 left to right), y (0-1 top to bottom), z (depth)
+                // Three.js: x (left-right), y (up-down), z (forward-back)
+                //
+                // x: flip for mirror effect
+                // y: invert (MP 0=top, Three.js positive=up) and offset to center the figure
+                // z: invert for ThreeJS camera orientation
                 const x = (0.5 - l.x) * 3 * config.scale;
-                const y = ((0.5 - l.y) * 3 + 1) * config.scale; // +1 to lift up
-                const z = -l.z * 2 * config.scale; // Invert Z for ThreeJS camera
+                const y = ((0.5 - l.y) * 3 + 1) * config.scale;
+                const z = -l.z * 2 * config.scale;
 
                 // Smoothly interpolate for less jitter (use config smoothing)
                 lerpVector(vectors[i], new THREE.Vector3(x, y, z), config.smoothing);
@@ -216,7 +219,7 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
 const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults, config }) => {
     return (
         <div className="w-full h-full bg-slate-900 relative">
-            <Canvas shadows camera={{ position: [0, 1, 5], fov: 50 }}>
+            <Canvas shadows camera={{ position: [0, 2, 6], fov: 50 }}>
                 <fog attach="fog" args={['#0f172a', 5, 20]} />
                 <ambientLight intensity={0.5} />
                 <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} castShadow />

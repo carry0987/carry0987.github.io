@@ -19,6 +19,9 @@ import {
 import './style.css';
 
 // Generate a neutral standing pose (A-pose)
+// Y values are designed so that with the transform ((0.5 - y) * 3 + 1):
+// - Head (y=0.17) -> y=2.0 in 3D
+// - Feet (y=0.83) -> y=0 in 3D (ground level)
 const generateNeutralPose = (): Landmark[] => {
     const neutralLandmarks: Landmark[] = Array.from({ length: 33 }, () => ({
         x: 0.5,
@@ -31,31 +34,36 @@ const generateNeutralPose = (): Landmark[] => {
         neutralLandmarks[idx] = { x, y, z: 0, visibility: 1 };
     };
 
-    // Head
-    setL(0, 0.5, 0.1); // Nose
-    setL(7, 0.55, 0.1); // L Ear
-    setL(8, 0.45, 0.1); // R Ear
-    setL(9, 0.52, 0.15); // Mouth L
-    setL(10, 0.48, 0.15); // Mouth R
+    // Head (y around 0.17 -> 3D y = 2.0)
+    setL(0, 0.5, 0.17); // Nose
+    setL(7, 0.55, 0.17); // L Ear
+    setL(8, 0.45, 0.17); // R Ear
+    setL(9, 0.52, 0.2); // Mouth L
+    setL(10, 0.48, 0.2); // Mouth R
 
-    // Body
-    setL(11, 0.6, 0.25); // L Shoulder
-    setL(12, 0.4, 0.25); // R Shoulder
+    // Shoulders (y around 0.30 -> 3D y = 1.6)
+    setL(11, 0.6, 0.3); // L Shoulder
+    setL(12, 0.4, 0.3); // R Shoulder
 
-    setL(13, 0.65, 0.45); // L Elbow
-    setL(14, 0.35, 0.45); // R Elbow
+    // Elbows (y around 0.47 -> 3D y = 1.1)
+    setL(13, 0.65, 0.47); // L Elbow
+    setL(14, 0.35, 0.47); // R Elbow
 
+    // Wrists (y around 0.60 -> 3D y = 0.7)
     setL(15, 0.7, 0.6); // L Wrist
     setL(16, 0.3, 0.6); // R Wrist
 
-    setL(23, 0.55, 0.55); // L Hip
-    setL(24, 0.45, 0.55); // R Hip
+    // Hips (y around 0.53 -> 3D y = 0.9)
+    setL(23, 0.55, 0.53); // L Hip
+    setL(24, 0.45, 0.53); // R Hip
 
-    setL(25, 0.55, 0.75); // L Knee
-    setL(26, 0.45, 0.75); // R Knee
+    // Knees (y around 0.68 -> 3D y = 0.46)
+    setL(25, 0.55, 0.68); // L Knee
+    setL(26, 0.45, 0.68); // R Knee
 
-    setL(27, 0.55, 0.95); // L Ankle
-    setL(28, 0.45, 0.95); // R Ankle
+    // Ankles (y around 0.83 -> 3D y = 0.0, ground level)
+    setL(27, 0.55, 0.83); // L Ankle
+    setL(28, 0.45, 0.83); // R Ankle
 
     return neutralLandmarks;
 };
