@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
+import type { Pose } from '@mediapipe/pose';
 import type { PoseResults } from '../types';
 
 interface PoseSensorProps {
@@ -10,47 +11,45 @@ const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive }) => 
     const videoRef = useRef<HTMLVideoElement>(null);
     const [loading, setLoading] = useState(true);
     const requestRef = useRef<number>(0);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const poseRef = useRef<any>(null);
+    const poseRef = useRef<Pose | null>(null);
 
     useEffect(() => {
         if (!videoRef.current) return;
         const videoElement = videoRef.current;
 
-        // Access the globally loaded Pose class
-        const Pose = (window as any).Pose;
-
-        if (!Pose) {
-            console.error('MediaPipe Pose library not loaded');
-            setLoading(false);
-            return;
-        }
-
-        const pose = new Pose({
-            locateFile: (file: string) => {
-                return `https://cdn.jsdelivr.net/npm/@mediapipe/pose/${file}`;
-            }
-        });
-
-        pose.setOptions({
-            modelComplexity: 1,
-            smoothLandmarks: true,
-            enableSegmentation: false,
-            minDetectionConfidence: 0.5,
-            minTrackingConfidence: 0.5
-        });
-
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        pose.onResults((results: any) => {
-            setLoading(false);
-            if (!results.poseLandmarks) return;
-            onPoseDetected({ poseLandmarks: results.poseLandmarks });
-        });
-
-        poseRef.current = pose;
-
         let stream: MediaStream | null = null;
         let isProcessing = false;
+
+        const initPose = async () => {
+            // Dynamic import for client-side only
+            const mediapipePose = await import('@mediapipe/pose');
+            const PoseClass = mediapipePose.Pose;
+
+            const pose = new PoseClass({
+                locateFile: (file: string) => {
+                    return `/mediapipe/pose/${file}`;
+                }
+            });
+
+            pose.setOptions({
+                modelComplexity: 1,
+                smoothLandmarks: true,
+                enableSegmentation: false,
+                minDetectionConfidence: 0.5,
+                minTrackingConfidence: 0.5
+            });
+
+            pose.onResults((results) => {
+                setLoading(false);
+                if (!results.poseLandmarks) return;
+                onPoseDetected({ poseLandmarks: results.poseLandmarks as PoseResults['poseLandmarks'] });
+            });
+
+            poseRef.current = pose;
+
+            // Start camera after pose is initialized
+            startCamera();
+        };
 
         const loop = async () => {
             if (!isActive || !videoElement) return;
@@ -92,7 +91,7 @@ const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive }) => 
         };
 
         if (isActive) {
-            startCamera();
+            initPose();
         }
 
         return () => {
