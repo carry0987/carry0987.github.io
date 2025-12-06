@@ -42,6 +42,13 @@ export default function GamesPage() {
             tech: ['Three.js', 'MediaPipe', 'Hand Tracking'],
             genre: '3D',
             playUrl: '/games/gesture-flow'
+        },
+        {
+            title: '3D Motion Capture',
+            desc: 'Real-time pose detection that mirrors your movements onto a 3D robot avatar using webcam tracking.',
+            tech: ['Three.js', 'MediaPipe', 'Pose Detection'],
+            genre: '3D',
+            playUrl: '/games/3d-motion-capture'
         }
     ];
 
