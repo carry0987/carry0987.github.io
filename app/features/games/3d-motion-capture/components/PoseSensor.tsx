@@ -1,6 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import type { Pose } from '@mediapipe/pose';
 import type { PoseResults } from '../types';
+import { usePageVisibility } from '@/hooks';
 
 interface PoseSensorProps {
     onPoseDetected: (results: PoseResults) => void;
@@ -11,25 +12,11 @@ interface PoseSensorProps {
 
 const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive, onCameraReady, onCameraError }) => {
     const videoRef = useRef<HTMLVideoElement>(null);
-    const [loading, setLoading] = useState(true);
-    const [isPaused, setIsPaused] = useState(false);
+    const [loading, setLoading] = React.useState(true);
     const requestRef = useRef<number>(0);
     const poseRef = useRef<Pose | null>(null);
-    const isPageVisibleRef = useRef(true);
-
-    // Handle page visibility change to pause/resume pose detection
-    useEffect(() => {
-        const handleVisibilityChange = () => {
-            const isVisible = document.visibilityState === 'visible';
-            isPageVisibleRef.current = isVisible;
-            setIsPaused(!isVisible);
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, []);
+    const { isVisible, isVisibleRef } = usePageVisibility();
+    const isPaused = !isVisible;
 
     useEffect(() => {
         if (!isActive) return;
@@ -75,7 +62,7 @@ const PoseSensor: React.FC<PoseSensorProps> = ({ onPoseDetected, isActive, onCam
             if (!isActive || !videoElement) return;
 
             // Skip processing if page is not visible
-            if (isPageVisibleRef.current && videoElement.readyState >= 2 && !isProcessing && poseRef.current) {
+            if (isVisibleRef.current && videoElement.readyState >= 2 && !isProcessing && poseRef.current) {
                 isProcessing = true;
                 try {
                     await poseRef.current.send({ image: videoElement });

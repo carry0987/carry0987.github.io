@@ -1,9 +1,10 @@
-import React, { useRef, useMemo, useState, useEffect, useCallback } from 'react';
+import React, { useRef, useMemo, useEffect, useCallback } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Environment, Grid } from '@react-three/drei';
 import * as THREE from 'three';
 import type { PoseResults, Landmark, AvatarConfig } from '../types';
 import { AVATAR_COLORS, AvatarColorScheme } from '../types';
+import { usePageVisibility } from '@/hooks';
 
 interface Avatar3DProps {
     poseResults: PoseResults | null;
@@ -272,21 +273,9 @@ const SceneController: React.FC<{ isPaused: boolean }> = ({ isPaused }) => {
 };
 
 const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults, config }) => {
-    const [isPaused, setIsPaused] = useState(false);
+    const { isVisible } = usePageVisibility();
+    const isPaused = !isVisible;
     const canvasRef = useRef<HTMLCanvasElement>(null);
-
-    // Handle page visibility change
-    useEffect(() => {
-        const handleVisibilityChange = () => {
-            const isVisible = document.visibilityState === 'visible';
-            setIsPaused(!isVisible);
-        };
-
-        document.addEventListener('visibilitychange', handleVisibilityChange);
-        return () => {
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
-        };
-    }, []);
 
     // Callback to dispose resources when component unmounts or visibility changes
     const onCreated = useCallback((state: { gl: THREE.WebGLRenderer }) => {

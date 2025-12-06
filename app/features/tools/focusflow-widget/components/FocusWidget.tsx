@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { usePageVisibility } from '../hooks/usePageVisibility';
+import { usePageVisibility } from '@/hooks';
 import { ProgressBar } from './ProgressBar';
 import { PlayIcon, PauseIcon, CheckCircleIcon, RefreshIcon, ChevronDownIcon, SparklesIcon } from './Icons';
 
@@ -8,7 +8,8 @@ const TICK_RATE = 100; // Milliseconds
 const COMPLETION_DELAY = 1500; // Time to show "Complete" before resetting
 
 export const FocusWidget: React.FC = () => {
-    const isPageVisible = usePageVisibility();
+    // Use considerFocus: true to pause when user clicks outside the window
+    const { isVisible: isPageVisible } = usePageVisibility({ considerFocus: true });
     const [progress, setProgress] = useState(0);
     const [isComplete, setIsComplete] = useState(false);
     const [sessionCount, setSessionCount] = useState(0);
