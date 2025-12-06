@@ -5,6 +5,7 @@ import ParticleScene from './components/ParticleScene';
 import HandTracker from './components/HandTracker';
 import { ShapeType, THEME_COLORS } from './types';
 import type { HandData, ParticleConfig } from './types';
+import { useCameraAvailability } from '@/hooks';
 import {
     SparklesIcon,
     HeartIcon,
@@ -30,8 +31,6 @@ const App: React.FC = () => {
     });
 
     const [loading, setLoading] = useState(true);
-    const [useMouseControl, setUseMouseControl] = useState(false);
-    const [cameraAvailable, setCameraAvailable] = useState(true);
     const [panelOpen, setPanelOpen] = useState(false);
     const canvasContainerRef = useRef<HTMLDivElement>(null);
 
@@ -48,6 +47,20 @@ const App: React.FC = () => {
         detected: false,
         state: 'Waiting...'
     });
+
+    // Camera availability hook
+    const { cameraAvailable, cameraEnabled, setCameraEnabled, handleCameraError } = useCameraAvailability({
+        onCameraUnavailable: () => {
+            setLoading(false);
+        },
+        onCameraError: () => {
+            setLoading(false);
+        }
+    });
+
+    // Derive useMouseControl from cameraEnabled (inverted logic)
+    const useMouseControl = !cameraEnabled;
+    const setUseMouseControl = (value: boolean) => setCameraEnabled(!value);
 
     // Mouse control handler
     const handleMouseMove = useCallback(
@@ -189,68 +202,6 @@ const App: React.FC = () => {
         handleTouchMove,
         handleTouchEnd
     ]);
-
-    // Track if camera error has occurred (permission denied, etc.)
-    const cameraErrorOccurredRef = useRef(false);
-
-    const handleCameraError = useCallback(() => {
-        cameraErrorOccurredRef.current = true;
-        setCameraAvailable(false);
-        setUseMouseControl(true);
-        setLoading(false);
-    }, []);
-
-    // Check camera availability periodically
-    useEffect(() => {
-        // Check if mediaDevices API is available (requires secure context: HTTPS or localhost)
-        if (!navigator.mediaDevices) {
-            console.warn('mediaDevices API not available (requires HTTPS or localhost)');
-            cameraErrorOccurredRef.current = true;
-            setCameraAvailable(false);
-            setUseMouseControl(true);
-            setLoading(false);
-            return;
-        }
-
-        const checkCameraAvailability = async () => {
-            // If camera error occurred (permission denied, etc.), don't auto-restore
-            if (cameraErrorOccurredRef.current) {
-                return;
-            }
-
-            try {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const hasCamera = devices.some((device) => device.kind === 'videoinput');
-
-                if (hasCamera !== cameraAvailable) {
-                    setCameraAvailable(hasCamera);
-                    // If camera becomes unavailable, auto switch to mouse control
-                    if (!hasCamera) {
-                        setUseMouseControl(true);
-                    }
-                }
-            } catch (err) {
-                console.warn('Failed to enumerate devices:', err);
-            }
-        };
-
-        // Initial check
-        checkCameraAvailability();
-
-        // Listen for device changes (plug/unplug)
-        const handleDeviceChange = () => {
-            // Reset error state on device change to allow re-detection
-            // This handles the case when user plugs in a new camera
-            cameraErrorOccurredRef.current = false;
-            checkCameraAvailability();
-        };
-
-        navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
-
-        return () => {
-            navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
-        };
-    }, [cameraAvailable]);
 
     const handleHandUpdate = (data: HandData) => {
         // Update ref for 3D loop

@@ -1,8 +1,9 @@
-import React, { useState, useCallback, useRef, useEffect } from 'react';
+import React, { useState, useCallback, useRef } from 'react';
 import type { PoseResults, Landmark, AvatarConfig } from './types';
 import { AvatarColorScheme, AVATAR_COLORS } from './types';
 import Avatar3D from './components/Avatar3D';
 import PoseSensor from './components/PoseSensor';
+import { useCameraAvailability } from '@/hooks';
 import {
     VideoCameraIcon,
     CursorArrowRaysIcon,
@@ -75,8 +76,6 @@ const generateNeutralPose = (): Landmark[] => {
 const App: React.FC = () => {
     const [poseData, setPoseData] = useState<PoseResults | null>({ poseLandmarks: generateNeutralPose() });
     const [loading, setLoading] = useState(true);
-    const [cameraEnabled, setCameraEnabled] = useState(true); // Default to camera mode
-    const [cameraAvailable, setCameraAvailable] = useState(true);
     const [panelOpen, setPanelOpen] = useState(false);
 
     // Config state
@@ -88,88 +87,36 @@ const App: React.FC = () => {
         colorScheme: AvatarColorScheme.CYAN
     });
 
-    // Track if camera error has occurred
-    const cameraErrorOccurredRef = useRef(false);
-
     // Store the latest pose
     const currentPoseRef = useRef<Landmark[]>(generateNeutralPose());
+
+    // Reset pose to neutral
+    const resetPose = useCallback(() => {
+        const neutralLandmarks = generateNeutralPose();
+        setPoseData({ poseLandmarks: neutralLandmarks });
+        currentPoseRef.current = neutralLandmarks;
+    }, []);
+
+    // Camera availability hook
+    const { cameraAvailable, cameraEnabled, setCameraEnabled, handleCameraError } = useCameraAvailability({
+        onCameraUnavailable: () => {
+            resetPose();
+            setLoading(false);
+        },
+        onCameraError: () => {
+            resetPose();
+            setLoading(false);
+        }
+    });
 
     const handlePoseDetected = useCallback((results: PoseResults) => {
         setPoseData(results);
         currentPoseRef.current = results.poseLandmarks;
     }, []);
 
-    const handleResetPose = useCallback(() => {
-        const neutralLandmarks = generateNeutralPose();
-        setPoseData({ poseLandmarks: neutralLandmarks });
-        currentPoseRef.current = neutralLandmarks;
-    }, []);
-
     const handleCameraReady = useCallback(() => {
         setLoading(false);
     }, []);
-
-    const handleCameraError = useCallback(() => {
-        cameraErrorOccurredRef.current = true;
-        setCameraAvailable(false);
-        setCameraEnabled(false); // Switch to static mode on error
-        // Reset to neutral pose when camera is unavailable
-        const neutralLandmarks = generateNeutralPose();
-        setPoseData({ poseLandmarks: neutralLandmarks });
-        currentPoseRef.current = neutralLandmarks;
-        setLoading(false);
-    }, []);
-
-    // Check camera availability
-    useEffect(() => {
-        if (!navigator.mediaDevices) {
-            console.warn('mediaDevices API not available (requires HTTPS or localhost)');
-            cameraErrorOccurredRef.current = true;
-            setCameraAvailable(false);
-            setCameraEnabled(false); // Switch to static mode
-            // Reset to neutral pose
-            const neutralLandmarks = generateNeutralPose();
-            setPoseData({ poseLandmarks: neutralLandmarks });
-            currentPoseRef.current = neutralLandmarks;
-            setLoading(false);
-            return;
-        }
-
-        const checkCameraAvailability = async () => {
-            if (cameraErrorOccurredRef.current) return;
-
-            try {
-                const devices = await navigator.mediaDevices.enumerateDevices();
-                const hasCamera = devices.some((device) => device.kind === 'videoinput');
-
-                if (hasCamera !== cameraAvailable) {
-                    setCameraAvailable(hasCamera);
-                    if (!hasCamera) {
-                        setCameraEnabled(false); // Switch to static mode if no camera
-                        // Reset to neutral pose
-                        const neutralLandmarks = generateNeutralPose();
-                        setPoseData({ poseLandmarks: neutralLandmarks });
-                        currentPoseRef.current = neutralLandmarks;
-                    }
-                }
-            } catch (err) {
-                console.warn('Failed to enumerate devices:', err);
-            }
-        };
-
-        checkCameraAvailability();
-        // Don't set loading to false here - let the camera ready callback handle it
-
-        const handleDeviceChange = () => {
-            cameraErrorOccurredRef.current = false;
-            checkCameraAvailability();
-        };
-
-        navigator.mediaDevices.addEventListener('devicechange', handleDeviceChange);
-        return () => {
-            navigator.mediaDevices.removeEventListener('devicechange', handleDeviceChange);
-        };
-    }, [cameraAvailable]);
 
     const colorSchemes = [
         { scheme: AvatarColorScheme.CYAN, icon: SparklesIcon, label: 'Cyan' },
@@ -244,7 +191,7 @@ const App: React.FC = () => {
                             <button
                                 onClick={() => {
                                     setCameraEnabled(false);
-                                    handleResetPose();
+                                    resetPose();
                                 }}
                                 className={`flex-1 flex items-center justify-center p-2 rounded-lg transition-all text-xs ${
                                     !cameraEnabled
@@ -357,7 +304,7 @@ const App: React.FC = () => {
 
                     {/* Reset Button */}
                     <button
-                        onClick={handleResetPose}
+                        onClick={resetPose}
                         className="mt-6 w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-900/50 hover:bg-cyan-700/50 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all cursor-pointer">
                         <ArrowPathIcon className="w-4 h-4" />
                         Reset Pose
@@ -437,7 +384,7 @@ const App: React.FC = () => {
                             <button
                                 onClick={() => {
                                     setCameraEnabled(false);
-                                    handleResetPose();
+                                    resetPose();
                                 }}
                                 className={`flex-1 flex items-center justify-center p-2.5 rounded-xl transition-all text-xs ${
                                     !cameraEnabled
@@ -532,7 +479,7 @@ const App: React.FC = () => {
 
                         {/* Reset Button */}
                         <button
-                            onClick={handleResetPose}
+                            onClick={resetPose}
                             className="mt-4 w-full flex items-center justify-center gap-2 px-4 py-2 bg-cyan-900/50 hover:bg-cyan-700/50 border border-cyan-500/50 rounded-lg text-cyan-100 font-semibold transition-all text-sm cursor-pointer">
                             <ArrowPathIcon className="w-4 h-4" />
                             Reset Pose
