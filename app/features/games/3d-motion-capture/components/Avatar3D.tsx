@@ -389,7 +389,7 @@ const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults, config }) => {
             <Canvas
                 ref={canvasRef}
                 shadows
-                camera={{ position: [0, 2, 6], fov: 50 }}
+                camera={{ position: [0, 1.2, 5], fov: 50 }}
                 frameloop={isPaused ? 'never' : 'always'}
                 onCreated={onCreated}>
                 <SceneController isPaused={isPaused} />
@@ -408,6 +408,7 @@ const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults, config }) => {
                 <Environment preset="city" />
                 <OrbitControls
                     enablePan={false}
+                    target={[0, 1, 0]}
                     maxPolarAngle={Math.PI / 1.5}
                     enableDamping={true}
                     dampingFactor={0.03}
