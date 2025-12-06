@@ -113,6 +113,10 @@ const App: React.FC = () => {
         cameraErrorOccurredRef.current = true;
         setCameraAvailable(false);
         setCameraEnabled(false); // Switch to static mode on error
+        // Reset to neutral pose when camera is unavailable
+        const neutralLandmarks = generateNeutralPose();
+        setPoseData({ poseLandmarks: neutralLandmarks });
+        currentPoseRef.current = neutralLandmarks;
         setLoading(false);
     }, []);
 
@@ -123,6 +127,10 @@ const App: React.FC = () => {
             cameraErrorOccurredRef.current = true;
             setCameraAvailable(false);
             setCameraEnabled(false); // Switch to static mode
+            // Reset to neutral pose
+            const neutralLandmarks = generateNeutralPose();
+            setPoseData({ poseLandmarks: neutralLandmarks });
+            currentPoseRef.current = neutralLandmarks;
             setLoading(false);
             return;
         }
@@ -138,6 +146,10 @@ const App: React.FC = () => {
                     setCameraAvailable(hasCamera);
                     if (!hasCamera) {
                         setCameraEnabled(false); // Switch to static mode if no camera
+                        // Reset to neutral pose
+                        const neutralLandmarks = generateNeutralPose();
+                        setPoseData({ poseLandmarks: neutralLandmarks });
+                        currentPoseRef.current = neutralLandmarks;
                     }
                 }
             } catch (err) {
