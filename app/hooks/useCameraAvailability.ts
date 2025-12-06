@@ -17,7 +17,7 @@ interface UseCameraAvailabilityReturn {
     /** Handle camera error (call this from your camera component) */
     handleCameraError: () => void;
     /** Ref to track if camera error has occurred */
-    cameraErrorOccurredRef: React.MutableRefObject<boolean>;
+    cameraErrorOccurredRef: React.RefObject<boolean>;
 }
 
 /**
