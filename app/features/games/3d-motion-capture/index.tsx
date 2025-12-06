@@ -22,6 +22,8 @@ import './style.css';
 // Y values are designed so that with the transform ((0.5 - y) * 3 + 1):
 // - Head (y=0.17) -> y=2.0 in 3D
 // - Feet (y=0.83) -> y=0 in 3D (ground level)
+// Z values in MediaPipe: negative = closer to camera, positive = farther
+// For upright pose: nose forward, ears behind, torso at reference plane
 const generateNeutralPose = (): Landmark[] => {
     const neutralLandmarks: Landmark[] = Array.from({ length: 33 }, () => ({
         x: 0.5,
@@ -30,40 +32,42 @@ const generateNeutralPose = (): Landmark[] => {
         visibility: 1
     }));
 
-    const setL = (idx: number, x: number, y: number) => {
-        neutralLandmarks[idx] = { x, y, z: 0, visibility: 1 };
+    const setL = (idx: number, x: number, y: number, z: number = 0) => {
+        neutralLandmarks[idx] = { x, y, z, visibility: 1 };
     };
 
     // Head (y around 0.17 -> 3D y = 2.0)
-    setL(0, 0.5, 0.17); // Nose
-    setL(7, 0.55, 0.17); // L Ear
-    setL(8, 0.45, 0.17); // R Ear
-    setL(9, 0.52, 0.2); // Mouth L
-    setL(10, 0.48, 0.2); // Mouth R
+    // Nose is forward (negative z), ears are behind (positive z)
+    setL(0, 0.5, 0.17, 0); // Nose (forward)
+    setL(7, 0.55, 0.17, 0.05); // L Ear (behind nose)
+    setL(8, 0.45, 0.17, 0.05); // R Ear (behind nose)
+    setL(9, 0.52, 0.2, -0.08); // Mouth L (slightly forward)
+    setL(10, 0.48, 0.2, -0.08); // Mouth R (slightly forward)
 
     // Shoulders (y around 0.30 -> 3D y = 1.6)
-    setL(11, 0.6, 0.3); // L Shoulder
-    setL(12, 0.4, 0.3); // R Shoulder
+    // Shoulders at reference plane (z = 0)
+    setL(11, 0.6, 0.3, 0); // L Shoulder
+    setL(12, 0.4, 0.3, 0); // R Shoulder
 
     // Elbows (y around 0.47 -> 3D y = 1.1)
-    setL(13, 0.65, 0.47); // L Elbow
-    setL(14, 0.35, 0.47); // R Elbow
+    setL(13, 0.65, 0.47, 0); // L Elbow
+    setL(14, 0.35, 0.47, 0); // R Elbow
 
     // Wrists (y around 0.60 -> 3D y = 0.7)
-    setL(15, 0.7, 0.6); // L Wrist
-    setL(16, 0.3, 0.6); // R Wrist
+    setL(15, 0.7, 0.6, 0); // L Wrist
+    setL(16, 0.3, 0.6, 0); // R Wrist
 
     // Hips (y around 0.53 -> 3D y = 0.9)
-    setL(23, 0.55, 0.53); // L Hip
-    setL(24, 0.45, 0.53); // R Hip
+    setL(23, 0.55, 0.53, 0); // L Hip
+    setL(24, 0.45, 0.53, 0); // R Hip
 
     // Knees (y around 0.68 -> 3D y = 0.46)
-    setL(25, 0.55, 0.68); // L Knee
-    setL(26, 0.45, 0.68); // R Knee
+    setL(25, 0.55, 0.68, 0); // L Knee
+    setL(26, 0.45, 0.68, 0); // R Knee
 
     // Ankles (y around 0.83 -> 3D y = 0.0, ground level)
-    setL(27, 0.55, 0.83); // L Ankle
-    setL(28, 0.45, 0.83); // R Ankle
+    setL(27, 0.55, 0.83, 0); // L Ankle
+    setL(28, 0.45, 0.83, 0); // R Ankle
 
     return neutralLandmarks;
 };

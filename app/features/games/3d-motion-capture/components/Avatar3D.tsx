@@ -30,6 +30,30 @@ const BONE_CONNECTIONS = [
     [0, 12] // Neck/Head approximate
 ];
 
+// Define maximum bone lengths (in 3D units) to prevent unrealistic stretching
+// These are based on human body proportions scaled to a ~2 unit tall figure
+const BONE_MAX_LENGTHS: Record<string, number> = {
+    '11-12': 0.6, // Shoulders width
+    '11-13': 0.5, // Upper arm
+    '13-15': 0.5, // Forearm
+    '12-14': 0.5, // Upper arm
+    '14-16': 0.5, // Forearm
+    '11-23': 0.7, // Torso side
+    '12-24': 0.7, // Torso side
+    '23-24': 0.4, // Hips width
+    '23-25': 0.6, // Upper leg
+    '25-27': 0.6, // Lower leg
+    '24-26': 0.6, // Upper leg
+    '26-28': 0.6, // Lower leg
+    '0-11': 0.5, // Neck to shoulder
+    '0-12': 0.5 // Neck to shoulder
+};
+
+// Get bone key for lookup
+const getBoneKey = (start: number, end: number): string => {
+    return start < end ? `${start}-${end}` : `${end}-${start}`;
+};
+
 // Helper to interpolate position smoothly
 const lerpVector = (v1: THREE.Vector3, v2: THREE.Vector3, alpha: number) => {
     v1.lerp(v2, alpha);
@@ -163,8 +187,31 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
         return Array.from({ length: 33 }, () => new THREE.Vector3());
     }, []);
 
+    // Temporary vectors for raw positions before constraint
+    const rawVectors = useMemo(() => {
+        return Array.from({ length: 33 }, () => new THREE.Vector3());
+    }, []);
+
     // Target height for the figure in 3D units (head to feet)
     const targetHeight = 2.0;
+
+    // Helper to constrain bone length
+    const constrainBoneLength = (
+        parentIdx: number,
+        childIdx: number,
+        maxLength: number,
+        constrainedVectors: THREE.Vector3[]
+    ) => {
+        const parent = constrainedVectors[parentIdx];
+        const child = constrainedVectors[childIdx];
+        const dist = parent.distanceTo(child);
+
+        if (dist > maxLength) {
+            // Move child toward parent to maintain max length
+            const direction = new THREE.Vector3().subVectors(child, parent).normalize();
+            child.copy(parent).addScaledVector(direction, maxLength);
+        }
+    };
 
     useFrame(() => {
         // Calculate body height from head (nose) to feet (ankles) in MediaPipe coords
@@ -180,6 +227,7 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
         // Avoid division by zero
         const heightScale = bodyHeightMP > 0.1 ? targetHeight / (bodyHeightMP * 3) : 1;
 
+        // First pass: calculate raw positions
         landmarks.forEach((l, i) => {
             if (i < 33) {
                 // Mapping:
@@ -196,10 +244,51 @@ const Robot = ({ landmarks, config }: { landmarks: Landmark[]; config: AvatarCon
                 const y = (rawY - feetY) * config.scale; // Anchor feet to y=0
                 const z = -l.z * 2 * heightScale * config.scale;
 
-                // Smoothly interpolate for less jitter (use config smoothing)
-                lerpVector(vectors[i], new THREE.Vector3(x, y, z), config.smoothing);
+                rawVectors[i].set(x, y, z);
             }
         });
+
+        // Second pass: apply bone length constraints
+        // We need to process bones in a hierarchical order (from core to extremities)
+        // Copy raw positions to a working array first
+        rawVectors.forEach((v, i) => {
+            if (i < 33) {
+                vectors[i].lerp(v, config.smoothing);
+            }
+        });
+
+        // Apply constraints in hierarchical order:
+        // 1. Core body (shoulders, hips)
+        const scaledMaxLengths: Record<string, number> = {};
+        Object.entries(BONE_MAX_LENGTHS).forEach(([key, length]) => {
+            scaledMaxLengths[key] = length * config.scale;
+        });
+
+        // Head to shoulders
+        constrainBoneLength(0, 11, scaledMaxLengths['0-11'], vectors);
+        constrainBoneLength(0, 12, scaledMaxLengths['0-12'], vectors);
+
+        // Shoulders width
+        constrainBoneLength(11, 12, scaledMaxLengths['11-12'], vectors);
+
+        // Torso (shoulders to hips)
+        constrainBoneLength(11, 23, scaledMaxLengths['11-23'], vectors);
+        constrainBoneLength(12, 24, scaledMaxLengths['12-24'], vectors);
+
+        // Hips width
+        constrainBoneLength(23, 24, scaledMaxLengths['23-24'], vectors);
+
+        // Arms (from shoulder outward)
+        constrainBoneLength(11, 13, scaledMaxLengths['11-13'], vectors); // L upper arm
+        constrainBoneLength(13, 15, scaledMaxLengths['13-15'], vectors); // L forearm
+        constrainBoneLength(12, 14, scaledMaxLengths['12-14'], vectors); // R upper arm
+        constrainBoneLength(14, 16, scaledMaxLengths['14-16'], vectors); // R forearm
+
+        // Legs (from hip downward)
+        constrainBoneLength(23, 25, scaledMaxLengths['23-25'], vectors); // L upper leg
+        constrainBoneLength(25, 27, scaledMaxLengths['25-27'], vectors); // L lower leg
+        constrainBoneLength(24, 26, scaledMaxLengths['24-26'], vectors); // R upper leg
+        constrainBoneLength(26, 28, scaledMaxLengths['26-28'], vectors); // R lower leg
     });
 
     // Check if we have enough confidence (basic check using nose visibility)
