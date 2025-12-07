@@ -63,7 +63,7 @@ const App: React.FC = () => {
             {/* Footer / Instruction overlay */}
             <div className="absolute bottom-6 left-6 pointer-events-none opacity-50 text-white mix-blend-difference z-10">
                 <h2 className="text-4xl font-black tracking-tighter uppercase">{activeEffect.replace('_', ' ')}</h2>
-                <p className="text-sm tracking-widest mt-1">PERLIN NOISE GENERATOR v1.0</p>
+                <p className="text-sm tracking-widest mt-1">PERLIN NOISE GENERATOR</p>
             </div>
         </div>
     );
