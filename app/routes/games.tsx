@@ -49,6 +49,13 @@ export default function GamesPage() {
             tech: ['Three.js', 'MediaPipe', 'Pose Detection'],
             genre: '3D',
             playUrl: '/games/3d-motion-capture'
+        },
+        {
+            title: 'Perlin Noise',
+            desc: 'An interactive Perlin noise visualizer with multiple effects including terrain, sphere blob, particles, and plasma.',
+            tech: ['Three.js', 'GLSL Shaders', 'Procedural Generation'],
+            genre: '3D',
+            playUrl: '/games/perlin-noise'
         }
     ];
 

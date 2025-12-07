@@ -9,6 +9,7 @@ export default [
     route('/games/sky-metropolis', './features/games/sky-metropolis/index.tsx'),
     route('/games/gesture-flow', './features/games/gesture-flow/index.tsx'),
     route('/games/3d-motion-capture', './features/games/3d-motion-capture/index.tsx'),
+    route('/games/perlin-noise', './features/games/perlin-noise/index.tsx'),
     /* Tools */
     route('/tools/svg-generator', './features/tools/svg-generator/index.tsx'),
     route('/tools/focusflow-widget', './features/tools/focusflow-widget/index.tsx'),
