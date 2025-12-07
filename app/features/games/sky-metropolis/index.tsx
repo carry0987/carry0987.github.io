@@ -109,14 +109,24 @@ function App() {
     const toggleAutoSave = useCallback(() => {
         setSaveSettings((prev) => {
             const newEnabled = !prev.autoSaveEnabled;
-            addNewsItem({
-                id: Date.now().toString(),
-                text: newEnabled ? 'Auto-save enabled (every 30 seconds).' : 'Auto-save disabled.',
-                type: 'neutral'
-            });
             return { ...prev, autoSaveEnabled: newEnabled };
         });
-    }, [addNewsItem]);
+    }, []);
+
+    // --- Show news when auto-save setting changes ---
+    const isFirstRender = useRef(true);
+    useEffect(() => {
+        // Skip the first render to avoid showing message on initial load
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+        addNewsItem({
+            id: Date.now().toString(),
+            text: saveSettings.autoSaveEnabled ? 'Auto-save enabled (every 30 seconds).' : 'Auto-save disabled.',
+            type: 'neutral'
+        });
+    }, [saveSettings.autoSaveEnabled, addNewsItem]);
 
     // --- Check for existing save on mount ---
     useEffect(() => {
