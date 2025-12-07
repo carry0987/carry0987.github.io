@@ -305,7 +305,7 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ effectType, params }) => {
             
             vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
             gl_Position = projectionMatrix * mvPosition;
-            gl_PointSize = (4.0 / -mvPosition.z);
+            gl_PointSize = (48.0 / -mvPosition.z);
             vNoise = n1;
           }
         `,
