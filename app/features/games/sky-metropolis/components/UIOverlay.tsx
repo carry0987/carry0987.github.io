@@ -1,5 +1,5 @@
-import React, { useEffect, useRef } from 'react';
-import { Trash2 } from 'lucide-react';
+import React, { useState, useEffect, useRef } from 'react';
+import { Trash2, ChevronDown, ChevronUp } from 'lucide-react';
 import { BuildingType, type CityStats, type NewsItem, type SaveSettings } from '../types';
 import { BUILDINGS } from '../constants';
 
@@ -81,6 +81,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
     onClearNewsFeed
 }) => {
     const newsRef = useRef<HTMLDivElement>(null);
+    const [isFeedCollapsed, setIsFeedCollapsed] = useState(false);
 
     // Auto-scroll news
     useEffect(() => {
@@ -216,50 +217,69 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                 </div>
 
                 {/* News Feed */}
-                <div className="w-full md:w-80 h-32 md:h-48 bg-black/80 text-white rounded-xl border border-gray-700/80 backdrop-blur-xl shadow-2xl flex flex-col overflow-hidden relative selection:bg-white/30 selection:text-white">
-                    <div className="bg-gray-800/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 border-b border-gray-600 flex justify-between items-center">
+                <div
+                    className={`w-full md:w-80 bg-black/80 text-white rounded-xl border border-gray-700/80 backdrop-blur-xl shadow-2xl flex flex-col overflow-hidden relative selection:bg-white/30 selection:text-white transition-all duration-300 ${isFeedCollapsed ? 'h-auto' : 'h-32 md:h-48'}`}>
+                    <div
+                        className="bg-gray-800/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 border-b border-gray-600 flex justify-between items-center cursor-pointer hover:bg-gray-700/90 transition-colors"
+                        onClick={() => setIsFeedCollapsed(!isFeedCollapsed)}>
                         <span>City Feed</span>
                         <div className="flex items-center gap-2">
-                            {newsFeed.length > 0 && (
+                            {!isFeedCollapsed && newsFeed.length > 0 && (
                                 <button
-                                    onClick={onClearNewsFeed}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        onClearNewsFeed();
+                                    }}
                                     className="text-gray-400 hover:text-red-400 transition-colors p-0.5 rounded hover:bg-white/10"
                                     title="Clear feed">
                                     <Trash2 className="w-3 h-3" />
                                 </button>
                             )}
+                            <button
+                                className="text-gray-400 hover:text-white transition-colors p-0.5 rounded hover:bg-white/10"
+                                title={isFeedCollapsed ? 'Expand feed' : 'Collapse feed'}>
+                                {isFeedCollapsed ? (
+                                    <ChevronUp className="w-3 h-3" />
+                                ) : (
+                                    <ChevronDown className="w-3 h-3" />
+                                )}
+                            </button>
                             <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                         </div>
                     </div>
 
-                    {/* Scanline effect */}
-                    <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_50%,rgba(0,0,0,0.1)_50%)] bg-size-[100%_4px] opacity-30 z-20"></div>
+                    {!isFeedCollapsed && (
+                        <>
+                            {/* Scanline effect */}
+                            <div className="absolute inset-0 pointer-events-none bg-[linear-gradient(to_bottom,rgba(255,255,255,0)_50%,rgba(0,0,0,0.1)_50%)] bg-size-[100%_4px] opacity-30 z-20"></div>
 
-                    <div
-                        ref={newsRef}
-                        className="flex-1 overflow-y-auto p-2 md:p-3 space-y-2 text-[10px] md:text-xs font-mono scroll-smooth mask-image-b z-10">
-                        {newsFeed.length === 0 && (
-                            <div className="text-gray-500 italic text-center mt-10">No active news stream.</div>
-                        )}
-                        {newsFeed.map((news) => (
                             <div
-                                key={news.id}
-                                className={`
+                                ref={newsRef}
+                                className="flex-1 overflow-y-auto p-2 md:p-3 space-y-2 text-[10px] md:text-xs font-mono scroll-smooth mask-image-b z-10">
+                                {newsFeed.length === 0 && (
+                                    <div className="text-gray-500 italic text-center mt-10">No active news stream.</div>
+                                )}
+                                {newsFeed.map((news) => (
+                                    <div
+                                        key={news.id}
+                                        className={`
                 border-l-2 pl-2 py-1 transition-all animate-fade-in leading-tight relative
                 ${news.type === 'positive' ? 'border-green-500 text-green-200 bg-green-900/20' : ''}
                 ${news.type === 'negative' ? 'border-red-500 text-red-200 bg-red-900/20' : ''}
                 ${news.type === 'neutral' ? 'border-blue-400 text-blue-100 bg-blue-900/20' : ''}
               `}>
-                                <span className="opacity-70 text-[8px] absolute top-0.5 right-1">
-                                    {new Date(Number(news.id.split('.')[0])).toLocaleTimeString([], {
-                                        hour: '2-digit',
-                                        minute: '2-digit'
-                                    })}
-                                </span>
-                                {news.text}
+                                        <span className="opacity-70 text-[8px] absolute top-0.5 right-1">
+                                            {new Date(Number(news.id.split('.')[0])).toLocaleTimeString([], {
+                                                hour: '2-digit',
+                                                minute: '2-digit'
+                                            })}
+                                        </span>
+                                        {news.text}
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
+                        </>
+                    )}
                 </div>
             </div>
         </div>
