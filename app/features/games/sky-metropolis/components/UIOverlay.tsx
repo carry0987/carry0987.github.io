@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { BuildingType, type CityStats, type NewsItem } from '../types';
+import { BuildingType, type CityStats, type NewsItem, type SaveSettings } from '../types';
 import { BUILDINGS } from '../constants';
 
 interface UIOverlayProps {
@@ -7,6 +7,9 @@ interface UIOverlayProps {
     selectedTool: BuildingType;
     onSelectTool: (type: BuildingType) => void;
     newsFeed: NewsItem[];
+    saveSettings: SaveSettings;
+    onSave: () => void;
+    onToggleAutoSave: () => void;
 }
 
 const tools = [
@@ -65,7 +68,15 @@ const ToolButton: React.FC<{
     );
 };
 
-const UIOverlay: React.FC<UIOverlayProps> = ({ stats, selectedTool, onSelectTool, newsFeed }) => {
+const UIOverlay: React.FC<UIOverlayProps> = ({
+    stats,
+    selectedTool,
+    onSelectTool,
+    newsFeed,
+    saveSettings,
+    onSave,
+    onToggleAutoSave
+}) => {
     const newsRef = useRef<HTMLDivElement>(null);
 
     // Auto-scroll news
@@ -74,6 +85,13 @@ const UIOverlay: React.FC<UIOverlayProps> = ({ stats, selectedTool, onSelectTool
             newsRef.current.scrollTop = newsRef.current.scrollHeight;
         }
     }, [newsFeed]);
+
+    // Format last saved time
+    const formatLastSaved = () => {
+        if (!saveSettings.lastSavedAt) return 'Never';
+        const date = new Date(saveSettings.lastSavedAt);
+        return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
 
     return (
         <div className="absolute inset-0 pointer-events-none flex flex-col justify-between p-2 md:p-4 font-sans z-10">
@@ -104,6 +122,53 @@ const UIOverlay: React.FC<UIOverlayProps> = ({ stats, selectedTool, onSelectTool
                             Day
                         </span>
                         <span className="text-base md:text-lg font-bold text-white font-mono">{stats.day}</span>
+                    </div>
+                </div>
+
+                {/* Save Controls */}
+                <div className="bg-gray-900/90 text-white p-2 md:p-3 rounded-xl border border-gray-700 shadow-2xl backdrop-blur-md flex gap-2 md:gap-3 items-center">
+                    {/* Save Button */}
+                    <button
+                        onClick={onSave}
+                        className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-600 hover:bg-blue-500 rounded-lg transition-colors text-xs font-bold uppercase tracking-wide"
+                        title="Save Game">
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"
+                            />
+                        </svg>
+                        <span className="hidden md:inline">Save</span>
+                    </button>
+
+                    {/* Auto-Save Toggle */}
+                    <button
+                        onClick={onToggleAutoSave}
+                        className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-colors text-xs font-bold uppercase tracking-wide ${
+                            saveSettings.autoSaveEnabled
+                                ? 'bg-green-600 hover:bg-green-500'
+                                : 'bg-gray-600 hover:bg-gray-500'
+                        }`}
+                        title={saveSettings.autoSaveEnabled ? 'Auto-save ON (every 30s)' : 'Auto-save OFF'}>
+                        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth={2}
+                                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+                            />
+                        </svg>
+                        <span className="hidden md:inline">Auto</span>
+                    </button>
+
+                    {/* Last Saved Indicator */}
+                    <div className="flex flex-col items-end text-[8px] md:text-[10px] leading-tight">
+                        <span className="text-gray-400 uppercase font-bold tracking-widest">Saved</span>
+                        <span className={`font-mono ${saveSettings.lastSavedAt ? 'text-green-300' : 'text-gray-500'}`}>
+                            {formatLastSaved()}
+                        </span>
                     </div>
                 </div>
             </div>

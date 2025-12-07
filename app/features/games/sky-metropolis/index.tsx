@@ -1,7 +1,8 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import type { Grid, TileData, CityStats, NewsItem } from './types';
+import type { Grid, TileData, CityStats, NewsItem, SaveSettings } from './types';
 import { BuildingType } from './types';
 import { GRID_SIZE, BUILDINGS, TICK_RATE_MS, INITIAL_MONEY } from './constants';
+import { saveManager } from './utils/saveManager';
 import IsoMap from './components/IsoMap';
 import UIOverlay from './components/UIOverlay';
 import StartScreen from './components/StartScreen';
@@ -39,6 +40,13 @@ function App() {
     // --- News State ---
     const [newsFeed, setNewsFeed] = useState<NewsItem[]>([]);
 
+    // --- Save Settings State ---
+    const [saveSettings, setSaveSettings] = useState<SaveSettings>({
+        autoSaveEnabled: true,
+        lastSavedAt: null
+    });
+    const [hasSavedGame, setHasSavedGame] = useState(false);
+
     // Refs for accessing state inside intervals without dependencies
     const gridRef = useRef(grid);
     const statsRef = useRef(stats);
@@ -56,6 +64,75 @@ function App() {
     const addNewsItem = useCallback((item: NewsItem) => {
         setNewsFeed((prev) => [...prev.slice(-12), item]); // Keep last few
     }, []);
+
+    // --- Save/Load Functions ---
+    const handleSave = useCallback(
+        async (silent = false) => {
+            const success = await saveManager.save(gridRef.current, statsRef.current);
+            if (success) {
+                setSaveSettings((prev) => ({ ...prev, lastSavedAt: Date.now() }));
+                if (!silent) {
+                    addNewsItem({
+                        id: Date.now().toString(),
+                        text: 'City saved successfully.',
+                        type: 'positive'
+                    });
+                }
+            } else if (!silent) {
+                addNewsItem({
+                    id: Date.now().toString(),
+                    text: 'Failed to save city data.',
+                    type: 'negative'
+                });
+            }
+            return success;
+        },
+        [addNewsItem]
+    );
+
+    const handleLoad = useCallback(async () => {
+        const saveData = await saveManager.load();
+        if (saveData) {
+            setGrid(saveData.grid);
+            setStats(saveData.stats);
+            setSaveSettings((prev) => ({ ...prev, lastSavedAt: saveData.savedAt }));
+            addNewsItem({
+                id: Date.now().toString(),
+                text: `City restored from ${new Date(saveData.savedAt).toLocaleString()}.`,
+                type: 'positive'
+            });
+            return true;
+        }
+        return false;
+    }, [addNewsItem]);
+
+    const toggleAutoSave = useCallback(() => {
+        setSaveSettings((prev) => {
+            const newEnabled = !prev.autoSaveEnabled;
+            addNewsItem({
+                id: Date.now().toString(),
+                text: newEnabled ? 'Auto-save enabled (every 30 seconds).' : 'Auto-save disabled.',
+                type: 'neutral'
+            });
+            return { ...prev, autoSaveEnabled: newEnabled };
+        });
+    }, [addNewsItem]);
+
+    // --- Check for existing save on mount ---
+    useEffect(() => {
+        saveManager.hasSave().then(setHasSavedGame);
+    }, []);
+
+    // --- Auto-save Effect (every 30 seconds) ---
+    useEffect(() => {
+        if (!gameStarted || !saveSettings.autoSaveEnabled) return;
+
+        const intervalId = setInterval(() => {
+            handleSave(true); // Silent auto-save
+        }, 30000); // 30 seconds
+
+        return () => clearInterval(intervalId);
+    }, [gameStarted, saveSettings.autoSaveEnabled, handleSave]);
 
     // --- Initial Setup ---
     useEffect(() => {
@@ -168,7 +245,10 @@ function App() {
         [selectedTool, addNewsItem, gameStarted]
     );
 
-    const handleStart = () => {
+    const handleStart = async (continueGame = false) => {
+        if (continueGame) {
+            await handleLoad();
+        }
         setGameStarted(true);
     };
 
@@ -183,7 +263,7 @@ function App() {
             />
 
             {/* Start Screen Overlay */}
-            {!gameStarted && <StartScreen onStart={handleStart} />}
+            {!gameStarted && <StartScreen onStart={handleStart} hasSavedGame={hasSavedGame} />}
 
             {/* UI Layer */}
             {gameStarted && (
@@ -192,6 +272,9 @@ function App() {
                     selectedTool={selectedTool}
                     onSelectTool={setSelectedTool}
                     newsFeed={newsFeed}
+                    saveSettings={saveSettings}
+                    onSave={() => handleSave(false)}
+                    onToggleAutoSave={toggleAutoSave}
                 />
             )}
 

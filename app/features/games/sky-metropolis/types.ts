@@ -38,3 +38,8 @@ export interface NewsItem {
     text: string;
     type: 'positive' | 'negative' | 'neutral';
 }
+
+export interface SaveSettings {
+    autoSaveEnabled: boolean;
+    lastSavedAt: number | null;
+}
