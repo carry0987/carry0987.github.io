@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import ThreeScene from './components/ThreeScene';
 import Controls from './components/Controls';
-import { EffectType, type EffectParams } from './types';
+import { EffectType, type EffectParams, type FireballParams } from './types';
 
 const DEFAULT_PARAMS: Record<EffectType, EffectParams> = {
     [EffectType.TERRAIN]: {
@@ -35,22 +35,52 @@ const DEFAULT_PARAMS: Record<EffectType, EffectParams> = {
         colorA: '#1a0b2e',
         colorB: '#ff00ff',
         wireframe: false
+    },
+    [EffectType.FIREBALL]: {
+        speed: 1.0,
+        noiseScale: 1.0,
+        displacement: 2.0,
+        colorA: '#ff5500',
+        colorB: '#ffff00',
+        wireframe: false
     }
+};
+
+const DEFAULT_FIREBALL_PARAMS: FireballParams = {
+    velocity: 0.002,
+    speed: 0.0005,
+    pointScale: 1.0,
+    decay: 0.1,
+    complex: 0.3,
+    waves: 20.0,
+    hue: 11.0,
+    fragment: true,
+    electroflow: true,
+    sinVel: 0.0,
+    ampVel: 80.0
 };
 
 const App: React.FC = () => {
     const [activeEffect, setActiveEffect] = useState<EffectType>(EffectType.TERRAIN);
     const [params, setParams] = useState<EffectParams>(DEFAULT_PARAMS[EffectType.TERRAIN]);
+    const [fireballParams, setFireballParams] = useState<FireballParams>(DEFAULT_FIREBALL_PARAMS);
 
     const handleEffectChange = (type: EffectType) => {
         setActiveEffect(type);
         setParams(DEFAULT_PARAMS[type]);
+        if (type === EffectType.FIREBALL) {
+            setFireballParams(DEFAULT_FIREBALL_PARAMS);
+        }
     };
 
     return (
         <div className="relative w-screen h-screen overflow-hidden font-sans bg-transparent">
             {/* Background/Scene - Rendered first to be at the back */}
-            <ThreeScene effectType={activeEffect} params={params} />
+            <ThreeScene
+                effectType={activeEffect}
+                params={params}
+                fireballParams={activeEffect === EffectType.FIREBALL ? fireballParams : undefined}
+            />
 
             {/* UI Controls */}
             <Controls
@@ -58,6 +88,8 @@ const App: React.FC = () => {
                 params={params}
                 setEffectType={handleEffectChange}
                 setParams={setParams}
+                fireballParams={fireballParams}
+                setFireballParams={setFireballParams}
             />
 
             {/* Footer / Instruction overlay */}

@@ -4,7 +4,8 @@ import type {
     TerrainMaterial,
     SphereBlobMaterial,
     PlasmaMaterial,
-    ParticlesMaterial
+    ParticlesMaterial,
+    FireballMaterial
 } from './materials';
 
 declare module '@react-three/fiber' {
@@ -13,5 +14,6 @@ declare module '@react-three/fiber' {
         sphereBlobMaterial: MaterialNode<ShaderMaterial, typeof SphereBlobMaterial>;
         plasmaMaterial: MaterialNode<ShaderMaterial, typeof PlasmaMaterial>;
         particlesMaterial: MaterialNode<ShaderMaterial, typeof ParticlesMaterial>;
+        fireballMaterial: MaterialNode<ShaderMaterial, typeof FireballMaterial>;
     }
 }
