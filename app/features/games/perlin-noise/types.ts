@@ -1,8 +1,8 @@
 export enum EffectType {
+    FIREBALL = 'FIREBALL',
     TERRAIN = 'TERRAIN',
     SPHERE_BLOB = 'SPHERE_BLOB',
-    PARTICLES = 'PARTICLES',
-    FIREBALL = 'FIREBALL'
+    PARTICLES = 'PARTICLES'
 }
 
 export interface EffectParams {

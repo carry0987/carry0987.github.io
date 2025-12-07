@@ -4,6 +4,14 @@ import Controls from './components/Controls';
 import { EffectType, type EffectParams, type FireballParams } from './types';
 
 const DEFAULT_PARAMS: Record<EffectType, EffectParams> = {
+    [EffectType.FIREBALL]: {
+        speed: 1.0,
+        noiseScale: 1.0,
+        displacement: 2.0,
+        colorA: '#ff5500',
+        colorB: '#ffff00',
+        wireframe: false
+    },
     [EffectType.TERRAIN]: {
         speed: 0.2,
         noiseScale: 0.8,
@@ -27,14 +35,6 @@ const DEFAULT_PARAMS: Record<EffectType, EffectParams> = {
         colorA: '#ffffff',
         colorB: '#4444ff',
         wireframe: false
-    },
-    [EffectType.FIREBALL]: {
-        speed: 1.0,
-        noiseScale: 1.0,
-        displacement: 2.0,
-        colorA: '#ff5500',
-        colorB: '#ffff00',
-        wireframe: false
     }
 };
 
@@ -53,8 +53,8 @@ const DEFAULT_FIREBALL_PARAMS: FireballParams = {
 };
 
 const App: React.FC = () => {
-    const [activeEffect, setActiveEffect] = useState<EffectType>(EffectType.TERRAIN);
-    const [params, setParams] = useState<EffectParams>(DEFAULT_PARAMS[EffectType.TERRAIN]);
+    const [activeEffect, setActiveEffect] = useState<EffectType>(EffectType.FIREBALL);
+    const [params, setParams] = useState<EffectParams>(DEFAULT_PARAMS[EffectType.FIREBALL]);
     const [fireballParams, setFireballParams] = useState<FireballParams>(DEFAULT_FIREBALL_PARAMS);
 
     const handleEffectChange = (type: EffectType) => {
