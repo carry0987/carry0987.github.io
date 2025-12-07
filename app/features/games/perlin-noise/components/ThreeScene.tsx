@@ -1,7 +1,7 @@
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { EffectType, type EffectParams, type FireballParams } from '../types';
-import { TerrainEffect, SphereBlobEffect, PlasmaEffect, ParticlesEffect, FireballEffect } from './effects';
+import { TerrainEffect, SphereBlobEffect, ParticlesEffect, FireballEffect } from './effects';
 
 interface ThreeSceneProps {
     effectType: EffectType;
@@ -14,7 +14,6 @@ const CAMERA_POSITIONS: Record<EffectType, [number, number, number]> = {
     [EffectType.TERRAIN]: [0, 3, 4],
     [EffectType.SPHERE_BLOB]: [0, 0, 6],
     [EffectType.PARTICLES]: [0, 0, 8],
-    [EffectType.PLASMA]: [0, 0, 5],
     [EffectType.FIREBALL]: [0, 0, 12]
 };
 
@@ -45,7 +44,6 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ effectType, params, fireballPar
                 {/* Effects */}
                 {effectType === EffectType.TERRAIN && <TerrainEffect params={params} />}
                 {effectType === EffectType.SPHERE_BLOB && <SphereBlobEffect params={params} />}
-                {effectType === EffectType.PLASMA && <PlasmaEffect params={params} />}
                 {effectType === EffectType.PARTICLES && <ParticlesEffect params={params} />}
                 {effectType === EffectType.FIREBALL && fireballParams && <FireballEffect params={fireballParams} />}
             </Canvas>

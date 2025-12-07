@@ -28,14 +28,6 @@ const DEFAULT_PARAMS: Record<EffectType, EffectParams> = {
         colorB: '#4444ff',
         wireframe: false
     },
-    [EffectType.PLASMA]: {
-        speed: 0.3,
-        noiseScale: 1.0,
-        displacement: 1.0,
-        colorA: '#1a0b2e',
-        colorB: '#ff00ff',
-        wireframe: false
-    },
     [EffectType.FIREBALL]: {
         speed: 1.0,
         noiseScale: 1.0,

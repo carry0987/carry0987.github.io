@@ -96,46 +96,6 @@ export const SphereBlobMaterial = shaderMaterial(
     `
 );
 
-// Plasma Material
-export const PlasmaMaterial = shaderMaterial(
-    {
-        uTime: 0,
-        uSpeed: 0.3,
-        uNoiseScale: 1.0,
-        uColorA: new THREE.Color('#1a0b2e'),
-        uColorB: new THREE.Color('#ff00ff')
-    },
-    // Vertex Shader
-    `
-    varying vec2 vUv;
-    void main() {
-        vUv = uv;
-        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-    }
-    `,
-    // Fragment Shader
-    `
-    varying vec2 vUv;
-    uniform float uTime;
-    uniform float uSpeed;
-    uniform float uNoiseScale;
-    uniform vec3 uColorA;
-    uniform vec3 uColorB;
-    
-    ${NOISE_GLSL}
-
-    void main() {
-        float noise1 = snoise(vec3(vUv * uNoiseScale * 2.0, uTime * uSpeed));
-        float noise2 = snoise(vec3(vUv * uNoiseScale * 5.0 + vec2(10.0), uTime * uSpeed * 0.5));
-        float combined = (noise1 + noise2) * 0.5;
-        
-        float rings = sin(combined * 10.0 + uTime);
-        vec3 color = mix(uColorA, uColorB, rings * 0.5 + 0.5);
-        gl_FragColor = vec4(color, 1.0);
-    }
-    `
-);
-
 // Particles Material
 export const ParticlesMaterial = shaderMaterial(
     {

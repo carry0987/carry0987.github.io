@@ -2,7 +2,6 @@ export enum EffectType {
     TERRAIN = 'TERRAIN',
     SPHERE_BLOB = 'SPHERE_BLOB',
     PARTICLES = 'PARTICLES',
-    PLASMA = 'PLASMA',
     FIREBALL = 'FIREBALL'
 }
 
