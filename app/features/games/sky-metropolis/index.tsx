@@ -65,6 +65,10 @@ function App() {
         setNewsFeed((prev) => [...prev.slice(-12), item]); // Keep last few
     }, []);
 
+    const clearNewsFeed = useCallback(() => {
+        setNewsFeed([]);
+    }, []);
+
     // --- Save/Load Functions ---
     const handleSave = useCallback(
         async (silent = false) => {
@@ -285,6 +289,7 @@ function App() {
                     saveSettings={saveSettings}
                     onSave={() => handleSave(false)}
                     onToggleAutoSave={toggleAutoSave}
+                    onClearNewsFeed={clearNewsFeed}
                 />
             )}
 

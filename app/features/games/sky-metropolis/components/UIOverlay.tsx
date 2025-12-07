@@ -1,4 +1,5 @@
 import React, { useEffect, useRef } from 'react';
+import { Trash2 } from 'lucide-react';
 import { BuildingType, type CityStats, type NewsItem, type SaveSettings } from '../types';
 import { BUILDINGS } from '../constants';
 
@@ -10,6 +11,7 @@ interface UIOverlayProps {
     saveSettings: SaveSettings;
     onSave: () => void;
     onToggleAutoSave: () => void;
+    onClearNewsFeed: () => void;
 }
 
 const tools = [
@@ -75,7 +77,8 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
     newsFeed,
     saveSettings,
     onSave,
-    onToggleAutoSave
+    onToggleAutoSave,
+    onClearNewsFeed
 }) => {
     const newsRef = useRef<HTMLDivElement>(null);
 
@@ -213,10 +216,20 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                 </div>
 
                 {/* News Feed */}
-                <div className="w-full md:w-80 h-32 md:h-48 bg-black/80 text-white rounded-xl border border-gray-700/80 backdrop-blur-xl shadow-2xl flex flex-col overflow-hidden relative">
+                <div className="w-full md:w-80 h-32 md:h-48 bg-black/80 text-white rounded-xl border border-gray-700/80 backdrop-blur-xl shadow-2xl flex flex-col overflow-hidden relative selection:bg-white/30 selection:text-white">
                     <div className="bg-gray-800/90 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-gray-300 border-b border-gray-600 flex justify-between items-center">
                         <span>City Feed</span>
-                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        <div className="flex items-center gap-2">
+                            {newsFeed.length > 0 && (
+                                <button
+                                    onClick={onClearNewsFeed}
+                                    className="text-gray-400 hover:text-red-400 transition-colors p-0.5 rounded hover:bg-white/10"
+                                    title="Clear feed">
+                                    <Trash2 className="w-3 h-3" />
+                                </button>
+                            )}
+                            <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        </div>
                     </div>
 
                     {/* Scanline effect */}
