@@ -41,7 +41,7 @@ const FireballEffect: React.FC<FireballEffectProps> = ({ params }) => {
 
     return (
         <points ref={pointsRef}>
-            <icosahedronGeometry args={[3, 128]} />
+            <sphereGeometry args={[3, 512, 512]} />
             <fireballMaterial ref={materialRef} />
         </points>
     );
