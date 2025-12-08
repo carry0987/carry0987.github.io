@@ -121,60 +121,6 @@ const Controls: React.FC<ControlsProps> = ({
 
             {/* Common Sliders */}
             <div className={`space-y-${isMobile ? '4' : '5'}`}>
-                {/* Speed */}
-                <div className="space-y-2">
-                    <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                        <span>Speed</span>
-                        <span>{params.speed.toFixed(2)}</span>
-                    </div>
-                    <input
-                        type="range"
-                        min="0"
-                        max="2"
-                        step="0.01"
-                        value={params.speed}
-                        onChange={(e) => handleChange('speed', parseFloat(e.target.value))}
-                        className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                        style={{ background: getSliderGradient(params.speed, 0, 2, '#a855f7') }}
-                    />
-                </div>
-
-                {/* Noise Scale */}
-                <div className="space-y-2">
-                    <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                        <span>Noise Scale</span>
-                        <span>{params.noiseScale.toFixed(2)}</span>
-                    </div>
-                    <input
-                        type="range"
-                        min="0.1"
-                        max="5.0"
-                        step="0.1"
-                        value={params.noiseScale}
-                        onChange={(e) => handleChange('noiseScale', parseFloat(e.target.value))}
-                        className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                        style={{ background: getSliderGradient(params.noiseScale, 0.1, 5.0, '#3b82f6') }}
-                    />
-                </div>
-
-                {/* Displacement */}
-                <div className="space-y-2">
-                    <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                        <span>Intensity</span>
-                        <span>{params.displacement.toFixed(2)}</span>
-                    </div>
-                    <input
-                        type="range"
-                        min="0"
-                        max="3"
-                        step="0.1"
-                        value={params.displacement}
-                        onChange={(e) => handleChange('displacement', parseFloat(e.target.value))}
-                        className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                        style={{ background: getSliderGradient(params.displacement, 0, 3, '#ec4899') }}
-                    />
-                </div>
-
                 {/* Colors */}
                 <div className={`grid grid-cols-2 gap-${isMobile ? '3' : '4'} pt-2`}>
                     <div>
@@ -227,227 +173,214 @@ const Controls: React.FC<ControlsProps> = ({
                     </div>
                 )}
 
-                {/* Fireball-specific Controls */}
-                {effectType === EffectType.FIREBALL && (
-                    <>
-                        <div className="border-t border-white/10 pt-4 mt-4">
-                            <span
-                                className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-bold text-orange-400 uppercase tracking-widest`}>
-                                Fireball Settings
-                            </span>
+                {/* Noise Settings (for all effects) */}
+                <>
+                    <div className="border-t border-white/10 pt-4 mt-4">
+                        <span
+                            className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-bold text-orange-400 uppercase tracking-widest`}>
+                            Noise Settings
+                        </span>
+                    </div>
+
+                    {/* Velocity */}
+                    <div className="space-y-2">
+                        <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                            <span>Velocity</span>
+                            <span>{fireballParams.velocity.toFixed(4)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0"
+                            max="0.02"
+                            step="0.0001"
+                            value={fireballParams.velocity}
+                            onChange={(e) => handleFireballChange('velocity', parseFloat(e.target.value))}
+                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                            style={{ background: getSliderGradient(fireballParams.velocity, 0, 0.02, '#f97316') }}
+                        />
+                    </div>
+
+                    {/* Speed */}
+                    <div className="space-y-2">
+                        <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                            <span>Anim Speed</span>
+                            <span>{fireballParams.speed.toFixed(5)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0"
+                            max="0.0005"
+                            step="0.00001"
+                            value={fireballParams.speed}
+                            onChange={(e) => handleFireballChange('speed', parseFloat(e.target.value))}
+                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                            style={{ background: getSliderGradient(fireballParams.speed, 0, 0.0005, '#fb923c') }}
+                        />
+                    </div>
+
+                    {/* Point Scale */}
+                    <div className="space-y-2">
+                        <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                            <span>Point Size</span>
+                            <span>{fireballParams.pointScale.toFixed(1)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="1"
+                            max="5"
+                            step="0.1"
+                            value={fireballParams.pointScale}
+                            onChange={(e) => handleFireballChange('pointScale', parseFloat(e.target.value))}
+                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                            style={{ background: getSliderGradient(fireballParams.pointScale, 1, 5, '#eab308') }}
+                        />
+                    </div>
+
+                    {/* Decay */}
+                    <div className="space-y-2">
+                        <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                            <span>Decay</span>
+                            <span>{fireballParams.decay.toFixed(2)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={fireballParams.decay}
+                            onChange={(e) => handleFireballChange('decay', parseFloat(e.target.value))}
+                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                            style={{ background: getSliderGradient(fireballParams.decay, 0, 1, '#ef4444') }}
+                        />
+                    </div>
+
+                    {/* Complex */}
+                    <div className="space-y-2">
+                        <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                            <span>Complexity</span>
+                            <span>{fireballParams.complex.toFixed(2)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0.1"
+                            max="1"
+                            step="0.01"
+                            value={fireballParams.complex}
+                            onChange={(e) => handleFireballChange('complex', parseFloat(e.target.value))}
+                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                            style={{ background: getSliderGradient(fireballParams.complex, 0.1, 1, '#a855f7') }}
+                        />
+                    </div>
+
+                    {/* Waves */}
+                    <div className="space-y-2">
+                        <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                            <span>Waves</span>
+                            <span>{fireballParams.waves.toFixed(1)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0"
+                            max="20"
+                            step="0.5"
+                            value={fireballParams.waves}
+                            onChange={(e) => handleFireballChange('waves', parseFloat(e.target.value))}
+                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                            style={{ background: getSliderGradient(fireballParams.waves, 0, 20, '#3b82f6') }}
+                        />
+                    </div>
+
+                    {/* Hue */}
+                    <div className="space-y-2">
+                        <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                            <span>Hue</span>
+                            <span>{fireballParams.hue.toFixed(1)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0"
+                            max="15"
+                            step="0.1"
+                            value={fireballParams.hue}
+                            onChange={(e) => handleFireballChange('hue', parseFloat(e.target.value))}
+                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                            style={{ background: getSliderGradient(fireballParams.hue, 0, 15, '#ec4899') }}
+                        />
+                    </div>
+
+                    {/* Spin Settings */}
+                    <div className="border-t border-white/10 pt-4 mt-4">
+                        <span
+                            className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-bold text-cyan-400 uppercase tracking-widest`}>
+                            Spin Settings
+                        </span>
+                    </div>
+
+                    {/* Sine Velocity */}
+                    <div className="space-y-2">
+                        <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                            <span>Sine</span>
+                            <span>{fireballParams.sinVel.toFixed(2)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0"
+                            max="0.5"
+                            step="0.01"
+                            value={fireballParams.sinVel}
+                            onChange={(e) => handleFireballChange('sinVel', parseFloat(e.target.value))}
+                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                            style={{ background: getSliderGradient(fireballParams.sinVel, 0, 0.5, '#06b6d4') }}
+                        />
+                    </div>
+
+                    {/* Amplitude */}
+                    <div className="space-y-2">
+                        <div className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                            <span>Amplitude</span>
+                            <span>{fireballParams.ampVel.toFixed(1)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            min="0"
+                            max="90"
+                            step="1"
+                            value={fireballParams.ampVel}
+                            onChange={(e) => handleFireballChange('ampVel', parseFloat(e.target.value))}
+                            className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
+                            style={{ background: getSliderGradient(fireballParams.ampVel, 0, 90, '#22d3ee') }}
+                        />
+                    </div>
+
+                    {/* Toggle Switches */}
+                    <div className={`${isMobile ? 'grid grid-cols-2 gap-3' : 'space-y-3'} pt-3`}>
+                        {/* Fragment Toggle */}
+                        <div className="flex items-center justify-between">
+                            <label className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>Fragment</label>
+                            <button
+                                onClick={() => handleFireballChange('fragment', !fireballParams.fragment)}
+                                className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${fireballParams.fragment ? 'bg-orange-500' : 'bg-gray-700'}`}>
+                                <div
+                                    className={`w-3 h-3 bg-white rounded-full absolute top-1 transition-transform duration-300 ${fireballParams.fragment ? 'left-6' : 'left-1'}`}
+                                />
+                            </button>
                         </div>
 
-                        {/* Velocity */}
-                        <div className="space-y-2">
-                            <div
-                                className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                <span>Velocity</span>
-                                <span>{fireballParams.velocity.toFixed(4)}</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="0.02"
-                                step="0.0001"
-                                value={fireballParams.velocity}
-                                onChange={(e) => handleFireballChange('velocity', parseFloat(e.target.value))}
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                                style={{ background: getSliderGradient(fireballParams.velocity, 0, 0.02, '#f97316') }}
-                            />
+                        {/* Electroflow Toggle */}
+                        <div className="flex items-center justify-between">
+                            <label className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
+                                Electroflow
+                            </label>
+                            <button
+                                onClick={() => handleFireballChange('electroflow', !fireballParams.electroflow)}
+                                className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${fireballParams.electroflow ? 'bg-purple-500' : 'bg-gray-700'}`}>
+                                <div
+                                    className={`w-3 h-3 bg-white rounded-full absolute top-1 transition-transform duration-300 ${fireballParams.electroflow ? 'left-6' : 'left-1'}`}
+                                />
+                            </button>
                         </div>
-
-                        {/* Speed */}
-                        <div className="space-y-2">
-                            <div
-                                className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                <span>Anim Speed</span>
-                                <span>{fireballParams.speed.toFixed(5)}</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="0.0005"
-                                step="0.00001"
-                                value={fireballParams.speed}
-                                onChange={(e) => handleFireballChange('speed', parseFloat(e.target.value))}
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                                style={{ background: getSliderGradient(fireballParams.speed, 0, 0.0005, '#fb923c') }}
-                            />
-                        </div>
-
-                        {/* Point Scale */}
-                        <div className="space-y-2">
-                            <div
-                                className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                <span>Point Size</span>
-                                <span>{fireballParams.pointScale.toFixed(1)}</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="1"
-                                max="5"
-                                step="0.1"
-                                value={fireballParams.pointScale}
-                                onChange={(e) => handleFireballChange('pointScale', parseFloat(e.target.value))}
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                                style={{ background: getSliderGradient(fireballParams.pointScale, 1, 5, '#eab308') }}
-                            />
-                        </div>
-
-                        {/* Decay */}
-                        <div className="space-y-2">
-                            <div
-                                className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                <span>Decay</span>
-                                <span>{fireballParams.decay.toFixed(2)}</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
-                                value={fireballParams.decay}
-                                onChange={(e) => handleFireballChange('decay', parseFloat(e.target.value))}
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                                style={{ background: getSliderGradient(fireballParams.decay, 0, 1, '#ef4444') }}
-                            />
-                        </div>
-
-                        {/* Complex */}
-                        <div className="space-y-2">
-                            <div
-                                className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                <span>Complexity</span>
-                                <span>{fireballParams.complex.toFixed(2)}</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0.1"
-                                max="1"
-                                step="0.01"
-                                value={fireballParams.complex}
-                                onChange={(e) => handleFireballChange('complex', parseFloat(e.target.value))}
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                                style={{ background: getSliderGradient(fireballParams.complex, 0.1, 1, '#a855f7') }}
-                            />
-                        </div>
-
-                        {/* Waves */}
-                        <div className="space-y-2">
-                            <div
-                                className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                <span>Waves</span>
-                                <span>{fireballParams.waves.toFixed(1)}</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="20"
-                                step="0.5"
-                                value={fireballParams.waves}
-                                onChange={(e) => handleFireballChange('waves', parseFloat(e.target.value))}
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                                style={{ background: getSliderGradient(fireballParams.waves, 0, 20, '#3b82f6') }}
-                            />
-                        </div>
-
-                        {/* Hue */}
-                        <div className="space-y-2">
-                            <div
-                                className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                <span>Hue</span>
-                                <span>{fireballParams.hue.toFixed(1)}</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="15"
-                                step="0.1"
-                                value={fireballParams.hue}
-                                onChange={(e) => handleFireballChange('hue', parseFloat(e.target.value))}
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                                style={{ background: getSliderGradient(fireballParams.hue, 0, 15, '#ec4899') }}
-                            />
-                        </div>
-
-                        {/* Spin Settings */}
-                        <div className="border-t border-white/10 pt-4 mt-4">
-                            <span
-                                className={`${isMobile ? 'text-[10px]' : 'text-xs'} font-bold text-cyan-400 uppercase tracking-widest`}>
-                                Spin Settings
-                            </span>
-                        </div>
-
-                        {/* Sine Velocity */}
-                        <div className="space-y-2">
-                            <div
-                                className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                <span>Sine</span>
-                                <span>{fireballParams.sinVel.toFixed(2)}</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="0.5"
-                                step="0.01"
-                                value={fireballParams.sinVel}
-                                onChange={(e) => handleFireballChange('sinVel', parseFloat(e.target.value))}
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                                style={{ background: getSliderGradient(fireballParams.sinVel, 0, 0.5, '#06b6d4') }}
-                            />
-                        </div>
-
-                        {/* Amplitude */}
-                        <div className="space-y-2">
-                            <div
-                                className={`flex justify-between ${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                <span>Amplitude</span>
-                                <span>{fireballParams.ampVel.toFixed(1)}</span>
-                            </div>
-                            <input
-                                type="range"
-                                min="0"
-                                max="90"
-                                step="1"
-                                value={fireballParams.ampVel}
-                                onChange={(e) => handleFireballChange('ampVel', parseFloat(e.target.value))}
-                                className="w-full h-1.5 rounded-lg appearance-none cursor-pointer"
-                                style={{ background: getSliderGradient(fireballParams.ampVel, 0, 90, '#22d3ee') }}
-                            />
-                        </div>
-
-                        {/* Toggle Switches */}
-                        <div className={`${isMobile ? 'grid grid-cols-2 gap-3' : 'space-y-3'} pt-3`}>
-                            {/* Fragment Toggle */}
-                            <div className="flex items-center justify-between">
-                                <label className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                    Fragment
-                                </label>
-                                <button
-                                    onClick={() => handleFireballChange('fragment', !fireballParams.fragment)}
-                                    className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${fireballParams.fragment ? 'bg-orange-500' : 'bg-gray-700'}`}>
-                                    <div
-                                        className={`w-3 h-3 bg-white rounded-full absolute top-1 transition-transform duration-300 ${fireballParams.fragment ? 'left-6' : 'left-1'}`}
-                                    />
-                                </button>
-                            </div>
-
-                            {/* Electroflow Toggle */}
-                            <div className="flex items-center justify-between">
-                                <label className={`${isMobile ? 'text-[10px]' : 'text-xs'} text-gray-400`}>
-                                    Electroflow
-                                </label>
-                                <button
-                                    onClick={() => handleFireballChange('electroflow', !fireballParams.electroflow)}
-                                    className={`w-10 h-5 rounded-full relative transition-colors duration-300 ${fireballParams.electroflow ? 'bg-purple-500' : 'bg-gray-700'}`}>
-                                    <div
-                                        className={`w-3 h-3 bg-white rounded-full absolute top-1 transition-transform duration-300 ${fireballParams.electroflow ? 'left-6' : 'left-1'}`}
-                                    />
-                                </button>
-                            </div>
-                        </div>
-                    </>
-                )}
+                    </div>
+                </>
             </div>
         </>
     );

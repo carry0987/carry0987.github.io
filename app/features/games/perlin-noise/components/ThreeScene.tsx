@@ -6,7 +6,7 @@ import { TerrainEffect, SphereBlobEffect, ParticlesEffect, FireballEffect } from
 interface ThreeSceneProps {
     effectType: EffectType;
     params: EffectParams;
-    fireballParams?: FireballParams;
+    fireballParams: FireballParams;
 }
 
 // Camera positions for each effect type
@@ -42,10 +42,14 @@ const ThreeScene: React.FC<ThreeSceneProps> = ({ effectType, params, fireballPar
                 <OrbitControls enableDamping dampingFactor={0.05} enableZoom />
 
                 {/* Effects */}
-                {effectType === EffectType.TERRAIN && <TerrainEffect params={params} />}
-                {effectType === EffectType.SPHERE_BLOB && <SphereBlobEffect params={params} />}
-                {effectType === EffectType.PARTICLES && <ParticlesEffect params={params} />}
-                {effectType === EffectType.FIREBALL && fireballParams && <FireballEffect params={fireballParams} />}
+                {effectType === EffectType.TERRAIN && <TerrainEffect params={params} fireballParams={fireballParams} />}
+                {effectType === EffectType.SPHERE_BLOB && (
+                    <SphereBlobEffect params={params} fireballParams={fireballParams} />
+                )}
+                {effectType === EffectType.PARTICLES && (
+                    <ParticlesEffect params={params} fireballParams={fireballParams} />
+                )}
+                {effectType === EffectType.FIREBALL && <FireballEffect params={fireballParams} />}
             </Canvas>
         </div>
     );

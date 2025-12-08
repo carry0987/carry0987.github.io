@@ -6,15 +6,12 @@ export enum EffectType {
 }
 
 export interface EffectParams {
-    speed: number;
-    noiseScale: number;
-    displacement: number;
     colorA: string;
     colorB: string;
     wireframe: boolean;
 }
 
-// Fireball-specific parameters
+// Main parameters (used by all effects)
 export interface FireballParams {
     velocity: number; // Rotation velocity
     speed: number; // Animation speed

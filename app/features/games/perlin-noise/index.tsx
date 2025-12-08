@@ -5,33 +5,21 @@ import { EffectType, type EffectParams, type FireballParams } from './types';
 
 const DEFAULT_PARAMS: Record<EffectType, EffectParams> = {
     [EffectType.FIREBALL]: {
-        speed: 1.0,
-        noiseScale: 1.0,
-        displacement: 2.0,
         colorA: '#ff5500',
         colorB: '#ffff00',
         wireframe: false
     },
     [EffectType.TERRAIN]: {
-        speed: 0.2,
-        noiseScale: 0.8,
-        displacement: 1.5,
-        colorA: '#0d1b2a', // Dark Blue-ish
-        colorB: '#00ffcc', // Bright Cyan
+        colorA: '#0d1b2a',
+        colorB: '#00ffcc',
         wireframe: true
     },
     [EffectType.SPHERE_BLOB]: {
-        speed: 0.5,
-        noiseScale: 1.5,
-        displacement: 0.8,
         colorA: '#ff0055',
         colorB: '#220033',
         wireframe: false
     },
     [EffectType.PARTICLES]: {
-        speed: 0.1,
-        noiseScale: 0.5,
-        displacement: 2.0,
         colorA: '#ffffff',
         colorB: '#4444ff',
         wireframe: false
@@ -60,19 +48,12 @@ const App: React.FC = () => {
     const handleEffectChange = (type: EffectType) => {
         setActiveEffect(type);
         setParams(DEFAULT_PARAMS[type]);
-        if (type === EffectType.FIREBALL) {
-            setFireballParams(DEFAULT_FIREBALL_PARAMS);
-        }
     };
 
     return (
         <div className="relative w-screen h-screen overflow-hidden font-sans bg-transparent">
             {/* Background/Scene - Rendered first to be at the back */}
-            <ThreeScene
-                effectType={activeEffect}
-                params={params}
-                fireballParams={activeEffect === EffectType.FIREBALL ? fireballParams : undefined}
-            />
+            <ThreeScene effectType={activeEffect} params={params} fireballParams={fireballParams} />
 
             {/* UI Controls */}
             <Controls

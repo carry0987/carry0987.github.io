@@ -6,9 +6,9 @@ import { NOISE_GLSL } from '../../constants';
 export const TerrainMaterial = shaderMaterial(
     {
         uTime: 0,
-        uSpeed: 0.2,
-        uNoiseScale: 0.8,
-        uDisplacement: 1.5,
+        uDecay: 0.1,
+        uComplex: 0.3,
+        uWaves: 20.0,
         uColorA: new THREE.Color('#0d1b2a'),
         uColorB: new THREE.Color('#00ffcc')
     },
@@ -17,18 +17,18 @@ export const TerrainMaterial = shaderMaterial(
     varying vec2 vUv;
     varying float vElevation;
     uniform float uTime;
-    uniform float uSpeed;
-    uniform float uNoiseScale;
-    uniform float uDisplacement;
+    uniform float uDecay;
+    uniform float uComplex;
+    uniform float uWaves;
     
     ${NOISE_GLSL}
 
     void main() {
         vUv = uv;
         vec3 pos = position;
-        float noiseVal = snoise(vec3(pos.x * uNoiseScale, pos.y * uNoiseScale, uTime * uSpeed));
+        float noiseVal = snoise(vec3(pos.x * uComplex, pos.y * uComplex, uTime * uDecay));
         vElevation = noiseVal;
-        pos.z += noiseVal * uDisplacement;
+        pos.z += noiseVal * uWaves * 0.1;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
     }
     `,
@@ -51,9 +51,9 @@ export const TerrainMaterial = shaderMaterial(
 export const SphereBlobMaterial = shaderMaterial(
     {
         uTime: 0,
-        uSpeed: 0.5,
-        uNoiseScale: 1.5,
-        uDisplacement: 0.8,
+        uDecay: 0.1,
+        uComplex: 0.3,
+        uWaves: 20.0,
         uColorA: new THREE.Color('#ff0055'),
         uColorB: new THREE.Color('#220033')
     },
@@ -63,9 +63,9 @@ export const SphereBlobMaterial = shaderMaterial(
     varying float vNoise;
     varying vec3 vNormal;
     uniform float uTime;
-    uniform float uSpeed;
-    uniform float uNoiseScale;
-    uniform float uDisplacement;
+    uniform float uDecay;
+    uniform float uComplex;
+    uniform float uWaves;
     
     ${NOISE_GLSL}
 
@@ -73,9 +73,9 @@ export const SphereBlobMaterial = shaderMaterial(
         vUv = uv;
         vNormal = normal;
         vec3 pos = position;
-        float noiseVal = snoise(vec3(pos * uNoiseScale + uTime * uSpeed));
+        float noiseVal = snoise(vec3(pos * uComplex + uTime * uDecay));
         vNoise = noiseVal;
-        pos += normal * noiseVal * uDisplacement;
+        pos += normal * noiseVal * uWaves * 0.05;
         gl_Position = projectionMatrix * modelViewMatrix * vec4(pos, 1.0);
     }
     `,
@@ -100,9 +100,9 @@ export const SphereBlobMaterial = shaderMaterial(
 export const ParticlesMaterial = shaderMaterial(
     {
         uTime: 0,
-        uSpeed: 0.1,
-        uNoiseScale: 0.5,
-        uDisplacement: 2.0,
+        uDecay: 0.1,
+        uComplex: 0.3,
+        uWaves: 20.0,
         uColorA: new THREE.Color('#ffffff'),
         uColorB: new THREE.Color('#4444ff')
     },
@@ -111,19 +111,19 @@ export const ParticlesMaterial = shaderMaterial(
     varying float vNoise;
     attribute float aRandom;
     uniform float uTime;
-    uniform float uSpeed;
-    uniform float uNoiseScale;
-    uniform float uDisplacement;
+    uniform float uDecay;
+    uniform float uComplex;
+    uniform float uWaves;
     
     ${NOISE_GLSL}
 
     void main() {
         vec3 pos = position;
-        float n1 = snoise(vec3(pos * uNoiseScale + uTime * uSpeed * 0.2));
-        float n2 = snoise(vec3(pos * uNoiseScale + 100.0 + uTime * uSpeed * 0.2));
-        float n3 = snoise(vec3(pos * uNoiseScale + 200.0 + uTime * uSpeed * 0.2));
+        float n1 = snoise(vec3(pos * uComplex + uTime * uDecay * 0.2));
+        float n2 = snoise(vec3(pos * uComplex + 100.0 + uTime * uDecay * 0.2));
+        float n3 = snoise(vec3(pos * uComplex + 200.0 + uTime * uDecay * 0.2));
         
-        pos += vec3(n1, n2, n3) * uDisplacement * aRandom;
+        pos += vec3(n1, n2, n3) * uWaves * 0.1 * aRandom;
         
         vec4 mvPosition = modelViewMatrix * vec4(pos, 1.0);
         gl_Position = projectionMatrix * mvPosition;

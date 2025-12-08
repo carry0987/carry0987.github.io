@@ -3,30 +3,33 @@ import { useFrame } from '@react-three/fiber';
 import { extend } from '@react-three/fiber';
 import * as THREE from 'three';
 import { TerrainMaterial } from '../materials';
-import type { EffectParams } from '../../types';
+import type { EffectParams, FireballParams } from '../../types';
 
 // Extend R3F with our custom material
 extend({ TerrainMaterial });
 
 interface TerrainEffectProps {
     params: EffectParams;
+    fireballParams: FireballParams;
 }
 
-const TerrainEffect: React.FC<TerrainEffectProps> = ({ params }) => {
+const TerrainEffect: React.FC<TerrainEffectProps> = ({ params, fireballParams }) => {
     const materialRef = useRef<THREE.ShaderMaterial>(null);
     const meshRef = useRef<THREE.Mesh>(null);
+    const startTimeRef = useRef(Date.now());
 
     useFrame(() => {
         if (materialRef.current) {
-            materialRef.current.uniforms.uTime.value += 0.01;
-            materialRef.current.uniforms.uSpeed.value = params.speed;
-            materialRef.current.uniforms.uNoiseScale.value = params.noiseScale;
-            materialRef.current.uniforms.uDisplacement.value = params.displacement;
+            const elapsed = (Date.now() - startTimeRef.current) * fireballParams.speed;
+            materialRef.current.uniforms.uTime.value = elapsed;
+            materialRef.current.uniforms.uDecay.value = fireballParams.decay;
+            materialRef.current.uniforms.uComplex.value = fireballParams.complex;
+            materialRef.current.uniforms.uWaves.value = fireballParams.waves;
             materialRef.current.uniforms.uColorA.value.set(params.colorA);
             materialRef.current.uniforms.uColorB.value.set(params.colorB);
         }
         if (meshRef.current) {
-            meshRef.current.rotation.y += 0.002;
+            meshRef.current.rotation.y += fireballParams.velocity;
         }
     });
 

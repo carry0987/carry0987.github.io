@@ -2,18 +2,20 @@ import { useRef, useMemo } from 'react';
 import { useFrame, extend } from '@react-three/fiber';
 import * as THREE from 'three';
 import { ParticlesMaterial } from '../materials';
-import type { EffectParams } from '../../types';
+import type { EffectParams, FireballParams } from '../../types';
 
 // Extend R3F with our custom material
 extend({ ParticlesMaterial });
 
 interface ParticlesEffectProps {
     params: EffectParams;
+    fireballParams: FireballParams;
 }
 
-const ParticlesEffect: React.FC<ParticlesEffectProps> = ({ params }) => {
+const ParticlesEffect: React.FC<ParticlesEffectProps> = ({ params, fireballParams }) => {
     const materialRef = useRef<THREE.ShaderMaterial>(null);
     const pointsRef = useRef<THREE.Points>(null);
+    const startTimeRef = useRef(Date.now());
 
     // Generate particle positions and randoms
     const { positions, randoms } = useMemo(() => {
@@ -41,15 +43,16 @@ const ParticlesEffect: React.FC<ParticlesEffectProps> = ({ params }) => {
 
     useFrame(() => {
         if (materialRef.current) {
-            materialRef.current.uniforms.uTime.value += 0.01;
-            materialRef.current.uniforms.uSpeed.value = params.speed;
-            materialRef.current.uniforms.uNoiseScale.value = params.noiseScale;
-            materialRef.current.uniforms.uDisplacement.value = params.displacement;
+            const elapsed = (Date.now() - startTimeRef.current) * fireballParams.speed;
+            materialRef.current.uniforms.uTime.value = elapsed;
+            materialRef.current.uniforms.uDecay.value = fireballParams.decay;
+            materialRef.current.uniforms.uComplex.value = fireballParams.complex;
+            materialRef.current.uniforms.uWaves.value = fireballParams.waves;
             materialRef.current.uniforms.uColorA.value.set(params.colorA);
             materialRef.current.uniforms.uColorB.value.set(params.colorB);
         }
         if (pointsRef.current) {
-            pointsRef.current.rotation.y += 0.002;
+            pointsRef.current.rotation.y += fireballParams.velocity;
         }
     });
 
