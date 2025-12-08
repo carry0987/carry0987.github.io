@@ -41,7 +41,7 @@ const DEFAULT_PARAMS: Record<EffectType, EffectParams> = {
 const DEFAULT_FIREBALL_PARAMS: FireballParams = {
     velocity: 0.002,
     speed: 0.0005,
-    pointScale: 1.0,
+    pointScale: 5.0,
     decay: 0.1,
     complex: 0.3,
     waves: 20.0,
