@@ -143,4 +143,18 @@ const FocusFlowPage: React.FC = () => {
     );
 };
 
+export function meta() {
+    return [
+        { title: 'FocusFlow Widget | Carry' },
+        {
+            property: 'og:title',
+            content: 'FocusFlow Widget'
+        },
+        {
+            name: 'description',
+            content: 'FocusFlow Widget - Track your engagement sessions automatically with Page Visibility API.'
+        }
+    ];
+}
+
 export default FocusFlowPage;

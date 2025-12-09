@@ -1,6 +1,6 @@
 import type { Route } from './+types/tools';
 import { Link } from 'react-router';
-import { Wrench, ArrowRight, Image, Timer, Upload } from 'lucide-react';
+import { Wrench, ArrowRight, Image, Timer, Upload, MessageCircle } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: 'Tools | Carry' }, { name: 'description', content: 'A collection of useful tools' }];
@@ -31,6 +31,14 @@ export default function ToolsPage() {
             category: 'Utility',
             icon: Upload,
             toolUrl: '/tools/imgur-drop'
+        },
+        {
+            title: 'Fake Chat',
+            desc: 'Create realistic fake chat screenshots for Instagram, LINE, and Messenger. Perfect for mockups and creative projects.',
+            tech: ['React', 'Gemini API', 'html-to-image'],
+            category: 'Creative',
+            icon: MessageCircle,
+            toolUrl: '/tools/fakechat'
         }
     ];
 

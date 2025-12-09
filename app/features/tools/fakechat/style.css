@@ -1,0 +1,8 @@
+/* Custom scrollbar for the preview area to look like mobile */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
+}
+.no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}

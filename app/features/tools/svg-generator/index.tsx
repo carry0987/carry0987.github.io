@@ -108,4 +108,18 @@ const App: React.FC = () => {
     );
 };
 
+export function meta() {
+    return [
+        { title: 'SVG Generator | Carry' },
+        {
+            property: 'og:title',
+            content: 'SVG Generator'
+        },
+        {
+            name: 'description',
+            content: 'SVG Generator - Generate custom SVG graphics using AI-powered prompts with Gemini API.'
+        }
+    ];
+}
+
 export default App;

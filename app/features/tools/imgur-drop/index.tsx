@@ -120,4 +120,19 @@ const App: React.FC = () => {
     );
 };
 
+export function meta() {
+    return [
+        { title: 'Imgur Drop | Carry' },
+        {
+            property: 'og:title',
+            content: 'Imgur Drop'
+        },
+        {
+            name: 'description',
+            content:
+                'Imgur Drop - Simple, fast, and anonymous image hosting. Drag, drop, and share your link instantly.'
+        }
+    ];
+}
+
 export default App;

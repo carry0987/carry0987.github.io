@@ -14,6 +14,7 @@ export default [
     route('/tools/svg-generator', './features/tools/svg-generator/index.tsx'),
     route('/tools/focusflow-widget', './features/tools/focusflow-widget/index.tsx'),
     route('/tools/imgur-drop', './features/tools/imgur-drop/index.tsx'),
+    route('/tools/fakechat', './features/tools/fakechat/index.tsx'),
     /* Other Routes */
     ...(await flatRoutes({
         ignoredRouteFiles: ['**/.*', '**/*.css', '**/*.scss']

@@ -1,0 +1,60 @@
+import { GoogleGenAI, Type } from '@google/genai';
+import type { Message } from '../types';
+
+const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+
+export const generateConversation = async (topic: string, platform: string, mood: string): Promise<Message[]> => {
+    const modelId = 'gemini-2.5-flash'; // Fast and sufficient for text generation
+
+    const prompt = `Generate a realistic chat conversation script in Traditional Chinese (Taiwanese style) between two people.
+  Platform style: ${platform}.
+  Topic: ${topic}.
+  Mood: ${mood}.
+  Length: 5-8 messages.
+  Include emojis appropriate for the platform.
+  Return a JSON array where each item has 'text' (string), 'isSender' (boolean, true for 'Me', false for 'Partner'), and 'timeOffset' (minutes from start).`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: modelId,
+            contents: prompt,
+            config: {
+                responseMimeType: 'application/json',
+                responseSchema: {
+                    type: Type.ARRAY,
+                    items: {
+                        type: Type.OBJECT,
+                        properties: {
+                            text: { type: Type.STRING },
+                            isSender: { type: Type.BOOLEAN },
+                            timeOffset: { type: Type.INTEGER }
+                        },
+                        required: ['text', 'isSender', 'timeOffset']
+                    }
+                }
+            }
+        });
+
+        const data = JSON.parse(response.text || '[]');
+
+        // Convert to App Message format
+        const baseTime = new Date();
+        baseTime.setHours(12, 0, 0, 0);
+
+        return data.map((item: any, index: number) => {
+            const msgTime = new Date(baseTime.getTime() + item.timeOffset * 60000);
+            const timeStr = msgTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+
+            return {
+                id: `gen-${Date.now()}-${index}`,
+                text: item.text,
+                isSender: item.isSender,
+                timestamp: timeStr,
+                isRead: true
+            };
+        });
+    } catch (error) {
+        console.error('Gemini Generation Error:', error);
+        throw new Error('Failed to generate conversation.');
+    }
+};
