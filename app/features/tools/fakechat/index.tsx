@@ -1,11 +1,16 @@
 import React, { useState, useRef } from 'react';
+import { Link } from 'react-router';
 import { toPng } from 'html-to-image';
+import { ArrowLeft, MessageCircle, Smartphone, Wand2, Download } from 'lucide-react';
 import type { ChatSettings, Message, Platform } from './types';
 import { DEFAULT_SETTINGS, INITIAL_MESSAGES } from './constants';
 import ChatPreview from './components/ChatPreview';
 import Editor from './components/Editor';
 import AIGeneratorModal from './components/AIGeneratorModal';
 import { generateConversation } from './services/geminiService';
+
+// Import styles
+import './style.css';
 
 const App: React.FC = () => {
     const [platform, setPlatform] = useState<Platform>('instagram');
@@ -60,33 +65,90 @@ const App: React.FC = () => {
         }
     };
 
+    const features = [
+        {
+            icon: Smartphone,
+            title: 'Multi-Platform',
+            desc: 'Support Instagram, LINE, and Messenger styles'
+        },
+        {
+            icon: Wand2,
+            title: 'AI Generation',
+            desc: 'Generate conversations with Gemini AI'
+        },
+        {
+            icon: Download,
+            title: 'Export as PNG',
+            desc: 'Download high-quality screenshot images'
+        }
+    ];
+
     return (
-        <div className="flex flex-col lg:flex-row h-screen bg-gray-50 overflow-hidden">
-            {/* Left Panel - Editor */}
-            <div className="w-full lg:w-[450px] lg:shrink-0 h-[50vh] lg:h-full z-20 shadow-xl">
-                <Editor
-                    settings={settings}
-                    setSettings={setSettings}
-                    messages={messages}
-                    setMessages={setMessages}
-                    platform={platform}
-                    setPlatform={setPlatform}
-                    onGenerateAI={() => setIsAIModalOpen(true)}
-                    onDownload={handleDownload}
-                    onReset={handleReset}
-                />
+        <div className="animate-slide-up">
+            {/* Back Link */}
+            <Link
+                to="/tools"
+                className="inline-flex items-center gap-2 text-slate-400 hover:text-tech-400 transition-colors mb-8 group">
+                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                <span className="text-sm font-medium">Back to Tools</span>
+            </Link>
+
+            {/* Header */}
+            <div className="flex items-center gap-4 mb-8">
+                <div className="p-3 bg-tech-500/10 rounded-xl text-tech-400 border border-tech-500/20">
+                    <MessageCircle size={28} />
+                </div>
+                <div>
+                    <h1 className="text-3xl font-bold text-white">Fake Chat</h1>
+                    <p className="text-slate-400 text-sm mt-1">Create realistic chat screenshots for mockups</p>
+                </div>
             </div>
 
-            {/* Right Panel - Preview */}
-            <div className="flex-1 h-[50vh] lg:h-full bg-[#f0f2f5] flex items-center justify-center p-4 lg:p-8 overflow-hidden relative">
-                <div className="absolute inset-0 bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] bg-size-[16px_16px] opacity-50 pointer-events-none"></div>
-                <ChatPreview
-                    ref={previewRef}
-                    platform={platform}
-                    messages={messages}
-                    settings={settings}
-                    onUpdateMessage={handleUpdateMessage}
-                />
+            {/* Features Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                {features.map((feature, idx) => (
+                    <div
+                        key={idx}
+                        className="p-4 rounded-xl bg-dark-card/30 border border-white/5 hover:border-tech-500/30 transition-all duration-300">
+                        <div className="p-2 bg-tech-500/10 rounded-lg text-tech-400 w-fit mb-3">
+                            <feature.icon size={18} />
+                        </div>
+                        <h4 className="text-white font-semibold mb-1">{feature.title}</h4>
+                        <p className="text-slate-500 text-sm">{feature.desc}</p>
+                    </div>
+                ))}
+            </div>
+
+            {/* Main Content - Editor and Preview */}
+            <div className="rounded-2xl overflow-hidden border border-white/10 bg-dark-card/30">
+                <div className="flex flex-col lg:flex-row min-h-[700px]">
+                    {/* Left Panel - Editor */}
+                    <div className="w-full lg:w-[420px] lg:shrink-0 border-b lg:border-b-0 lg:border-r border-white/10">
+                        <Editor
+                            settings={settings}
+                            setSettings={setSettings}
+                            messages={messages}
+                            setMessages={setMessages}
+                            platform={platform}
+                            setPlatform={setPlatform}
+                            onGenerateAI={() => setIsAIModalOpen(true)}
+                            onDownload={handleDownload}
+                            onReset={handleReset}
+                        />
+                    </div>
+
+                    {/* Right Panel - Preview */}
+                    <div className="flex-1 bg-slate-900/50 flex items-center justify-center p-4 lg:p-8 relative min-h-[500px] lg:min-h-0">
+                        <div className="absolute inset-0 bg-[radial-gradient(rgba(56,189,248,0.03)_1px,transparent_1px)] bg-size-[16px_16px] pointer-events-none"></div>
+                        <ChatPreview
+                            ref={previewRef}
+                            platform={platform}
+                            messages={messages}
+                            settings={settings}
+                            onUpdateMessage={handleUpdateMessage}
+                        />
+                    </div>
+                </div>
             </div>
 
             <AIGeneratorModal
