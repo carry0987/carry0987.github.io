@@ -1,16 +1,20 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router';
 import { toPng } from 'html-to-image';
 import { ArrowLeft, MessageCircle, Smartphone, Wand2, Download } from 'lucide-react';
+import { getLocalValue, setLocalValue } from '@carry0987/utils';
 import type { ChatSettings, Message, Platform } from './types';
 import { DEFAULT_SETTINGS, INITIAL_MESSAGES } from './constants';
 import ChatPreview from './components/ChatPreview';
 import Editor from './components/Editor';
 import AIGeneratorModal from './components/AIGeneratorModal';
+import ApiKeyInput from './components/ApiKeyInput';
 import { generateConversation } from './services/geminiService';
 
 // Import styles
 import './style.css';
+
+const API_KEY_STORAGE_KEY = 'fakechat_gemini_api_key';
 
 const App: React.FC = () => {
     const [platform, setPlatform] = useState<Platform>('instagram');
@@ -18,8 +22,22 @@ const App: React.FC = () => {
     const [settings, setSettings] = useState<ChatSettings>(DEFAULT_SETTINGS);
     const [isAIModalOpen, setIsAIModalOpen] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [apiKey, setApiKey] = useState<string>('');
 
     const previewRef = useRef<HTMLDivElement>(null);
+
+    // Load API key from localStorage on mount
+    useEffect(() => {
+        const savedKey = getLocalValue<string>(API_KEY_STORAGE_KEY);
+        if (savedKey) {
+            setApiKey(savedKey);
+        }
+    }, []);
+
+    const handleApiKeyChange = (key: string) => {
+        setApiKey(key);
+        setLocalValue(API_KEY_STORAGE_KEY, key || null);
+    };
 
     const handleDownload = async () => {
         if (previewRef.current) {
@@ -42,9 +60,13 @@ const App: React.FC = () => {
     };
 
     const handleGenerateAI = async (topic: string, mood: string) => {
+        if (!apiKey) {
+            alert('Please enter your Gemini API key first.');
+            return;
+        }
         setIsGenerating(true);
         try {
-            const newMessages = await generateConversation(topic, platform, mood);
+            const newMessages = await generateConversation(topic, platform, mood, apiKey);
             setMessages(newMessages);
             setIsAIModalOpen(false);
         } catch (error) {
@@ -64,24 +86,6 @@ const App: React.FC = () => {
             setSettings(DEFAULT_SETTINGS);
         }
     };
-
-    const features = [
-        {
-            icon: Smartphone,
-            title: 'Multi-Platform',
-            desc: 'Support Instagram, LINE, and Messenger styles'
-        },
-        {
-            icon: Wand2,
-            title: 'AI Generation',
-            desc: 'Generate conversations with Gemini AI'
-        },
-        {
-            icon: Download,
-            title: 'Export as PNG',
-            desc: 'Download high-quality screenshot images'
-        }
-    ];
 
     return (
         <div className="animate-slide-up">
@@ -104,20 +108,8 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                {features.map((feature, idx) => (
-                    <div
-                        key={idx}
-                        className="p-4 rounded-xl bg-dark-card/30 border border-white/5 hover:border-tech-500/30 transition-all duration-300">
-                        <div className="p-2 bg-tech-500/10 rounded-lg text-tech-400 w-fit mb-3">
-                            <feature.icon size={18} />
-                        </div>
-                        <h4 className="text-white font-semibold mb-1">{feature.title}</h4>
-                        <p className="text-slate-500 text-sm">{feature.desc}</p>
-                    </div>
-                ))}
-            </div>
+            {/* API Key Input */}
+            <ApiKeyInput apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
 
             {/* Main Content - Editor and Preview */}
             <div className="rounded-2xl overflow-hidden border border-white/10 bg-dark-card/30">
@@ -156,6 +148,7 @@ const App: React.FC = () => {
                 onClose={() => setIsAIModalOpen(false)}
                 onGenerate={handleGenerateAI}
                 isLoading={isGenerating}
+                hasApiKey={!!apiKey}
             />
         </div>
     );

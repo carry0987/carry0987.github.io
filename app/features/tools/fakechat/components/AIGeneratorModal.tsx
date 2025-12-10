@@ -1,14 +1,15 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Loader2 } from 'lucide-react';
+import { X, Sparkles, Loader2, AlertCircle } from 'lucide-react';
 
 interface AIGeneratorModalProps {
     isOpen: boolean;
     onClose: () => void;
     onGenerate: (topic: string, mood: string) => Promise<void>;
     isLoading: boolean;
+    hasApiKey: boolean;
 }
 
-const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({ isOpen, onClose, onGenerate, isLoading }) => {
+const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({ isOpen, onClose, onGenerate, isLoading, hasApiKey }) => {
     const [topic, setTopic] = useState('');
     const [mood, setMood] = useState('Casual');
 
@@ -38,6 +39,18 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({ isOpen, onClose, on
                 </div>
 
                 <form onSubmit={handleSubmit} className="p-6 space-y-5">
+                    {!hasApiKey && (
+                        <div className="bg-amber-500/10 border border-amber-500/20 rounded-xl p-4 flex items-start gap-3 text-amber-200">
+                            <AlertCircle className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" />
+                            <div>
+                                <h4 className="font-semibold text-amber-400">API Key Required</h4>
+                                <p className="text-sm text-amber-300/70 mt-1">
+                                    Please configure your Gemini API key in the settings above before generating.
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
                     <div>
                         <label className="block text-sm font-medium text-slate-300 mb-2">
                             What is the conversation about?
@@ -68,7 +81,7 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({ isOpen, onClose, on
 
                     <button
                         type="submit"
-                        disabled={isLoading || !topic.trim()}
+                        disabled={isLoading || !topic.trim() || !hasApiKey}
                         className="w-full bg-tech-600 text-white py-3 rounded-xl font-medium hover:bg-tech-700 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition border border-tech-500/30">
                         {isLoading ? (
                             <>

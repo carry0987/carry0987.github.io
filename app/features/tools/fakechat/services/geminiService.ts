@@ -1,9 +1,13 @@
 import { GoogleGenAI, Type } from '@google/genai';
 import type { Message } from '../types';
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
-export const generateConversation = async (topic: string, platform: string, mood: string): Promise<Message[]> => {
+export const generateConversation = async (
+    topic: string,
+    platform: string,
+    mood: string,
+    apiKey: string
+): Promise<Message[]> => {
+    const ai = new GoogleGenAI({ apiKey });
     const modelId = 'gemini-2.5-flash'; // Fast and sufficient for text generation
 
     const prompt = `Generate a realistic chat conversation script in Traditional Chinese (Taiwanese style) between two people.
