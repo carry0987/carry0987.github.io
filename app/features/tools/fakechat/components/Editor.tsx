@@ -827,7 +827,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                 <div className="mt-auto pt-6">
                     <button
                         onClick={onDownload}
-                        className="w-full bg-tech-600 hover:bg-tech-700 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-tech-900/30 transition transform active:scale-95 border border-tech-500/30">
+                        className="w-full bg-tech-600 hover:bg-tech-700 hover:shadow-xl hover:shadow-tech-500/20 hover:-translate-y-0.5 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-tech-900/30 transition-all duration-200 transform active:scale-95 border border-tech-500/30 hover:border-tech-400/50 cursor-pointer">
                         <Download size={20} />
                         Download Screenshot
                     </button>
