@@ -21,6 +21,7 @@ import {
     Clock3
 } from 'lucide-react';
 import { PLATFORMS, EMOJI_STICKERS } from '../constants';
+import { Modal, AlertDialog, ConfirmDialog } from './ui';
 
 interface EditorProps {
     settings: ChatSettings;
@@ -54,6 +55,12 @@ const Editor: React.FC<EditorProps> = ({
     const [showEmojiPicker, setShowEmojiPicker] = useState(false);
     const [showBatchTimeModal, setShowBatchTimeModal] = useState(false);
     const [batchTimeOffset, setBatchTimeOffset] = useState(0);
+
+    // Dialog states
+    const [showImportConfirm, setShowImportConfirm] = useState(false);
+    const [pendingImportData, setPendingImportData] = useState<ExportData | null>(null);
+    const [showInvalidFileAlert, setShowInvalidFileAlert] = useState(false);
+    const [showParseErrorAlert, setShowParseErrorAlert] = useState(false);
 
     // Drag and drop state
     const [draggedId, setDraggedId] = useState<string | null>(null);
@@ -138,16 +145,13 @@ const Editor: React.FC<EditorProps> = ({
                 try {
                     const data = JSON.parse(event.target?.result as string) as ExportData;
                     if (data.version && data.messages && data.settings) {
-                        if (confirm('Import will replace current chat. Continue?')) {
-                            setPlatform(data.platform);
-                            setSettings(data.settings);
-                            setMessages(data.messages);
-                        }
+                        setPendingImportData(data);
+                        setShowImportConfirm(true);
                     } else {
-                        alert('Invalid file format.');
+                        setShowInvalidFileAlert(true);
                     }
                 } catch {
-                    alert('Failed to parse JSON file.');
+                    setShowParseErrorAlert(true);
                 }
             };
             reader.readAsText(e.target.files[0]);
@@ -155,6 +159,15 @@ const Editor: React.FC<EditorProps> = ({
         // Reset file input
         if (fileInputRef.current) {
             fileInputRef.current.value = '';
+        }
+    };
+
+    const handleConfirmImport = () => {
+        if (pendingImportData) {
+            setPlatform(pendingImportData.platform);
+            setSettings(pendingImportData.settings);
+            setMessages(pendingImportData.messages);
+            setPendingImportData(null);
         }
     };
 
@@ -697,65 +710,94 @@ const Editor: React.FC<EditorProps> = ({
             </div>
 
             {/* Batch Time Adjustment Modal */}
-            {showBatchTimeModal && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
-                    <div className="bg-slate-900 rounded-xl w-full max-w-sm shadow-2xl border border-white/10 p-6">
-                        <div className="flex items-center justify-between mb-4">
-                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
-                                <Clock3 size={20} className="text-tech-400" />
-                                Batch Time Adjust
-                            </h3>
+            <Modal
+                isOpen={showBatchTimeModal}
+                onClose={() => {
+                    setShowBatchTimeModal(false);
+                    setBatchTimeOffset(0);
+                }}
+                title={
+                    <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                        <Clock3 size={20} className="text-tech-400" />
+                        Batch Time Adjust
+                    </h3>
+                }
+                maxWidth="sm">
+                <div className="p-6 pt-0">
+                    <p className="text-sm text-slate-400 mb-4">Adjust all message timestamps by a fixed amount.</p>
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-xs font-medium text-slate-400 mb-2">
+                                Time Offset (minutes)
+                            </label>
+                            <div className="flex items-center gap-3">
+                                <input
+                                    type="range"
+                                    min="-120"
+                                    max="120"
+                                    value={batchTimeOffset}
+                                    onChange={(e) => setBatchTimeOffset(parseInt(e.target.value))}
+                                    className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-tech-500"
+                                />
+                                <span
+                                    className={`w-16 text-center text-sm font-medium ${batchTimeOffset > 0 ? 'text-green-400' : batchTimeOffset < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                                    {batchTimeOffset > 0 ? '+' : ''}
+                                    {batchTimeOffset}m
+                                </span>
+                            </div>
+                        </div>
+                        <div className="flex gap-2">
                             <button
                                 onClick={() => {
                                     setShowBatchTimeModal(false);
                                     setBatchTimeOffset(0);
                                 }}
-                                className="text-slate-400 hover:text-white">
-                                <X size={20} />
+                                className="flex-1 py-2 rounded-lg text-slate-300 hover:bg-white/10 transition">
+                                Cancel
                             </button>
-                        </div>
-                        <p className="text-sm text-slate-400 mb-4">Adjust all message timestamps by a fixed amount.</p>
-                        <div className="space-y-4">
-                            <div>
-                                <label className="block text-xs font-medium text-slate-400 mb-2">
-                                    Time Offset (minutes)
-                                </label>
-                                <div className="flex items-center gap-3">
-                                    <input
-                                        type="range"
-                                        min="-120"
-                                        max="120"
-                                        value={batchTimeOffset}
-                                        onChange={(e) => setBatchTimeOffset(parseInt(e.target.value))}
-                                        className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-tech-500"
-                                    />
-                                    <span
-                                        className={`w-16 text-center text-sm font-medium ${batchTimeOffset > 0 ? 'text-green-400' : batchTimeOffset < 0 ? 'text-red-400' : 'text-slate-400'}`}>
-                                        {batchTimeOffset > 0 ? '+' : ''}
-                                        {batchTimeOffset}m
-                                    </span>
-                                </div>
-                            </div>
-                            <div className="flex gap-2">
-                                <button
-                                    onClick={() => {
-                                        setShowBatchTimeModal(false);
-                                        setBatchTimeOffset(0);
-                                    }}
-                                    className="flex-1 py-2 rounded-lg text-slate-300 hover:bg-white/10 transition">
-                                    Cancel
-                                </button>
-                                <button
-                                    onClick={handleBatchTimeAdjust}
-                                    disabled={batchTimeOffset === 0}
-                                    className="flex-1 py-2 rounded-lg bg-tech-600 text-white hover:bg-tech-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
-                                    Apply
-                                </button>
-                            </div>
+                            <button
+                                onClick={handleBatchTimeAdjust}
+                                disabled={batchTimeOffset === 0}
+                                className="flex-1 py-2 rounded-lg bg-tech-600 text-white hover:bg-tech-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                                Apply
+                            </button>
                         </div>
                     </div>
                 </div>
-            )}
+            </Modal>
+
+            {/* Import Confirm Dialog */}
+            <ConfirmDialog
+                isOpen={showImportConfirm}
+                onClose={() => {
+                    setShowImportConfirm(false);
+                    setPendingImportData(null);
+                }}
+                onConfirm={handleConfirmImport}
+                title="Import Chat"
+                message="Import will replace current chat. Continue?"
+                confirmText="Import"
+                cancelText="Cancel"
+                type="warning"
+            />
+
+            {/* Invalid File Format Alert */}
+            <AlertDialog
+                isOpen={showInvalidFileAlert}
+                onClose={() => setShowInvalidFileAlert(false)}
+                title="Invalid File"
+                message="Invalid file format. Please select a valid FakeChat export file."
+                type="error"
+            />
+
+            {/* Parse Error Alert */}
+            <AlertDialog
+                isOpen={showParseErrorAlert}
+                onClose={() => setShowParseErrorAlert(false)}
+                title="Parse Error"
+                message="Failed to parse JSON file. Please check if the file is valid."
+                type="error"
+            />
 
             <div className="mt-auto pt-6">
                 <button

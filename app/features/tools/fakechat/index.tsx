@@ -9,6 +9,7 @@ import ChatPreview from './components/ChatPreview';
 import Editor from './components/Editor';
 import AIGeneratorModal from './components/AIGeneratorModal';
 import ApiKeyInput from './components/ApiKeyInput';
+import { AlertDialog, ConfirmDialog } from './components/ui';
 import { generateConversation } from './services/geminiService';
 
 // Import styles
@@ -23,6 +24,12 @@ const App: React.FC = () => {
     const [isAIModalOpen, setIsAIModalOpen] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [apiKey, setApiKey] = useState<string>('');
+
+    // Dialog states
+    const [showImageErrorAlert, setShowImageErrorAlert] = useState(false);
+    const [showApiKeyAlert, setShowApiKeyAlert] = useState(false);
+    const [showAIErrorAlert, setShowAIErrorAlert] = useState(false);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
 
     const previewRef = useRef<HTMLDivElement>(null);
 
@@ -54,14 +61,14 @@ const App: React.FC = () => {
                 link.click();
             } catch (err) {
                 console.error('Failed to generate image', err);
-                alert('Could not generate image. Please try again.');
+                setShowImageErrorAlert(true);
             }
         }
     };
 
     const handleGenerateAI = async (topic: string, mood: string) => {
         if (!apiKey) {
-            alert('Please enter your Gemini API key first.');
+            setShowApiKeyAlert(true);
             return;
         }
         setIsGenerating(true);
@@ -70,7 +77,7 @@ const App: React.FC = () => {
             setMessages(newMessages);
             setIsAIModalOpen(false);
         } catch (error) {
-            alert('AI Generation failed. Please check your API key or try again.');
+            setShowAIErrorAlert(true);
         } finally {
             setIsGenerating(false);
         }
@@ -81,10 +88,12 @@ const App: React.FC = () => {
     };
 
     const handleReset = () => {
-        if (confirm('Reset all messages and settings?')) {
-            setMessages(INITIAL_MESSAGES);
-            setSettings(DEFAULT_SETTINGS);
-        }
+        setShowResetConfirm(true);
+    };
+
+    const handleConfirmReset = () => {
+        setMessages(INITIAL_MESSAGES);
+        setSettings(DEFAULT_SETTINGS);
     };
 
     return (
@@ -151,6 +160,45 @@ const App: React.FC = () => {
                 onGenerate={handleGenerateAI}
                 isLoading={isGenerating}
                 hasApiKey={!!apiKey}
+            />
+
+            {/* Image Error Alert */}
+            <AlertDialog
+                isOpen={showImageErrorAlert}
+                onClose={() => setShowImageErrorAlert(false)}
+                title="Image Generation Failed"
+                message="Could not generate image. Please try again."
+                type="error"
+            />
+
+            {/* API Key Alert */}
+            <AlertDialog
+                isOpen={showApiKeyAlert}
+                onClose={() => setShowApiKeyAlert(false)}
+                title="API Key Required"
+                message="Please enter your Gemini API key first."
+                type="warning"
+            />
+
+            {/* AI Generation Error Alert */}
+            <AlertDialog
+                isOpen={showAIErrorAlert}
+                onClose={() => setShowAIErrorAlert(false)}
+                title="AI Generation Failed"
+                message="AI Generation failed. Please check your API key or try again."
+                type="error"
+            />
+
+            {/* Reset Confirm Dialog */}
+            <ConfirmDialog
+                isOpen={showResetConfirm}
+                onClose={() => setShowResetConfirm(false)}
+                onConfirm={handleConfirmReset}
+                title="Reset Chat"
+                message="Reset all messages and settings?"
+                confirmText="Reset"
+                cancelText="Cancel"
+                type="danger"
             />
         </div>
     );
