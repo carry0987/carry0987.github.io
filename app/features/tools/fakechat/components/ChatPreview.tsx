@@ -13,7 +13,8 @@ import {
     Image as ImageIcon,
     ArrowLeft,
     MoreHorizontal,
-    Play
+    Play,
+    Camera
 } from 'lucide-react';
 
 interface ChatPreviewProps {
@@ -445,12 +446,12 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                 case 'instagram':
                     return (
                         <div className="px-4 py-3 bg-white flex items-center gap-3 border-t border-gray-100">
-                            <div className="bg-[#efefef] flex-1 rounded-full px-4 py-2.5 flex items-center gap-2">
-                                <div className="bg-blue-500 rounded-full p-1 text-white">
-                                    <ImageIcon size={12} fill="white" />
+                            <div className="bg-[#efefef] flex-1 rounded-full px-2 py-2 flex items-center gap-2">
+                                <div className="bg-blue-500 rounded-full p-1.5 text-white">
+                                    <Camera size={16} />
                                 </div>
                                 <span className="text-gray-400 text-sm">Message...</span>
-                                <div className="ml-auto flex gap-3 text-gray-500">
+                                <div className="ml-auto mr-1 flex gap-3 text-gray-500">
                                     <Mic size={20} />
                                     <ImageIcon size={20} />
                                     <Smile size={20} />
