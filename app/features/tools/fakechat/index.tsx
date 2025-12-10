@@ -108,9 +108,6 @@ const App: React.FC = () => {
                 </div>
             </div>
 
-            {/* API Key Input */}
-            <ApiKeyInput apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
-
             {/* Main Content - Editor and Preview */}
             <div className="rounded-2xl overflow-hidden border border-white/10 bg-dark-card/30">
                 <div className="flex flex-col lg:flex-row min-h-[700px]">
@@ -141,6 +138,11 @@ const App: React.FC = () => {
                         />
                     </div>
                 </div>
+            </div>
+
+            {/* API Key Input - For AI Generation */}
+            <div className="mt-8">
+                <ApiKeyInput apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
             </div>
 
             <AIGeneratorModal
