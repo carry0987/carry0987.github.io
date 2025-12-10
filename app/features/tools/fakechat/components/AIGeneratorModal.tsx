@@ -74,7 +74,7 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({ isOpen, onClose, on
                 <div>
                     <label className="block text-sm font-medium text-slate-300 mb-2">Tone / Mood</label>
                     <Listbox value={selectedMood} onChange={setSelectedMood}>
-                        <ListboxButton className="relative w-full p-3 pr-10 bg-slate-800/50 border border-white/10 rounded-xl text-left text-white focus:outline-none data-[focus]:ring-2 data-[focus]:ring-purple-500 cursor-pointer hover:bg-slate-800/70 transition-colors">
+                        <ListboxButton className="relative w-full p-3 pr-10 bg-slate-800/50 border border-white/10 rounded-xl text-left text-white focus:outline-none data-focus:ring-2 data-focus:ring-purple-500 cursor-pointer hover:bg-slate-800/70 transition-colors">
                             <span className="flex items-center gap-2">
                                 <span>{selectedMood.emoji}</span>
                                 <span>{selectedMood.label}</span>
@@ -87,15 +87,15 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({ isOpen, onClose, on
                         <ListboxOptions
                             anchor="bottom"
                             transition
-                            className="w-[var(--button-width)] rounded-xl border border-white/10 bg-slate-800 p-1 shadow-xl [--anchor-gap:4px] focus:outline-none transition duration-100 ease-in data-[leave]:data-[closed]:opacity-0">
+                            className="w-(--button-width) rounded-xl border border-white/10 bg-slate-800 p-1 shadow-xl [--anchor-gap:4px] focus:outline-none transition duration-100 ease-in data-leave:data-closed:opacity-0">
                             {MOOD_OPTIONS.map((mood) => (
                                 <ListboxOption
                                     key={mood.id}
                                     value={mood}
-                                    className="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 select-none data-[focus]:bg-purple-500/20 text-slate-300 data-[selected]:text-purple-400">
+                                    className="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 select-none data-focus:bg-purple-500/20 text-slate-300 data-selected:text-purple-400">
                                     <Check
                                         size={16}
-                                        className="invisible text-purple-400 group-data-[selected]:visible"
+                                        className="invisible text-purple-400 group-data-selected:visible"
                                     />
                                     <span>{mood.emoji}</span>
                                     <span>{mood.label}</span>
