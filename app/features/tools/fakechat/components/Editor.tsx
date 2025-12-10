@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import type { ChatSettings, Message, Platform } from '../types';
+import React, { useState, useEffect, useRef } from 'react';
+import type { ChatSettings, Message, Platform, ExportData } from '../types';
 import {
     Plus,
     Trash2,
@@ -12,10 +12,15 @@ import {
     Image as ImageIcon,
     X,
     Save,
-    Edit2,
-    Clock
+    Clock,
+    GripVertical,
+    FileUp,
+    FileDown,
+    Smile,
+    MessageCircle,
+    Clock3
 } from 'lucide-react';
-import { PLATFORMS } from '../constants';
+import { PLATFORMS, EMOJI_STICKERS } from '../constants';
 
 interface EditorProps {
     settings: ChatSettings;
@@ -46,6 +51,15 @@ const Editor: React.FC<EditorProps> = ({
     const [isSender, setIsSender] = useState(true);
     const [editingMessageId, setEditingMessageId] = useState<string | null>(null);
     const [messageTimestamp, setMessageTimestamp] = useState(settings.time);
+    const [showEmojiPicker, setShowEmojiPicker] = useState(false);
+    const [showBatchTimeModal, setShowBatchTimeModal] = useState(false);
+    const [batchTimeOffset, setBatchTimeOffset] = useState(0);
+
+    // Drag and drop state
+    const [draggedId, setDraggedId] = useState<string | null>(null);
+    const [dragOverId, setDragOverId] = useState<string | null>(null);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     // Sync message timestamp with settings time when not editing and settings time changes
     useEffect(() => {
@@ -53,6 +67,122 @@ const Editor: React.FC<EditorProps> = ({
             setMessageTimestamp(settings.time);
         }
     }, [settings.time, editingMessageId]);
+
+    // --- Drag and Drop Handlers ---
+    const handleDragStart = (e: React.DragEvent, id: string) => {
+        setDraggedId(id);
+        e.dataTransfer.effectAllowed = 'move';
+    };
+
+    const handleDragOver = (e: React.DragEvent, id: string) => {
+        e.preventDefault();
+        if (draggedId !== id) {
+            setDragOverId(id);
+        }
+    };
+
+    const handleDragLeave = () => {
+        setDragOverId(null);
+    };
+
+    const handleDrop = (e: React.DragEvent, targetId: string) => {
+        e.preventDefault();
+        if (!draggedId || draggedId === targetId) {
+            setDraggedId(null);
+            setDragOverId(null);
+            return;
+        }
+
+        const newMessages = [...messages];
+        const draggedIndex = newMessages.findIndex((m) => m.id === draggedId);
+        const targetIndex = newMessages.findIndex((m) => m.id === targetId);
+
+        if (draggedIndex !== -1 && targetIndex !== -1) {
+            const [removed] = newMessages.splice(draggedIndex, 1);
+            newMessages.splice(targetIndex, 0, removed);
+            setMessages(newMessages);
+        }
+
+        setDraggedId(null);
+        setDragOverId(null);
+    };
+
+    const handleDragEnd = () => {
+        setDraggedId(null);
+        setDragOverId(null);
+    };
+
+    // --- Export/Import Handlers ---
+    const handleExport = () => {
+        const exportData: ExportData = {
+            version: '1.0',
+            platform,
+            settings,
+            messages,
+            exportedAt: new Date().toISOString()
+        };
+
+        const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.download = `fakechat-${platform}-${Date.now()}.json`;
+        link.href = url;
+        link.click();
+        URL.revokeObjectURL(url);
+    };
+
+    const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files && e.target.files[0]) {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                try {
+                    const data = JSON.parse(event.target?.result as string) as ExportData;
+                    if (data.version && data.messages && data.settings) {
+                        if (confirm('Import will replace current chat. Continue?')) {
+                            setPlatform(data.platform);
+                            setSettings(data.settings);
+                            setMessages(data.messages);
+                        }
+                    } else {
+                        alert('Invalid file format.');
+                    }
+                } catch {
+                    alert('Failed to parse JSON file.');
+                }
+            };
+            reader.readAsText(e.target.files[0]);
+        }
+        // Reset file input
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
+    // --- Batch Time Adjustment ---
+    const handleBatchTimeAdjust = () => {
+        if (batchTimeOffset === 0) return;
+
+        const updatedMessages = messages.map((msg) => {
+            const [hours, minutes] = msg.timestamp.split(':').map(Number);
+            const totalMinutes = hours * 60 + minutes + batchTimeOffset;
+            const newHours = Math.floor((((totalMinutes % 1440) + 1440) % 1440) / 60);
+            const newMinutes = ((totalMinutes % 60) + 60) % 60;
+            return {
+                ...msg,
+                timestamp: `${newHours.toString().padStart(2, '0')}:${newMinutes.toString().padStart(2, '0')}`
+            };
+        });
+
+        setMessages(updatedMessages);
+        setShowBatchTimeModal(false);
+        setBatchTimeOffset(0);
+    };
+
+    // --- Emoji Insert ---
+    const handleEmojiInsert = (emoji: string) => {
+        setNewMessageText((prev) => prev + emoji);
+        setShowEmojiPicker(false);
+    };
 
     const handleSaveMessage = () => {
         if (inputType === 'text' && !newMessageText.trim()) return;
@@ -188,7 +318,25 @@ const Editor: React.FC<EditorProps> = ({
             {/* Title */}
             <div className="flex items-center justify-between">
                 <h1 className="text-xl font-bold text-white">Chat Editor</h1>
-                <div className="flex gap-2">
+                <div className="flex gap-1">
+                    <button
+                        onClick={handleExport}
+                        className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors"
+                        title="Export Chat">
+                        <FileDown size={18} />
+                    </button>
+                    <label
+                        className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors cursor-pointer"
+                        title="Import Chat">
+                        <FileUp size={18} />
+                        <input
+                            ref={fileInputRef}
+                            type="file"
+                            className="hidden"
+                            accept=".json"
+                            onChange={handleImport}
+                        />
+                    </label>
                     <button
                         onClick={onReset}
                         className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors"
@@ -303,6 +451,21 @@ const Editor: React.FC<EditorProps> = ({
                         </div>
                     </div>
                 </div>
+
+                {/* Typing Indicator Toggle */}
+                <div className="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-white/5">
+                    <div className="flex items-center gap-2">
+                        <MessageCircle size={16} className="text-slate-400" />
+                        <span className="text-sm text-slate-300">Show Typing Indicator</span>
+                    </div>
+                    <button
+                        onClick={() => setSettings({ ...settings, isTyping: !settings.isTyping })}
+                        className={`relative w-11 h-6 rounded-full transition-colors ${settings.isTyping ? 'bg-tech-500' : 'bg-slate-700'}`}>
+                        <div
+                            className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${settings.isTyping ? 'translate-x-6' : 'translate-x-1'}`}
+                        />
+                    </button>
+                </div>
             </div>
 
             <hr className="border-white/10" />
@@ -404,17 +567,42 @@ const Editor: React.FC<EditorProps> = ({
 
                     {/* Actions */}
                     <div className="flex justify-between items-center gap-2">
-                        <label
-                            className="cursor-pointer text-slate-400 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
-                            title="Upload Image">
-                            <Upload size={18} />
-                            <input
-                                type="file"
-                                className="hidden"
-                                accept="image/*"
-                                onChange={(e) => handleImageUpload(e, 'message')}
-                            />
-                        </label>
+                        <div className="flex items-center gap-1">
+                            <label
+                                className="cursor-pointer text-slate-400 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+                                title="Upload Image">
+                                <Upload size={18} />
+                                <input
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => handleImageUpload(e, 'message')}
+                                />
+                            </label>
+                            {/* Emoji Picker */}
+                            <div className="relative">
+                                <button
+                                    onClick={() => setShowEmojiPicker(!showEmojiPicker)}
+                                    className="text-slate-400 hover:text-white p-2 hover:bg-white/10 rounded-lg transition-colors"
+                                    title="Insert Emoji">
+                                    <Smile size={18} />
+                                </button>
+                                {showEmojiPicker && (
+                                    <div className="absolute bottom-full left-0 mb-2 p-2 bg-slate-800 border border-white/10 rounded-xl shadow-xl z-50 w-64">
+                                        <div className="grid grid-cols-8 gap-1 max-h-32 overflow-y-auto">
+                                            {EMOJI_STICKERS.map((emoji, i) => (
+                                                <button
+                                                    key={i}
+                                                    onClick={() => handleEmojiInsert(emoji)}
+                                                    className="w-7 h-7 flex items-center justify-center text-lg hover:bg-white/10 rounded transition">
+                                                    {emoji}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
 
                         <div className="flex items-center gap-2">
                             {editingMessageId && (
@@ -435,24 +623,52 @@ const Editor: React.FC<EditorProps> = ({
                     </div>
                 </div>
 
-                {/* Message List (Compact) */}
+                {/* Message List Header with Batch Time */}
+                <div className="flex items-center justify-between">
+                    <span className="text-xs text-slate-500">{messages.length} messages</span>
+                    <button
+                        onClick={() => setShowBatchTimeModal(true)}
+                        disabled={messages.length === 0}
+                        className="flex items-center gap-1 text-xs text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                        title="Batch adjust timestamps">
+                        <Clock3 size={12} />
+                        Batch Time
+                    </button>
+                </div>
+
+                {/* Message List (Compact) with Drag & Drop */}
                 <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
                     {messages.map((msg) => (
                         <div
                             key={msg.id}
+                            draggable
+                            onDragStart={(e) => handleDragStart(e, msg.id)}
+                            onDragOver={(e) => handleDragOver(e, msg.id)}
+                            onDragLeave={handleDragLeave}
+                            onDrop={(e) => handleDrop(e, msg.id)}
+                            onDragEnd={handleDragEnd}
                             onClick={() => handleSelectMessage(msg)}
                             className={`group flex items-center justify-between p-2 rounded-lg border transition cursor-pointer ${
                                 editingMessageId === msg.id
                                     ? 'bg-tech-500/10 border-tech-500/30 ring-1 ring-tech-500/30'
-                                    : 'hover:bg-white/5 border-transparent hover:border-white/10'
+                                    : dragOverId === msg.id
+                                      ? 'bg-tech-500/5 border-tech-500/20'
+                                      : draggedId === msg.id
+                                        ? 'opacity-50'
+                                        : 'hover:bg-white/5 border-transparent hover:border-white/10'
                             }`}>
-                            <div className="flex items-center gap-3 overflow-hidden">
+                            {/* Drag Handle */}
+                            <div className="flex items-center gap-2 overflow-hidden">
+                                <GripVertical
+                                    size={14}
+                                    className="text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
+                                />
                                 <span
-                                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${msg.isSender ? 'bg-tech-500/20 text-tech-400' : 'bg-slate-700 text-slate-300'}`}>
+                                    className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${msg.isSender ? 'bg-tech-500/20 text-tech-400' : 'bg-slate-700 text-slate-300'}`}>
                                     {msg.isSender ? 'Me' : 'Them'}
                                 </span>
                                 <div className="flex flex-col overflow-hidden">
-                                    <p className="text-sm text-slate-300 truncate max-w-[150px]">
+                                    <p className="text-sm text-slate-300 truncate max-w-[120px]">
                                         {msg.image
                                             ? '📷 [Image]'
                                             : msg.audioDuration
@@ -479,6 +695,67 @@ const Editor: React.FC<EditorProps> = ({
                     )}
                 </div>
             </div>
+
+            {/* Batch Time Adjustment Modal */}
+            {showBatchTimeModal && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/70 backdrop-blur-sm">
+                    <div className="bg-slate-900 rounded-xl w-full max-w-sm shadow-2xl border border-white/10 p-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                                <Clock3 size={20} className="text-tech-400" />
+                                Batch Time Adjust
+                            </h3>
+                            <button
+                                onClick={() => {
+                                    setShowBatchTimeModal(false);
+                                    setBatchTimeOffset(0);
+                                }}
+                                className="text-slate-400 hover:text-white">
+                                <X size={20} />
+                            </button>
+                        </div>
+                        <p className="text-sm text-slate-400 mb-4">Adjust all message timestamps by a fixed amount.</p>
+                        <div className="space-y-4">
+                            <div>
+                                <label className="block text-xs font-medium text-slate-400 mb-2">
+                                    Time Offset (minutes)
+                                </label>
+                                <div className="flex items-center gap-3">
+                                    <input
+                                        type="range"
+                                        min="-120"
+                                        max="120"
+                                        value={batchTimeOffset}
+                                        onChange={(e) => setBatchTimeOffset(parseInt(e.target.value))}
+                                        className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-tech-500"
+                                    />
+                                    <span
+                                        className={`w-16 text-center text-sm font-medium ${batchTimeOffset > 0 ? 'text-green-400' : batchTimeOffset < 0 ? 'text-red-400' : 'text-slate-400'}`}>
+                                        {batchTimeOffset > 0 ? '+' : ''}
+                                        {batchTimeOffset}m
+                                    </span>
+                                </div>
+                            </div>
+                            <div className="flex gap-2">
+                                <button
+                                    onClick={() => {
+                                        setShowBatchTimeModal(false);
+                                        setBatchTimeOffset(0);
+                                    }}
+                                    className="flex-1 py-2 rounded-lg text-slate-300 hover:bg-white/10 transition">
+                                    Cancel
+                                </button>
+                                <button
+                                    onClick={handleBatchTimeAdjust}
+                                    disabled={batchTimeOffset === 0}
+                                    className="flex-1 py-2 rounded-lg bg-tech-600 text-white hover:bg-tech-700 disabled:opacity-50 disabled:cursor-not-allowed transition">
+                                    Apply
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            )}
 
             <div className="mt-auto pt-6">
                 <button

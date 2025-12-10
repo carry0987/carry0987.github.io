@@ -18,6 +18,15 @@ export interface ChatSettings {
     partnerAvatar: string;
     myAvatar: string; // Only used for some platforms like TikTok/Line if needed
     backgroundImage?: string;
+    isTyping?: boolean; // Show typing indicator
+}
+
+export interface ExportData {
+    version: string;
+    platform: Platform;
+    settings: ChatSettings;
+    messages: Message[];
+    exportedAt: string;
 }
 
 export interface GeneratorResponse {

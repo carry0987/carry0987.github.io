@@ -5,7 +5,8 @@ export const DEFAULT_SETTINGS: ChatSettings = {
     batteryLevel: 85,
     partnerName: 'Babe ❤️',
     partnerAvatar: 'https://picsum.photos/100/100',
-    myAvatar: 'https://picsum.photos/101/101'
+    myAvatar: 'https://picsum.photos/101/101',
+    isTyping: false
 };
 
 export const INITIAL_MESSAGES: Message[] = [
@@ -30,4 +31,56 @@ export const PLATFORMS: { id: Platform; name: string; icon: string }[] = [
     { id: 'line', name: 'LINE', icon: 'message-circle' },
     { id: 'telegram', name: 'Telegram', icon: 'send' },
     { id: 'tiktok', name: 'TikTok', icon: 'music' }
+];
+
+// Common emoji stickers for quick insert
+export const EMOJI_STICKERS: string[] = [
+    '😀',
+    '😂',
+    '🥰',
+    '😍',
+    '😘',
+    '🥺',
+    '😢',
+    '😭',
+    '😡',
+    '🤔',
+    '😱',
+    '🙄',
+    '😴',
+    '🤗',
+    '🤣',
+    '😎',
+    '❤️',
+    '💕',
+    '💖',
+    '💔',
+    '🔥',
+    '✨',
+    '🎉',
+    '👍',
+    '👎',
+    '👏',
+    '🙏',
+    '💪',
+    '🤝',
+    '👋',
+    '✌️',
+    '🤞',
+    '🍕',
+    '🍔',
+    '🍜',
+    '🍲',
+    '🍺',
+    '☕',
+    '🎂',
+    '🍰',
+    '🎁',
+    '🎈',
+    '🎊',
+    '💐',
+    '🌹',
+    '🌸',
+    '⭐',
+    '🌙'
 ];

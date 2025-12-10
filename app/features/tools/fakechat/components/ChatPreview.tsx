@@ -165,6 +165,66 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
             }
         };
 
+        // Typing Indicator Component
+        const renderTypingIndicator = () => {
+            const dotClasses = 'w-2 h-2 rounded-full animate-bounce';
+
+            switch (platform) {
+                case 'instagram':
+                    return (
+                        <div className="flex w-full mb-3 justify-start items-end gap-2">
+                            <img src={settings.partnerAvatar} className="w-7 h-7 rounded-full object-cover mb-1" />
+                            <div className="bg-[#efefef] px-4 py-3 rounded-3xl rounded-bl-md flex items-center gap-1.5">
+                                <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '0ms' }} />
+                                <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '150ms' }} />
+                                <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '300ms' }} />
+                            </div>
+                        </div>
+                    );
+                case 'line':
+                    return (
+                        <div className="flex w-full mb-4 justify-start items-start gap-2">
+                            <img src={settings.partnerAvatar} className="w-10 h-10 rounded-full object-cover" />
+                            <div className="flex flex-col items-start">
+                                <span className="text-xs text-gray-600 mb-1 ml-1">{settings.partnerName}</span>
+                                <div className="bg-white px-4 py-2.5 rounded-2xl shadow-sm flex items-center gap-1.5 relative after:absolute after:top-2 after:-left-1 after:w-3 after:h-3 after:bg-white after:rotate-45">
+                                    <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '0ms' }} />
+                                    <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '150ms' }} />
+                                    <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '300ms' }} />
+                                </div>
+                            </div>
+                        </div>
+                    );
+                case 'telegram':
+                    return (
+                        <div className="flex w-full mb-2 justify-start gap-2">
+                            <img
+                                src={settings.partnerAvatar}
+                                className="w-8 h-8 rounded-full object-cover self-end mb-1"
+                            />
+                            <div className="bg-white px-4 py-2 rounded-lg shadow-sm flex items-center gap-1.5">
+                                <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '0ms' }} />
+                                <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '150ms' }} />
+                                <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '300ms' }} />
+                            </div>
+                        </div>
+                    );
+                case 'tiktok':
+                    return (
+                        <div className="flex w-full mb-3 justify-start items-end gap-2">
+                            <img src={settings.partnerAvatar} className="w-8 h-8 rounded-full object-cover mb-1" />
+                            <div className="bg-[#383838] px-4 py-2.5 rounded-2xl rounded-bl-sm flex items-center gap-1.5">
+                                <div className={`${dotClasses} bg-gray-500`} style={{ animationDelay: '0ms' }} />
+                                <div className={`${dotClasses} bg-gray-500`} style={{ animationDelay: '150ms' }} />
+                                <div className={`${dotClasses} bg-gray-500`} style={{ animationDelay: '300ms' }} />
+                            </div>
+                        </div>
+                    );
+                default:
+                    return null;
+            }
+        };
+
         // Helper to render voice visual
         const renderVoiceVisual = (isSender: boolean, duration: number, style: 'bars' | 'line' | 'wave' = 'bars') => {
             if (style === 'line') {
@@ -469,6 +529,8 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                         className={`flex-1 overflow-y-auto no-scrollbar p-4 flex flex-col ${settings.backgroundImage ? 'bg-no-repeat bg-cover bg-center' : renderBackground()}`}
                         style={settings.backgroundImage ? { backgroundImage: `url(${settings.backgroundImage})` } : {}}>
                         {messages.map(renderMessage)}
+                        {/* Typing Indicator */}
+                        {settings.isTyping && renderTypingIndicator()}
                     </div>
 
                     {/* Footer / Input */}
