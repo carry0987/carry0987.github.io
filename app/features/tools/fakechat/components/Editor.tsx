@@ -334,7 +334,7 @@ const Editor: React.FC<EditorProps> = ({
                 <div className="flex gap-1">
                     <button
                         onClick={handleExport}
-                        className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors"
+                        className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors cursor-pointer"
                         title="Export Chat">
                         <FileDown size={18} />
                     </button>
@@ -352,7 +352,7 @@ const Editor: React.FC<EditorProps> = ({
                     </label>
                     <button
                         onClick={onReset}
-                        className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors"
+                        className="p-2 hover:bg-white/10 rounded-full text-slate-400 hover:text-white transition-colors cursor-pointer"
                         title="Reset">
                         <RefreshCw size={18} />
                     </button>
@@ -473,7 +473,7 @@ const Editor: React.FC<EditorProps> = ({
                     </div>
                     <button
                         onClick={() => setSettings({ ...settings, isTyping: !settings.isTyping })}
-                        className={`relative w-11 h-6 rounded-full transition-colors ${settings.isTyping ? 'bg-tech-500' : 'bg-slate-700'}`}>
+                        className={`relative w-11 h-6 rounded-full transition-colors cursor-pointer ${settings.isTyping ? 'bg-tech-500' : 'bg-slate-700'}`}>
                         <div
                             className={`absolute top-1 w-4 h-4 bg-white rounded-full transition-transform ${settings.isTyping ? 'translate-x-6' : 'translate-x-1'}`}
                         />
@@ -491,7 +491,7 @@ const Editor: React.FC<EditorProps> = ({
                     </h3>
                     <button
                         onClick={onGenerateAI}
-                        className="flex items-center gap-1.5 text-xs font-medium text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 px-3 py-1.5 rounded-full transition-colors border border-purple-500/20">
+                        className="flex items-center gap-1.5 text-xs font-medium text-purple-400 bg-purple-500/10 hover:bg-purple-500/20 px-3 py-1.5 rounded-full transition-colors border border-purple-500/20 cursor-pointer">
                         <Wand2 size={14} />
                         AI Generate
                     </button>

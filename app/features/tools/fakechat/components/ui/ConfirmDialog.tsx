@@ -89,12 +89,12 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
                                     <div className="flex gap-3 w-full">
                                         <button
                                             onClick={onClose}
-                                            className="flex-1 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 transition font-medium border border-white/10">
+                                            className="flex-1 py-2.5 rounded-xl text-slate-300 hover:bg-white/10 transition font-medium border border-white/10 cursor-pointer">
                                             {cancelText}
                                         </button>
                                         <button
                                             onClick={handleConfirm}
-                                            className={`flex-1 py-2.5 rounded-xl text-white transition font-medium border ${confirmButtonColorMap[type]}`}>
+                                            className={`flex-1 py-2.5 rounded-xl text-white transition font-medium border cursor-pointer ${confirmButtonColorMap[type]}`}>
                                             {confirmText}
                                         </button>
                                     </div>

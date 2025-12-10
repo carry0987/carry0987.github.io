@@ -82,7 +82,7 @@ const AlertDialog: React.FC<AlertDialogProps> = ({
 
                                     <button
                                         onClick={onClose}
-                                        className={`w-full py-2.5 rounded-xl text-white transition font-medium border ${buttonColorMap[type]}`}>
+                                        className={`w-full py-2.5 rounded-xl text-white transition font-medium border cursor-pointer ${buttonColorMap[type]}`}>
                                         {buttonText}
                                     </button>
                                 </div>
