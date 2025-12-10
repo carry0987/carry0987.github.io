@@ -22,6 +22,7 @@ interface ChatPreviewProps {
     messages: Message[];
     settings: ChatSettings;
     onUpdateMessage: (id: string, updates: Partial<Message>) => void;
+    onSelectMessage?: (msg: Message) => void;
 }
 
 const INSTAGRAM_REACTIONS = ['❤️', '😂', '😮', '😢', '😡', '👍'];
@@ -33,17 +34,20 @@ const formatDuration = (seconds: number) => {
 };
 
 const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
-    ({ platform, messages, settings, onUpdateMessage }, ref) => {
+    ({ platform, messages, settings, onUpdateMessage, onSelectMessage }, ref) => {
         const [activeReactionId, setActiveReactionId] = useState<string | null>(null);
         const [longPressTimer, setLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
         const [reactionPosition, setReactionPosition] = useState<'top' | 'bottom'>('top');
+        const [isLongPress, setIsLongPress] = useState(false);
         const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
         const chatAreaRef = useRef<HTMLDivElement>(null);
 
         // --- Interaction Logic ---
         const handleTouchStart = (id: string, e: React.MouseEvent | React.TouchEvent) => {
+            setIsLongPress(false);
             if (platform !== 'instagram') return;
             const timer = setTimeout(() => {
+                setIsLongPress(true);
                 // Calculate whether to show the reaction picker at the bottom
                 const messageEl = messageRefs.current.get(id);
                 const chatArea = chatAreaRef.current;
@@ -63,6 +67,13 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
             if (longPressTimer) {
                 clearTimeout(longPressTimer);
                 setLongPressTimer(null);
+            }
+        };
+
+        const handleMessageClick = (msg: Message) => {
+            // Only trigger edit if it wasn't a long press and reaction picker is not open
+            if (!isLongPress && !activeReactionId && onSelectMessage) {
+                onSelectMessage(msg);
             }
         };
 
@@ -315,6 +326,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                 onMouseLeave={handleTouchEnd}
                                 onTouchStart={(e) => handleTouchStart(msg.id, e)}
                                 onTouchEnd={handleTouchEnd}
+                                onClick={() => handleMessageClick(msg)}
                                 onContextMenu={(e) => e.preventDefault()}
                                 className={`max-w-60 px-4 py-2.5 text-[15px] leading-snug rounded-3xl relative select-none cursor-pointer transition-transform active:scale-95 ${
                                     isSender
@@ -367,7 +379,8 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                     </div>
                                 )}
                                 <div
-                                    className={`max-w-[220px] px-3 py-2 text-[14px] rounded-2xl shadow-sm relative leading-relaxed wrap-break-words ${
+                                    onClick={() => handleMessageClick(msg)}
+                                    className={`max-w-[220px] px-3 py-2 text-[14px] rounded-2xl shadow-sm relative leading-relaxed wrap-break-words cursor-pointer ${
                                         isSender
                                             ? 'bg-[#85E249] text-black after:absolute after:top-2 after:-right-1 after:w-3 after:h-3 after:bg-[#85E249] after:rotate-45'
                                             : 'bg-white text-black after:absolute after:top-2 after:-left-1 after:w-3 after:h-3 after:bg-white after:rotate-45'
@@ -401,7 +414,8 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                             />
                         )}
                         <div
-                            className={`max-w-[75%] px-3 py-1.5 rounded-lg text-[15px] shadow-sm relative min-w-[60px] ${
+                            onClick={() => handleMessageClick(msg)}
+                            className={`max-w-[75%] px-3 py-1.5 rounded-lg text-[15px] shadow-sm relative min-w-[60px] cursor-pointer ${
                                 isSender ? 'bg-[#eeffde] text-black' : 'bg-white text-black'
                             }`}>
                             <div className="wrap-break-words mb-1">
@@ -435,7 +449,8 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                             <img src={settings.partnerAvatar} className="w-8 h-8 rounded-full object-cover mb-1" />
                         )}
                         <div
-                            className={`max-w-[70%] px-4 py-2.5 text-[15px] rounded-2xl ${
+                            onClick={() => handleMessageClick(msg)}
+                            className={`max-w-[70%] px-4 py-2.5 text-[15px] rounded-2xl cursor-pointer ${
                                 isSender
                                     ? 'bg-[#2CB6D3] text-white rounded-br-sm' // Cyan accent for sender
                                     : 'bg-[#383838] text-white rounded-bl-sm'

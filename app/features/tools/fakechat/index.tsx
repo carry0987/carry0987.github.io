@@ -6,7 +6,7 @@ import { getLocalValue, setLocalValue } from '@carry0987/utils';
 import type { ChatSettings, Message, Platform } from './types';
 import { DEFAULT_SETTINGS, INITIAL_MESSAGES } from './constants';
 import ChatPreview from './components/ChatPreview';
-import Editor from './components/Editor';
+import Editor, { type EditorRef } from './components/Editor';
 import AIGeneratorModal from './components/AIGeneratorModal';
 import ApiKeyInput from './components/ApiKeyInput';
 import { AlertDialog, ConfirmDialog } from './components/ui';
@@ -32,6 +32,7 @@ const App: React.FC = () => {
     const [showResetConfirm, setShowResetConfirm] = useState(false);
 
     const previewRef = useRef<HTMLDivElement>(null);
+    const editorRef = useRef<EditorRef>(null);
 
     // Load API key from localStorage on mount
     useEffect(() => {
@@ -123,6 +124,7 @@ const App: React.FC = () => {
                     {/* Left Panel - Editor */}
                     <div className="w-full lg:w-[420px] lg:shrink-0 border-b lg:border-b-0 lg:border-r border-white/10">
                         <Editor
+                            ref={editorRef}
                             settings={settings}
                             setSettings={setSettings}
                             messages={messages}
@@ -144,6 +146,7 @@ const App: React.FC = () => {
                             messages={messages}
                             settings={settings}
                             onUpdateMessage={handleUpdateMessage}
+                            onSelectMessage={(msg) => editorRef.current?.selectMessage(msg)}
                         />
                     </div>
                 </div>
