@@ -613,7 +613,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                                                     <button
                                                         key={i}
                                                         onClick={() => handleEmojiInsert(emoji)}
-                                                        className="w-7 h-7 flex items-center justify-center text-lg hover:bg-white/10 rounded transition">
+                                                        className="w-7 h-7 flex items-center justify-center text-lg hover:bg-white/10 rounded transition cursor-pointer">
                                                         {emoji}
                                                     </button>
                                                 ))}
@@ -627,14 +627,14 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                                 {editingMessageId && (
                                     <button
                                         onClick={handleCancelEdit}
-                                        className="text-slate-400 hover:text-white px-3 py-2 text-sm font-medium transition">
+                                        className="text-slate-400 hover:text-white px-3 py-2 text-sm font-medium transition cursor-pointer">
                                         Cancel
                                     </button>
                                 )}
                                 <button
                                     onClick={handleSaveMessage}
                                     disabled={inputType === 'text' && !newMessageText.trim()}
-                                    className={`${editingMessageId ? 'bg-tech-600 hover:bg-tech-700' : 'bg-tech-600 hover:bg-tech-700'} text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors`}>
+                                    className={`${editingMessageId ? 'bg-tech-600 hover:bg-tech-700' : 'bg-tech-600 hover:bg-tech-700'} text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors cursor-pointer`}>
                                     {editingMessageId ? <Save size={16} /> : <Plus size={16} />}
                                     {editingMessageId ? 'Update' : inputType === 'voice' ? 'Add Voice' : 'Add Message'}
                                 </button>
@@ -827,7 +827,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                 <div className="mt-auto pt-6">
                     <button
                         onClick={onDownload}
-                        className="w-full bg-tech-600 hover:bg-tech-700 hover:shadow-xl hover:shadow-tech-500/20 hover:-translate-y-0.5 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-tech-900/30 transition-all duration-200 transform active:scale-95 border border-tech-500/30 hover:border-tech-400/50 cursor-pointer">
+                        className="w-full bg-tech-600 hover:bg-tech-500 hover:shadow-xl hover:shadow-tech-500/20 hover:-translate-y-0.5 text-white py-3 rounded-xl font-semibold flex items-center justify-center gap-2 shadow-lg shadow-tech-900/30 transition-all duration-200 transform active:scale-95 border border-tech-500/30 hover:border-tech-400/50 cursor-pointer">
                         <Download size={20} />
                         Download Screenshot
                     </button>
