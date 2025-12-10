@@ -521,11 +521,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                             </div>
 
                             {/* Message Time Input */}
-                            <TimeInput
-                                value={messageTimestamp}
-                                onChange={setMessageTimestamp}
-                                className="w-28"
-                            />
+                            <TimeInput value={messageTimestamp} onChange={setMessageTimestamp} className="w-28" />
                         </div>
 
                         {/* Input Type Toggle */}
