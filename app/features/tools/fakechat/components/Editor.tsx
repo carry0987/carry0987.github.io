@@ -18,7 +18,9 @@ import {
     FileDown,
     Smile,
     MessageCircle,
-    Clock3
+    Clock3,
+    ChevronDown,
+    ChevronUp
 } from 'lucide-react';
 import { PLATFORMS, EMOJI_STICKERS } from '../constants';
 import { Modal, AlertDialog, ConfirmDialog } from './ui';
@@ -53,6 +55,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(
         const [showEmojiPicker, setShowEmojiPicker] = useState(false);
         const [showBatchTimeModal, setShowBatchTimeModal] = useState(false);
         const [batchTimeOffset, setBatchTimeOffset] = useState(0);
+        const [showMessageList, setShowMessageList] = useState(false);
 
         // Dialog states
         const [showImportConfirm, setShowImportConfirm] = useState(false);
@@ -639,11 +642,26 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                         </div>
                     </div>
 
-                    {/* Message List Header with Batch Time */}
-                    <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-500">{messages.length} messages</span>
+                    {/* Message List Header - Collapsible */}
+                    <div
+                        onClick={() => setShowMessageList(!showMessageList)}
+                        className="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-white/5 cursor-pointer hover:bg-slate-800/50 transition-colors">
+                        <div className="flex items-center gap-2">
+                            {showMessageList ? (
+                                <ChevronUp size={16} className="text-slate-400" />
+                            ) : (
+                                <ChevronDown size={16} className="text-slate-400" />
+                            )}
+                            <span className="text-sm font-medium text-slate-300">Message List</span>
+                            <span className="text-xs text-slate-500 bg-slate-700/50 px-2 py-0.5 rounded-full">
+                                {messages.length}
+                            </span>
+                        </div>
                         <button
-                            onClick={() => setShowBatchTimeModal(true)}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setShowBatchTimeModal(true);
+                            }}
                             disabled={messages.length === 0}
                             className="flex items-center gap-1 text-xs text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
                             title="Batch adjust timestamps">
@@ -652,64 +670,68 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                         </button>
                     </div>
 
-                    {/* Message List (Compact) with Drag & Drop */}
-                    <div className="space-y-2 max-h-[300px] overflow-y-auto pr-1">
-                        {messages.map((msg) => (
-                            <div
-                                key={msg.id}
-                                draggable
-                                onDragStart={(e) => handleDragStart(e, msg.id)}
-                                onDragOver={(e) => handleDragOver(e, msg.id)}
-                                onDragLeave={handleDragLeave}
-                                onDrop={(e) => handleDrop(e, msg.id)}
-                                onDragEnd={handleDragEnd}
-                                onClick={() => handleSelectMessage(msg)}
-                                className={`group flex items-center justify-between p-2 rounded-lg border transition cursor-pointer ${
-                                    editingMessageId === msg.id
-                                        ? 'bg-tech-500/10 border-tech-500/30 ring-1 ring-tech-500/30'
-                                        : dragOverId === msg.id
-                                          ? 'bg-tech-500/5 border-tech-500/20'
-                                          : draggedId === msg.id
-                                            ? 'opacity-50'
-                                            : 'hover:bg-white/5 border-transparent hover:border-white/10'
-                                }`}>
-                                {/* Drag Handle */}
-                                <div className="flex items-center gap-2 overflow-hidden">
-                                    <GripVertical
-                                        size={14}
-                                        className="text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
-                                    />
-                                    <span
-                                        className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${msg.isSender ? 'bg-tech-500/20 text-tech-400' : 'bg-slate-700 text-slate-300'}`}>
-                                        {msg.isSender ? 'Me' : 'Them'}
-                                    </span>
-                                    <div className="flex flex-col overflow-hidden">
-                                        <p className="text-sm text-slate-300 truncate max-w-[120px]">
-                                            {msg.image
-                                                ? '📷 [Image]'
-                                                : msg.audioDuration
-                                                  ? `🎤 Voice (${msg.audioDuration}s)`
-                                                  : msg.text}
-                                        </p>
-                                        {editingMessageId === msg.id && (
-                                            <span className="text-[10px] text-tech-400 font-medium">Editing...</span>
-                                        )}
+                    {/* Message List (Compact) with Drag & Drop - Collapsible */}
+                    {showMessageList && (
+                        <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1 animate-in slide-in-from-top-2 duration-200">
+                            {messages.map((msg) => (
+                                <div
+                                    key={msg.id}
+                                    draggable
+                                    onDragStart={(e) => handleDragStart(e, msg.id)}
+                                    onDragOver={(e) => handleDragOver(e, msg.id)}
+                                    onDragLeave={handleDragLeave}
+                                    onDrop={(e) => handleDrop(e, msg.id)}
+                                    onDragEnd={handleDragEnd}
+                                    onClick={() => handleSelectMessage(msg)}
+                                    className={`group flex items-center justify-between p-2 rounded-lg border transition cursor-pointer ${
+                                        editingMessageId === msg.id
+                                            ? 'bg-tech-500/10 border-tech-500/30 ring-1 ring-tech-500/30'
+                                            : dragOverId === msg.id
+                                              ? 'bg-tech-500/5 border-tech-500/20'
+                                              : draggedId === msg.id
+                                                ? 'opacity-50'
+                                                : 'hover:bg-white/5 border-transparent hover:border-white/10'
+                                    }`}>
+                                    {/* Drag Handle */}
+                                    <div className="flex items-center gap-2 overflow-hidden">
+                                        <GripVertical
+                                            size={14}
+                                            className="text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
+                                        />
+                                        <span
+                                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${msg.isSender ? 'bg-tech-500/20 text-tech-400' : 'bg-slate-700 text-slate-300'}`}>
+                                            {msg.isSender ? 'Me' : 'Them'}
+                                        </span>
+                                        <div className="flex flex-col overflow-hidden">
+                                            <p className="text-sm text-slate-300 truncate max-w-[120px]">
+                                                {msg.image
+                                                    ? '📷 [Image]'
+                                                    : msg.audioDuration
+                                                      ? `🎤 Voice (${msg.audioDuration}s)`
+                                                      : msg.text}
+                                            </p>
+                                            {editingMessageId === msg.id && (
+                                                <span className="text-[10px] text-tech-400 font-medium">
+                                                    Editing...
+                                                </span>
+                                            )}
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-1">
+                                        <button
+                                            onClick={(e) => deleteMessage(e, msg.id)}
+                                            className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-full transition opacity-0 group-hover:opacity-100"
+                                            title="Delete">
+                                            <Trash2 size={14} />
+                                        </button>
                                     </div>
                                 </div>
-                                <div className="flex items-center gap-1">
-                                    <button
-                                        onClick={(e) => deleteMessage(e, msg.id)}
-                                        className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-full transition opacity-0 group-hover:opacity-100"
-                                        title="Delete">
-                                        <Trash2 size={14} />
-                                    </button>
-                                </div>
-                            </div>
-                        ))}
-                        {messages.length === 0 && (
-                            <p className="text-center text-xs text-slate-500 py-4">No messages yet.</p>
-                        )}
-                    </div>
+                            ))}
+                            {messages.length === 0 && (
+                                <p className="text-center text-xs text-slate-500 py-4">No messages yet.</p>
+                            )}
+                        </div>
+                    )}
                 </div>
 
                 {/* Batch Time Adjustment Modal */}
