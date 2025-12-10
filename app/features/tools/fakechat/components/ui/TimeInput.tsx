@@ -249,7 +249,7 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, className = '' }
                 className={`
                     w-full h-full flex items-center gap-2 px-3 py-2
                     bg-linear-to-br from-slate-800/80 to-slate-900/80
-                    border rounded-xl transition-all duration-200
+                    border rounded-lg transition-all duration-200
                     ${
                         isFocused || isOpen
                             ? 'border-tech-500/50 shadow-lg shadow-tech-500/10 ring-2 ring-tech-500/20'
