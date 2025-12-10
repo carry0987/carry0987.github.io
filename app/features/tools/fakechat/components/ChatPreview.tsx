@@ -1,4 +1,4 @@
-import { forwardRef, useState, useEffect } from 'react';
+import { forwardRef, useState, useEffect, useRef } from 'react';
 import type { ChatSettings, Message, Platform } from '../types';
 import {
     Wifi,
@@ -36,11 +36,24 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
     ({ platform, messages, settings, onUpdateMessage }, ref) => {
         const [activeReactionId, setActiveReactionId] = useState<string | null>(null);
         const [longPressTimer, setLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
+        const [reactionPosition, setReactionPosition] = useState<'top' | 'bottom'>('top');
+        const messageRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+        const chatAreaRef = useRef<HTMLDivElement>(null);
 
         // --- Interaction Logic ---
-        const handleTouchStart = (id: string) => {
+        const handleTouchStart = (id: string, e: React.MouseEvent | React.TouchEvent) => {
             if (platform !== 'instagram') return;
             const timer = setTimeout(() => {
+                // Calculate whether to show the reaction picker at the bottom
+                const messageEl = messageRefs.current.get(id);
+                const chatArea = chatAreaRef.current;
+                if (messageEl && chatArea) {
+                    const messageRect = messageEl.getBoundingClientRect();
+                    const chatRect = chatArea.getBoundingClientRect();
+                    // If the top of the message is less than 60px from the top of the chat area, show it at the bottom
+                    const distanceFromTop = messageRect.top - chatRect.top;
+                    setReactionPosition(distanceFromTop < 60 ? 'bottom' : 'top');
+                }
                 setActiveReactionId(id);
             }, 500);
             setLongPressTimer(timer);
@@ -275,16 +288,20 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                             <img src={settings.partnerAvatar} className="w-7 h-7 rounded-full object-cover mb-1" />
                         )}
 
-                        <div className="relative">
+                        <div
+                            className="relative"
+                            ref={(el) => {
+                                if (el) messageRefs.current.set(msg.id, el);
+                            }}>
                             {/* Reaction Picker Overlay */}
                             {isReacting && (
                                 <div
-                                    className={`reaction-picker absolute -top-14 ${isSender ? 'right-0' : 'left-0'} bg-[#262626] rounded-full px-2 py-1.5 flex gap-1 z-30 shadow-xl animate-in zoom-in duration-200`}>
+                                    className={`reaction-picker absolute ${reactionPosition === 'top' ? '-top-14' : 'top-full mt-2'} ${isSender ? 'right-0' : 'left-0'} bg-[#262626] rounded-full px-2 py-1.5 flex gap-1 z-30 shadow-xl animate-in zoom-in duration-200`}>
                                     {INSTAGRAM_REACTIONS.map((emoji) => (
                                         <button
                                             key={emoji}
                                             onClick={() => handleReactionSelect(emoji)}
-                                            className="w-8 h-8 flex items-center justify-center text-xl hover:scale-125 transition-transform">
+                                            className="w-8 h-8 flex items-center justify-center text-xl hover:scale-125 transition-transform cursor-pointer">
                                             {emoji}
                                         </button>
                                     ))}
@@ -293,10 +310,10 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
 
                             {/* Message Bubble */}
                             <div
-                                onMouseDown={() => handleTouchStart(msg.id)}
+                                onMouseDown={(e) => handleTouchStart(msg.id, e)}
                                 onMouseUp={handleTouchEnd}
                                 onMouseLeave={handleTouchEnd}
-                                onTouchStart={() => handleTouchStart(msg.id)}
+                                onTouchStart={(e) => handleTouchStart(msg.id, e)}
                                 onTouchEnd={handleTouchEnd}
                                 onContextMenu={(e) => e.preventDefault()}
                                 className={`max-w-60 px-4 py-2.5 text-[15px] leading-snug rounded-3xl relative select-none cursor-pointer transition-transform active:scale-95 ${
@@ -527,6 +544,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
 
                     {/* Chat Area */}
                     <div
+                        ref={chatAreaRef}
                         className={`flex-1 overflow-y-auto no-scrollbar p-4 flex flex-col ${settings.backgroundImage ? 'bg-no-repeat bg-cover bg-center' : renderBackground()}`}
                         style={settings.backgroundImage ? { backgroundImage: `url(${settings.backgroundImage})` } : {}}>
                         {messages.map(renderMessage)}
