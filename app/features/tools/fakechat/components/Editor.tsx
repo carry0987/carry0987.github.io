@@ -627,14 +627,14 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                                 {editingMessageId && (
                                     <button
                                         onClick={handleCancelEdit}
-                                        className="text-slate-400 hover:text-white px-3 py-2 text-sm font-medium transition cursor-pointer">
+                                        className="text-slate-400 hover:text-white hover:bg-white/10 px-3 py-2 rounded-lg text-sm font-medium transition-all cursor-pointer">
                                         Cancel
                                     </button>
                                 )}
                                 <button
                                     onClick={handleSaveMessage}
                                     disabled={inputType === 'text' && !newMessageText.trim()}
-                                    className={`${editingMessageId ? 'bg-tech-600 hover:bg-tech-700' : 'bg-tech-600 hover:bg-tech-700'} text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-colors cursor-pointer`}>
+                                    className={`${editingMessageId ? 'bg-tech-600 hover:bg-tech-500 hover:shadow-lg hover:shadow-tech-500/20' : 'bg-tech-600 hover:bg-tech-500 hover:shadow-lg hover:shadow-tech-500/20'} text-white px-4 py-2 rounded-lg text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2 transition-all duration-200 cursor-pointer border border-tech-500/30 hover:border-tech-400/50`}>
                                     {editingMessageId ? <Save size={16} /> : <Plus size={16} />}
                                     {editingMessageId ? 'Update' : inputType === 'voice' ? 'Add Voice' : 'Add Message'}
                                 </button>
