@@ -12,7 +12,6 @@ import {
     Image as ImageIcon,
     X,
     Save,
-    Clock,
     GripVertical,
     FileUp,
     FileDown,
@@ -23,7 +22,7 @@ import {
     ChevronUp
 } from 'lucide-react';
 import { PLATFORMS, EMOJI_STICKERS } from '../constants';
-import { Modal, AlertDialog, ConfirmDialog } from './ui';
+import { Modal, AlertDialog, ConfirmDialog, TimeInput } from './ui';
 
 interface EditorProps {
     settings: ChatSettings;
@@ -388,11 +387,10 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                     <div className="grid grid-cols-2 gap-4">
                         <div>
                             <label className="block text-xs font-medium text-slate-400 mb-1">Time</label>
-                            <input
-                                type="time"
+                            <TimeInput
                                 value={settings.time}
-                                onChange={(e) => setSettings({ ...settings, time: e.target.value })}
-                                className="w-full p-2 bg-slate-800/50 border border-white/10 rounded-lg text-sm text-white focus:ring-2 focus:ring-tech-500 outline-none"
+                                onChange={(time) => setSettings({ ...settings, time })}
+                                className="w-full"
                             />
                         </div>
                         <div>
@@ -523,15 +521,11 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                             </div>
 
                             {/* Message Time Input */}
-                            <div className="w-24 relative">
-                                <input
-                                    type="time"
-                                    value={messageTimestamp}
-                                    onChange={(e) => setMessageTimestamp(e.target.value)}
-                                    className="w-full h-full p-1.5 pl-7 text-xs bg-slate-800/50 border border-white/10 rounded-lg outline-none focus:border-tech-500 text-white"
-                                />
-                                <Clock size={12} className="absolute left-2 top-1/2 -translate-y-1/2 text-slate-500" />
-                            </div>
+                            <TimeInput
+                                value={messageTimestamp}
+                                onChange={setMessageTimestamp}
+                                className="w-28"
+                            />
                         </div>
 
                         {/* Input Type Toggle */}
