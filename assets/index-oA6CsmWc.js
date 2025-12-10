@@ -23,7 +23,7 @@ import{a as u,o as a,G as R,r as ki,z as Fn,w as Ri,L as Ti}from"./chunk-WWGJGFF
                 `,children:[a.jsx(pr,{size:12}),"Set to Now"]})]});return a.jsxs("div",{ref:p,className:`relative ${n}`,children:[a.jsxs("button",{ref:h,onClick:()=>o(!r),onFocus:()=>i(!0),onBlur:()=>i(!1),className:`
                     w-full h-full flex items-center gap-2 px-3 py-2
                     bg-linear-to-br from-slate-800/80 to-slate-900/80
-                    border rounded-xl transition-all duration-200
+                    border rounded-lg transition-all duration-200
                     ${s||r?"border-tech-500/50 shadow-lg shadow-tech-500/10 ring-2 ring-tech-500/20":"border-white/10 hover:border-white/20"}
                 `,children:[a.jsx("div",{className:`
                     p-1.5 rounded-lg transition-colors duration-200 shrink-0
