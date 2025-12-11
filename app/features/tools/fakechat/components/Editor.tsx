@@ -18,9 +18,11 @@ import {
     Smile,
     MessageCircle,
     Clock3,
-    List
+    List,
+    Globe,
+    HardDrive
 } from 'lucide-react';
-import { PLATFORMS, EMOJI_STICKERS } from '../constants';
+import { PLATFORMS, EMOJI_STICKERS, getRandomPicsumAvatar } from '../constants';
 import { Modal, AlertDialog, ConfirmDialog, TimeInput } from './ui';
 
 interface EditorProps {
@@ -71,6 +73,24 @@ const Editor = forwardRef<EditorRef, EditorProps>(
         const messageListRef = useRef<HTMLDivElement>(null);
 
         const fileInputRef = useRef<HTMLInputElement>(null);
+
+        // Avatar menu state
+        const [showAvatarMenu, setShowAvatarMenu] = useState(false);
+        const avatarMenuRef = useRef<HTMLDivElement>(null);
+        const avatarFileInputRef = useRef<HTMLInputElement>(null);
+
+        // Close avatar menu when clicking outside
+        useEffect(() => {
+            const handleClickOutside = (e: MouseEvent) => {
+                if (avatarMenuRef.current && !avatarMenuRef.current.contains(e.target as Node)) {
+                    setShowAvatarMenu(false);
+                }
+            };
+            if (showAvatarMenu) {
+                document.addEventListener('mousedown', handleClickOutside);
+            }
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }, [showAvatarMenu]);
 
         // Sync message timestamp with settings time when not editing and settings time changes
         useEffect(() => {
@@ -473,23 +493,51 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                     </div>
 
                     <div className="grid grid-cols-2 gap-4">
-                        <div>
+                        <div className="relative" ref={avatarMenuRef}>
                             <label className="block text-xs font-medium text-slate-400 mb-1">Partner Avatar</label>
                             <div className="flex items-center gap-3">
                                 <img
                                     src={settings.partnerAvatar}
                                     className="w-10 h-10 rounded-full object-cover border border-white/10"
                                 />
-                                <label className="cursor-pointer bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 px-3 py-1.5 rounded-md text-xs border border-white/10 transition">
+                                <button
+                                    onClick={() => setShowAvatarMenu(!showAvatarMenu)}
+                                    className="cursor-pointer bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 px-3 py-1.5 rounded-md text-xs border border-white/10 transition">
                                     Change
-                                    <input
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={(e) => handleImageUpload(e, 'partner')}
-                                    />
-                                </label>
+                                </button>
+                                <input
+                                    ref={avatarFileInputRef}
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        handleImageUpload(e, 'partner');
+                                        setShowAvatarMenu(false);
+                                    }}
+                                />
                             </div>
+                            {/* Avatar source dropdown menu */}
+                            {showAvatarMenu && (
+                                <div className="absolute top-full left-0 mt-2 w-48 bg-slate-800 border border-white/10 rounded-lg shadow-xl z-20 overflow-hidden">
+                                    <button
+                                        onClick={() => {
+                                            setSettings({ ...settings, partnerAvatar: getRandomPicsumAvatar() });
+                                            setShowAvatarMenu(false);
+                                        }}
+                                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-700/50 transition cursor-pointer">
+                                        <Globe size={16} className="text-tech-400" />
+                                        <span>Random (Picsum)</span>
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            avatarFileInputRef.current?.click();
+                                        }}
+                                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-700/50 transition cursor-pointer">
+                                        <HardDrive size={16} className="text-emerald-400" />
+                                        <span>Upload from device</span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
 
                         <div>

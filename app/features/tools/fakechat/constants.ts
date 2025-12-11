@@ -1,11 +1,19 @@
 import type { ChatSettings, Message, Platform } from './types';
+import avatarPartner from './assets/avatar-partner.svg';
+import avatarMe from './assets/avatar-me.svg';
+
+export const DEFAULT_AVATAR_PARTNER = avatarPartner;
+export const DEFAULT_AVATAR_ME = avatarMe;
+
+// Generate random avatar from picsum
+export const getRandomPicsumAvatar = () => `https://picsum.photos/seed/${Date.now()}/100/100`;
 
 export const DEFAULT_SETTINGS: ChatSettings = {
     time: '12:34',
     batteryLevel: 85,
     partnerName: 'Babe ❤️',
-    partnerAvatar: 'https://picsum.photos/100/100',
-    myAvatar: 'https://picsum.photos/101/101',
+    partnerAvatar: DEFAULT_AVATAR_PARTNER,
+    myAvatar: DEFAULT_AVATAR_ME,
     isTyping: false
 };
 
