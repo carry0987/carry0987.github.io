@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
 import { toPng } from 'html-to-image';
 import { ArrowLeft, MessageCircle, Smartphone, Wand2, Download } from 'lucide-react';
@@ -11,6 +11,7 @@ import AIGeneratorModal from './components/AIGeneratorModal';
 import ApiKeyInput from './components/ApiKeyInput';
 import { AlertDialog, ConfirmDialog } from './components/ui';
 import { generateConversation } from './services/geminiService';
+import { saveChatData, loadChatData, clearChatData } from './services/storageService';
 
 // Import styles
 import './style.css';
@@ -21,6 +22,7 @@ const App: React.FC = () => {
     const [platform, setPlatform] = useState<Platform>('instagram');
     const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
     const [settings, setSettings] = useState<ChatSettings>(DEFAULT_SETTINGS);
+    const [isLoaded, setIsLoaded] = useState(false);
     const [isAIModalOpen, setIsAIModalOpen] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
     const [apiKey, setApiKey] = useState<string>('');
@@ -33,6 +35,31 @@ const App: React.FC = () => {
 
     const previewRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<EditorRef>(null);
+
+    // Load saved data from IndexedDB on mount
+    useEffect(() => {
+        const loadSavedData = async () => {
+            try {
+                const savedData = await loadChatData();
+                if (savedData) {
+                    setPlatform(savedData.platform);
+                    setSettings(savedData.settings);
+                    setMessages(savedData.messages);
+                }
+            } catch (error) {
+                console.error('Failed to load saved chat data:', error);
+            } finally {
+                setIsLoaded(true);
+            }
+        };
+        loadSavedData();
+    }, []);
+
+    // Save data to IndexedDB whenever it changes
+    useEffect(() => {
+        if (!isLoaded) return;
+        saveChatData(platform, settings, messages);
+    }, [platform, settings, messages, isLoaded]);
 
     // Load API key from localStorage on mount
     useEffect(() => {
@@ -92,9 +119,11 @@ const App: React.FC = () => {
         setShowResetConfirm(true);
     };
 
-    const handleConfirmReset = () => {
+    const handleConfirmReset = async () => {
         setMessages(INITIAL_MESSAGES);
         setSettings(DEFAULT_SETTINGS);
+        setPlatform('instagram');
+        await clearChatData();
     };
 
     return (
