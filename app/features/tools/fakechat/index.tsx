@@ -13,6 +13,7 @@ import ApiKeyInput from './components/ApiKeyInput';
 import { AlertDialog, ConfirmDialog } from './components/ui';
 import { generateConversation } from './services/geminiService';
 import { saveChatData, loadChatData, clearChatData } from './services/storageService';
+import { useScaledPreview } from './hooks';
 
 // Import styles
 import './style.css';
@@ -37,6 +38,7 @@ const App: React.FC = () => {
 
     const previewRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<EditorRef>(null);
+    const { wrapperRef, contentRef, scale, wrapperStyle } = useScaledPreview();
 
     // Load saved data from IndexedDB on mount
     useEffect(() => {
@@ -209,18 +211,23 @@ const App: React.FC = () => {
                         </div>
 
                         {/* Phone Preview with Shadow */}
-                        <div className="relative transform scale-[0.55] sm:scale-[0.65] md:scale-75 lg:scale-90 xl:scale-100 origin-top">
-                            {/* Glow Effect */}
-                            <div className="absolute -inset-4 bg-linear-to-b from-tech-500/10 via-purple-500/5 to-transparent blur-2xl rounded-[3rem] pointer-events-none"></div>
-                            <ChatPreview
-                                ref={previewRef}
-                                platform={platform}
-                                phoneModel={phoneModel}
-                                messages={messages}
-                                settings={settings}
-                                onUpdateMessage={handleUpdateMessage}
-                                onSelectMessage={(msg) => editorRef.current?.selectMessage(msg)}
-                            />
+                        <div ref={wrapperRef} style={wrapperStyle}>
+                            <div
+                                ref={contentRef}
+                                className="relative origin-top"
+                                style={{ transform: `scale(${scale})` }}>
+                                {/* Glow Effect */}
+                                <div className="absolute -inset-4 bg-linear-to-b from-tech-500/10 via-purple-500/5 to-transparent blur-2xl rounded-[3rem] pointer-events-none"></div>
+                                <ChatPreview
+                                    ref={previewRef}
+                                    platform={platform}
+                                    phoneModel={phoneModel}
+                                    messages={messages}
+                                    settings={settings}
+                                    onUpdateMessage={handleUpdateMessage}
+                                    onSelectMessage={(msg) => editorRef.current?.selectMessage(msg)}
+                                />
+                            </div>
                         </div>
 
                         {/* Hint Text */}
