@@ -18,8 +18,7 @@ import {
     Smile,
     MessageCircle,
     Clock3,
-    ChevronDown,
-    ChevronUp
+    List
 } from 'lucide-react';
 import { PLATFORMS, EMOJI_STICKERS } from '../constants';
 import { Modal, AlertDialog, ConfirmDialog, TimeInput } from './ui';
@@ -66,6 +65,11 @@ const Editor = forwardRef<EditorRef, EditorProps>(
         const [draggedId, setDraggedId] = useState<string | null>(null);
         const [dragOverId, setDragOverId] = useState<string | null>(null);
 
+        // Touch drag state
+        const [touchDragId, setTouchDragId] = useState<string | null>(null);
+        const touchStartY = useRef<number>(0);
+        const messageListRef = useRef<HTMLDivElement>(null);
+
         const fileInputRef = useRef<HTMLInputElement>(null);
 
         // Sync message timestamp with settings time when not editing and settings time changes
@@ -75,7 +79,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(
             }
         }, [settings.time, editingMessageId]);
 
-        // --- Drag and Drop Handlers ---
+        // --- Drag and Drop Handlers (Desktop) ---
         const handleDragStart = (e: React.DragEvent, id: string) => {
             setDraggedId(id);
             e.dataTransfer.effectAllowed = 'move';
@@ -110,6 +114,52 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                 setMessages(newMessages);
             }
 
+            setDraggedId(null);
+            setDragOverId(null);
+        };
+
+        // --- Touch Drag Handlers (Mobile) ---
+        const handleTouchStart = (e: React.TouchEvent, id: string) => {
+            const touch = e.touches[0];
+            touchStartY.current = touch.clientY;
+            setTouchDragId(id);
+            setDraggedId(id);
+        };
+
+        const handleTouchMove = (e: React.TouchEvent) => {
+            if (!touchDragId || !messageListRef.current) return;
+
+            const touch = e.touches[0];
+            const elements = messageListRef.current.querySelectorAll('[data-message-id]');
+
+            let targetId: string | null = null;
+            elements.forEach((el) => {
+                const rect = el.getBoundingClientRect();
+                if (touch.clientY >= rect.top && touch.clientY <= rect.bottom) {
+                    const id = el.getAttribute('data-message-id');
+                    if (id && id !== touchDragId) {
+                        targetId = id;
+                    }
+                }
+            });
+
+            setDragOverId(targetId);
+        };
+
+        const handleTouchEnd = () => {
+            if (touchDragId && dragOverId) {
+                const newMessages = [...messages];
+                const draggedIndex = newMessages.findIndex((m) => m.id === touchDragId);
+                const targetIndex = newMessages.findIndex((m) => m.id === dragOverId);
+
+                if (draggedIndex !== -1 && targetIndex !== -1) {
+                    const [removed] = newMessages.splice(draggedIndex, 1);
+                    newMessages.splice(targetIndex, 0, removed);
+                    setMessages(newMessages);
+                }
+            }
+
+            setTouchDragId(null);
             setDraggedId(null);
             setDragOverId(null);
         };
@@ -639,96 +689,119 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                     </div>
 
                     {/* Message List Header - Collapsible */}
-                    <div
-                        onClick={() => setShowMessageList(!showMessageList)}
-                        className="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-white/5 cursor-pointer hover:bg-slate-800/50 transition-colors">
-                        <div className="flex items-center gap-2">
-                            {showMessageList ? (
-                                <ChevronUp size={16} className="text-slate-400" />
-                            ) : (
-                                <ChevronDown size={16} className="text-slate-400" />
-                            )}
-                            <span className="text-sm font-medium text-slate-300">Message List</span>
+                    <div className="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-white/5">
+                        <button
+                            onClick={() => setShowMessageList(true)}
+                            className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors cursor-pointer">
+                            <List size={16} className="text-slate-400" />
+                            <span className="text-sm font-medium">Message List</span>
                             <span className="text-xs text-slate-500 bg-slate-700/50 px-2 py-0.5 rounded-full">
                                 {messages.length}
                             </span>
-                        </div>
+                        </button>
                         <button
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setShowBatchTimeModal(true);
-                            }}
+                            onClick={() => setShowBatchTimeModal(true)}
                             disabled={messages.length === 0}
-                            className="flex items-center gap-1 text-xs text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="flex items-center gap-1 text-xs text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
                             title="Batch adjust timestamps">
                             <Clock3 size={12} />
                             Batch Time
                         </button>
                     </div>
+                </div>
 
-                    {/* Message List (Compact) with Drag & Drop - Collapsible */}
-                    {showMessageList && (
-                        <div className="space-y-2 max-h-[250px] overflow-y-auto pr-1 animate-in slide-in-from-top-2 duration-200">
+                {/* Message List Modal */}
+                <Modal
+                    isOpen={showMessageList}
+                    onClose={() => setShowMessageList(false)}
+                    title={
+                        <h3 className="text-lg font-bold text-white flex items-center gap-2">
+                            <List size={20} className="text-tech-400" />
+                            Message List
+                            <span className="text-xs text-slate-500 bg-slate-700/50 px-2 py-0.5 rounded-full font-normal">
+                                {messages.length}
+                            </span>
+                        </h3>
+                    }
+                    maxWidth="md">
+                    <div className="p-4 pt-0">
+                        <p className="text-xs text-slate-500 mb-3">Drag the handle to reorder messages</p>
+                        <div
+                            ref={messageListRef}
+                            className="space-y-2 max-h-[400px] overflow-y-auto pr-1"
+                            onTouchMove={handleTouchMove}
+                            onTouchEnd={handleTouchEnd}>
                             {messages.map((msg) => (
                                 <div
                                     key={msg.id}
+                                    data-message-id={msg.id}
                                     draggable
                                     onDragStart={(e) => handleDragStart(e, msg.id)}
                                     onDragOver={(e) => handleDragOver(e, msg.id)}
                                     onDragLeave={handleDragLeave}
                                     onDrop={(e) => handleDrop(e, msg.id)}
                                     onDragEnd={handleDragEnd}
-                                    onClick={() => handleSelectMessage(msg)}
-                                    className={`group flex items-center justify-between p-2 rounded-lg border transition cursor-pointer ${
+                                    onClick={() => {
+                                        if (!touchDragId) {
+                                            handleSelectMessage(msg);
+                                            setShowMessageList(false);
+                                        }
+                                    }}
+                                    className={`group flex items-center justify-between p-3 rounded-lg border transition select-none ${
                                         editingMessageId === msg.id
                                             ? 'bg-tech-500/10 border-tech-500/30 ring-1 ring-tech-500/30'
                                             : dragOverId === msg.id
-                                              ? 'bg-tech-500/5 border-tech-500/20'
+                                              ? 'bg-tech-500/20 border-tech-500/40 scale-[1.02]'
                                               : draggedId === msg.id
-                                                ? 'opacity-50'
-                                                : 'hover:bg-white/5 border-transparent hover:border-white/10'
+                                                ? 'opacity-50 scale-95'
+                                                : 'hover:bg-white/5 border-white/10 hover:border-white/20 cursor-pointer'
                                     }`}>
                                     {/* Drag Handle */}
-                                    <div className="flex items-center gap-2 overflow-hidden">
-                                        <GripVertical
-                                            size={14}
-                                            className="text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
-                                        />
+                                    <div className="flex items-center gap-3 overflow-hidden">
+                                        <div
+                                            onTouchStart={(e) => handleTouchStart(e, msg.id)}
+                                            className="touch-none p-1 -m-1">
+                                            <GripVertical
+                                                size={16}
+                                                className="text-slate-600 cursor-grab active:cursor-grabbing shrink-0"
+                                            />
+                                        </div>
                                         <span
-                                            className={`text-[10px] font-bold px-1.5 py-0.5 rounded shrink-0 ${msg.isSender ? 'bg-tech-500/20 text-tech-400' : 'bg-slate-700 text-slate-300'}`}>
+                                            className={`text-xs font-bold px-2 py-1 rounded shrink-0 ${msg.isSender ? 'bg-tech-500/20 text-tech-400' : 'bg-slate-700 text-slate-300'}`}>
                                             {msg.isSender ? 'Me' : 'Them'}
                                         </span>
                                         <div className="flex flex-col overflow-hidden">
-                                            <p className="text-sm text-slate-300 truncate max-w-[120px]">
+                                            <p className="text-sm text-slate-300 truncate max-w-[250px]">
                                                 {msg.image
                                                     ? '📷 [Image]'
                                                     : msg.audioDuration
                                                       ? `🎤 Voice (${msg.audioDuration}s)`
                                                       : msg.text}
                                             </p>
-                                            {editingMessageId === msg.id && (
-                                                <span className="text-[10px] text-tech-400 font-medium">
-                                                    Editing...
-                                                </span>
-                                            )}
+                                            <span className="text-xs text-slate-500">{msg.timestamp}</span>
                                         </div>
                                     </div>
-                                    <div className="flex items-center gap-1">
+                                    <div className="flex items-center gap-2">
+                                        {editingMessageId === msg.id && (
+                                            <span className="text-xs text-tech-400 font-medium px-2 py-1 bg-tech-500/10 rounded">
+                                                Editing
+                                            </span>
+                                        )}
                                         <button
                                             onClick={(e) => deleteMessage(e, msg.id)}
-                                            className="p-1.5 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-full transition opacity-0 group-hover:opacity-100"
+                                            className="p-2 text-slate-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition"
                                             title="Delete">
-                                            <Trash2 size={14} />
+                                            <Trash2 size={16} />
                                         </button>
                                     </div>
                                 </div>
                             ))}
                             {messages.length === 0 && (
-                                <p className="text-center text-xs text-slate-500 py-4">No messages yet.</p>
+                                <p className="text-center text-sm text-slate-500 py-8">No messages yet.</p>
                             )}
                         </div>
-                    )}
-                </div>
+                    </div>
+                </Modal>
 
                 {/* Batch Time Adjustment Modal */}
                 <Modal
