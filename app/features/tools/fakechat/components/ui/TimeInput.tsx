@@ -247,25 +247,20 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, className = '' }
                 onFocus={() => setIsFocused(true)}
                 onBlur={() => setIsFocused(false)}
                 className={`
-                    w-full h-full flex items-center gap-2 px-3 py-2
-                    bg-linear-to-br from-slate-800/80 to-slate-900/80
+                    w-full flex items-center gap-2 p-2
+                    bg-slate-800/50
                     border rounded-lg transition-all duration-200
                     ${
                         isFocused || isOpen
-                            ? 'border-tech-500/50 shadow-lg shadow-tech-500/10 ring-2 ring-tech-500/20'
+                            ? 'border-tech-500/50 ring-2 ring-tech-500/20'
                             : 'border-white/10 hover:border-white/20'
                     }
                 `}>
-                <div
-                    className={`
-                    p-1.5 rounded-lg transition-colors duration-200 shrink-0
-                    ${isOpen ? 'bg-tech-500/20 text-tech-400' : 'bg-slate-700/50 text-slate-400'}
-                `}>
-                    <Clock size={12} />
-                </div>
-                <span className="text-xs font-medium text-white tracking-wide whitespace-nowrap">
-                    {formatDisplayTime()}
-                </span>
+                <Clock
+                    size={14}
+                    className={`shrink-0 transition-colors duration-200 ${isOpen ? 'text-tech-400' : 'text-slate-400'}`}
+                />
+                <span className="text-sm text-white whitespace-nowrap">{formatDisplayTime()}</span>
             </button>
 
             {/* Dropdown rendered via Portal */}
