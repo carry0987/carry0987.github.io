@@ -8,6 +8,9 @@ export const DEFAULT_AVATAR_ME = avatarMe;
 // Generate random avatar from picsum
 export const getRandomPicsumAvatar = () => `https://picsum.photos/seed/${Date.now()}/100/100`;
 
+// Generate random background from picsum (phone screen ratio)
+export const getRandomPicsumBackground = () => `https://picsum.photos/seed/${Date.now()}/400/800`;
+
 export const DEFAULT_SETTINGS: ChatSettings = {
     time: '12:34',
     batteryLevel: 85,

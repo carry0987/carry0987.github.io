@@ -23,7 +23,13 @@ import {
     HardDrive,
     RotateCcw
 } from 'lucide-react';
-import { PLATFORMS, EMOJI_STICKERS, getRandomPicsumAvatar, DEFAULT_AVATAR_PARTNER } from '../constants';
+import {
+    PLATFORMS,
+    EMOJI_STICKERS,
+    getRandomPicsumAvatar,
+    getRandomPicsumBackground,
+    DEFAULT_AVATAR_PARTNER
+} from '../constants';
 import { Modal, AlertDialog, ConfirmDialog, TimeInput } from './ui';
 import { fileToBase64 } from '../services/storageService';
 
@@ -81,18 +87,26 @@ const Editor = forwardRef<EditorRef, EditorProps>(
         const avatarMenuRef = useRef<HTMLDivElement>(null);
         const avatarFileInputRef = useRef<HTMLInputElement>(null);
 
+        // Background menu state
+        const [showBackgroundMenu, setShowBackgroundMenu] = useState(false);
+        const backgroundMenuRef = useRef<HTMLDivElement>(null);
+        const backgroundFileInputRef = useRef<HTMLInputElement>(null);
+
         // Close avatar menu when clicking outside
         useEffect(() => {
             const handleClickOutside = (e: MouseEvent) => {
                 if (avatarMenuRef.current && !avatarMenuRef.current.contains(e.target as Node)) {
                     setShowAvatarMenu(false);
                 }
+                if (backgroundMenuRef.current && !backgroundMenuRef.current.contains(e.target as Node)) {
+                    setShowBackgroundMenu(false);
+                }
             };
-            if (showAvatarMenu) {
+            if (showAvatarMenu || showBackgroundMenu) {
                 document.addEventListener('mousedown', handleClickOutside);
             }
             return () => document.removeEventListener('mousedown', handleClickOutside);
-        }, [showAvatarMenu]);
+        }, [showAvatarMenu, showBackgroundMenu]);
 
         // Sync message timestamp with settings time when not editing and settings time changes
         useEffect(() => {
@@ -565,36 +579,68 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                             )}
                         </div>
 
-                        <div>
+                        <div className="relative" ref={backgroundMenuRef}>
                             <label className="block text-xs font-medium text-slate-400 mb-1">Chat Background</label>
                             <div className="flex items-center gap-3">
                                 {settings.backgroundImage ? (
-                                    <div className="relative w-10 h-10">
-                                        <img
-                                            src={settings.backgroundImage}
-                                            className="w-full h-full rounded-lg object-cover border border-white/10"
-                                        />
-                                        <button
-                                            onClick={() => setSettings({ ...settings, backgroundImage: undefined })}
-                                            className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full p-0.5 hover:bg-red-600">
-                                            <X size={10} />
-                                        </button>
-                                    </div>
+                                    <img
+                                        src={settings.backgroundImage}
+                                        className="w-10 h-10 rounded-lg object-cover border border-white/10"
+                                    />
                                 ) : (
                                     <div className="w-10 h-10 rounded-lg border border-dashed border-white/20 flex items-center justify-center bg-slate-800/50">
                                         <ImageIcon size={16} className="text-slate-500" />
                                     </div>
                                 )}
-                                <label className="cursor-pointer bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 px-3 py-1.5 rounded-md text-xs border border-white/10 transition">
-                                    Upload
-                                    <input
-                                        type="file"
-                                        className="hidden"
-                                        accept="image/*"
-                                        onChange={(e) => handleImageUpload(e, 'background')}
-                                    />
-                                </label>
+                                <button
+                                    onClick={() => setShowBackgroundMenu(!showBackgroundMenu)}
+                                    className="cursor-pointer bg-slate-800/50 hover:bg-slate-700/50 text-slate-300 px-3 py-1.5 rounded-md text-xs border border-white/10 transition">
+                                    Change
+                                </button>
+                                <input
+                                    ref={backgroundFileInputRef}
+                                    type="file"
+                                    className="hidden"
+                                    accept="image/*"
+                                    onChange={(e) => {
+                                        handleImageUpload(e, 'background');
+                                        setShowBackgroundMenu(false);
+                                    }}
+                                />
                             </div>
+                            {/* Background source dropdown menu */}
+                            {showBackgroundMenu && (
+                                <div className="absolute top-full left-0 mt-2 w-48 bg-slate-800 border border-white/10 rounded-lg shadow-xl z-20 overflow-hidden">
+                                    {settings.backgroundImage && (
+                                        <button
+                                            onClick={() => {
+                                                setSettings({ ...settings, backgroundImage: undefined });
+                                                setShowBackgroundMenu(false);
+                                            }}
+                                            className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-700/50 transition cursor-pointer">
+                                            <X size={16} className="text-red-400" />
+                                            <span>Remove background</span>
+                                        </button>
+                                    )}
+                                    <button
+                                        onClick={() => {
+                                            setSettings({ ...settings, backgroundImage: getRandomPicsumBackground() });
+                                            setShowBackgroundMenu(false);
+                                        }}
+                                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-700/50 transition cursor-pointer">
+                                        <Globe size={16} className="text-tech-400" />
+                                        <span>Random (Picsum)</span>
+                                    </button>
+                                    <button
+                                        onClick={() => {
+                                            backgroundFileInputRef.current?.click();
+                                        }}
+                                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-700/50 transition cursor-pointer">
+                                        <HardDrive size={16} className="text-emerald-400" />
+                                        <span>Upload from device</span>
+                                    </button>
+                                </div>
+                            )}
                         </div>
                     </div>
 
