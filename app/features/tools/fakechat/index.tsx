@@ -1,7 +1,8 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
 import { toPng } from 'html-to-image';
-import { ArrowLeft, MessageCircle, Smartphone, Wand2, Download, ChevronDown } from 'lucide-react';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
+import { ArrowLeft, MessageCircle, Smartphone, Wand2, Download, ChevronDown, Check } from 'lucide-react';
 import { getLocalValue, setLocalValue } from '@carry0987/utils';
 import type { ChatSettings, Message, Platform, PhoneModel } from './types';
 import { DEFAULT_SETTINGS, INITIAL_MESSAGES, PHONE_MODELS, DEFAULT_PHONE_MODEL } from './constants';
@@ -179,25 +180,32 @@ const App: React.FC = () => {
                                 <Smartphone size={14} />
                                 <span className="text-xs font-medium uppercase tracking-wider">Preview</span>
                             </div>
-                            <div className="relative">
-                                <select
-                                    value={phoneModel.id}
-                                    onChange={(e) => {
-                                        const model = PHONE_MODELS.find((m) => m.id === e.target.value);
-                                        if (model) setPhoneModel(model);
-                                    }}
-                                    className="appearance-none bg-slate-800/80 text-slate-300 text-xs font-medium pl-3 pr-7 py-1.5 rounded-lg border border-white/10 hover:border-white/20 focus:border-tech-500/50 focus:ring-2 focus:ring-tech-500/20 outline-none cursor-pointer transition-all">
+                            <Listbox value={phoneModel} onChange={setPhoneModel}>
+                                <ListboxButton className="relative w-50 bg-slate-800/80 text-slate-300 text-xs font-medium pl-3 pr-7 py-1.5 rounded-lg border border-white/10 hover:border-white/20 focus:outline-none data-focus:border-tech-500/50 data-focus:ring-2 data-focus:ring-tech-500/20 cursor-pointer transition-all text-left">
+                                    <span className="truncate block">{phoneModel.name}</span>
+                                    <ChevronDown
+                                        size={12}
+                                        className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+                                    />
+                                </ListboxButton>
+                                <ListboxOptions
+                                    anchor="bottom"
+                                    transition
+                                    className="w-(--button-width) rounded-xl border border-white/10 bg-slate-800 p-1 shadow-xl [--anchor-gap:4px] focus:outline-none transition duration-100 ease-in data-leave:data-closed:opacity-0 z-50">
                                     {PHONE_MODELS.map((model) => (
-                                        <option key={model.id} value={model.id}>
-                                            {model.name}
-                                        </option>
+                                        <ListboxOption
+                                            key={model.id}
+                                            value={model}
+                                            className="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 select-none data-focus:bg-tech-500/20 text-slate-300 data-selected:text-tech-400 text-xs">
+                                            <Check
+                                                size={14}
+                                                className="invisible text-tech-400 group-data-selected:visible"
+                                            />
+                                            <span>{model.name}</span>
+                                        </ListboxOption>
                                     ))}
-                                </select>
-                                <ChevronDown
-                                    size={12}
-                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
-                                />
-                            </div>
+                                </ListboxOptions>
+                            </Listbox>
                         </div>
 
                         {/* Phone Preview with Shadow */}
