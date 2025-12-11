@@ -4,21 +4,23 @@ import { toPng } from 'html-to-image';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { ArrowLeft, MessageCircle, Smartphone, ChevronDown, Check } from 'lucide-react';
 import { getLocalValue, setLocalValue } from '@carry0987/utils';
-import type { ChatSettings, Message, Platform, PhoneModel } from './types';
+import type { ChatSettings, Message, Platform, PhoneModel, AIProvider } from './types';
 import { DEFAULT_SETTINGS, INITIAL_MESSAGES, PHONE_MODELS, DEFAULT_PHONE_MODEL } from './constants';
 import ChatPreview from './components/ChatPreview';
 import Editor, { type EditorRef } from './components/Editor';
 import AIGeneratorModal from './components/AIGeneratorModal';
 import ApiKeyInput from './components/ApiKeyInput';
 import { AlertDialog, ConfirmDialog } from './components/ui';
-import { generateConversation } from './services/geminiService';
+import { generateConversation as generateConversationGemini } from './services/geminiService';
+import { generateConversationOpenAI } from './services/openaiService';
 import { saveChatData, loadChatData, clearChatData } from './services/storageService';
 import { useResponsiveScale } from '@/hooks';
 
 // Import styles
 import './style.css';
 
-const API_KEY_STORAGE_KEY = 'fakechat_gemini_api_key';
+const API_KEY_STORAGE_KEY_PREFIX = 'fakechat_api_key_';
+const AI_PROVIDER_STORAGE_KEY = 'fakechat_ai_provider';
 
 const App: React.FC = () => {
     const [platform, setPlatform] = useState<Platform>('instagram');
@@ -28,6 +30,7 @@ const App: React.FC = () => {
     const [isLoaded, setIsLoaded] = useState(false);
     const [isAIModalOpen, setIsAIModalOpen] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
+    const [aiProvider, setAiProvider] = useState<AIProvider>('openai');
     const [apiKey, setApiKey] = useState<string>('');
 
     // Dialog states
@@ -69,17 +72,28 @@ const App: React.FC = () => {
         saveChatData(platform, settings, messages);
     }, [platform, settings, messages, isLoaded]);
 
-    // Load API key from localStorage on mount
+    // Load API key and provider from localStorage on mount
     useEffect(() => {
-        const savedKey = getLocalValue<string>(API_KEY_STORAGE_KEY);
-        if (savedKey) {
-            setApiKey(savedKey);
+        const savedProvider = getLocalValue<AIProvider>(AI_PROVIDER_STORAGE_KEY);
+        if (savedProvider) {
+            setAiProvider(savedProvider);
         }
     }, []);
 
+    // Load API key when provider changes
+    useEffect(() => {
+        const savedKey = getLocalValue<string>(`${API_KEY_STORAGE_KEY_PREFIX}${aiProvider}`);
+        setApiKey(savedKey || '');
+    }, [aiProvider]);
+
+    const handleProviderChange = (provider: AIProvider) => {
+        setAiProvider(provider);
+        setLocalValue(AI_PROVIDER_STORAGE_KEY, provider);
+    };
+
     const handleApiKeyChange = (key: string) => {
         setApiKey(key);
-        setLocalValue(API_KEY_STORAGE_KEY, key || null);
+        setLocalValue(`${API_KEY_STORAGE_KEY_PREFIX}${aiProvider}`, key || null);
     };
 
     const handleDownload = async () => {
@@ -109,7 +123,8 @@ const App: React.FC = () => {
         }
         setIsGenerating(true);
         try {
-            const newMessages = await generateConversation(topic, platform, mood, apiKey);
+            const generateFn = aiProvider === 'openai' ? generateConversationOpenAI : generateConversationGemini;
+            const newMessages = await generateFn(topic, platform, mood, apiKey);
             setMessages(newMessages);
             setIsAIModalOpen(false);
         } catch (error) {
@@ -241,7 +256,12 @@ const App: React.FC = () => {
 
             {/* API Key Input - For AI Generation */}
             <div className="mt-8">
-                <ApiKeyInput apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
+                <ApiKeyInput
+                    provider={aiProvider}
+                    onProviderChange={handleProviderChange}
+                    apiKey={apiKey}
+                    onApiKeyChange={handleApiKeyChange}
+                />
             </div>
 
             <AIGeneratorModal
@@ -250,6 +270,7 @@ const App: React.FC = () => {
                 onGenerate={handleGenerateAI}
                 isLoading={isGenerating}
                 hasApiKey={!!apiKey}
+                provider={aiProvider}
             />
 
             {/* Image Error Alert */}

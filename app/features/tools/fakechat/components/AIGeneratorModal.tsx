@@ -2,6 +2,12 @@ import React, { useState } from 'react';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { Sparkles, Loader2, AlertCircle, ChevronDown, Check } from 'lucide-react';
 import { Modal } from './ui';
+import type { AIProvider } from '../types';
+
+const AI_PROVIDER_NAMES: Record<AIProvider, string> = {
+    openai: 'OpenAI',
+    gemini: 'Google Gemini'
+};
 
 const MOOD_OPTIONS = [
     { id: 'casual', label: 'Casual & Funny', emoji: '😄' },
@@ -18,9 +24,17 @@ interface AIGeneratorModalProps {
     onGenerate: (topic: string, mood: string) => Promise<void>;
     isLoading: boolean;
     hasApiKey: boolean;
+    provider: AIProvider;
 }
 
-const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({ isOpen, onClose, onGenerate, isLoading, hasApiKey }) => {
+const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({
+    isOpen,
+    onClose,
+    onGenerate,
+    isLoading,
+    hasApiKey,
+    provider
+}) => {
     const [topic, setTopic] = useState('');
     const [selectedMood, setSelectedMood] = useState(MOOD_OPTIONS[0]);
 
@@ -41,7 +55,7 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({ isOpen, onClose, on
                         <Sparkles size={20} />
                         AI Script Generator
                     </h2>
-                    <p className="text-purple-100 text-sm mt-1">Powered by Google Gemini</p>
+                    <p className="text-purple-100 text-sm mt-1">Powered by {AI_PROVIDER_NAMES[provider]}</p>
                 </div>
             }
             headerClassName="bg-linear-to-r from-purple-600 to-tech-600 text-white">
@@ -52,7 +66,8 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({ isOpen, onClose, on
                         <div>
                             <h4 className="font-semibold text-amber-400">API Key Required</h4>
                             <p className="text-sm text-amber-300/70 mt-1">
-                                Please configure your Gemini API key in the settings above before generating.
+                                Please configure your {AI_PROVIDER_NAMES[provider]} API key in the settings below before
+                                generating.
                             </p>
                         </div>
                     </div>

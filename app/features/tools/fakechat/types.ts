@@ -1,5 +1,7 @@
 export type Platform = 'instagram' | 'line' | 'telegram' | 'tiktok';
 
+export type AIProvider = 'openai' | 'gemini';
+
 export type PhoneModelId =
     | 'iphone-15-pro-max'
     | 'iphone-15-pro'
