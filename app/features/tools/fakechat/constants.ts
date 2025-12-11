@@ -1,4 +1,4 @@
-import type { ChatSettings, Message, Platform } from './types';
+import type { ChatSettings, Message, Platform, PhoneModel } from './types';
 import avatarPartner from './assets/avatar-partner.svg';
 import avatarMe from './assets/avatar-me.svg';
 
@@ -43,6 +43,65 @@ export const PLATFORMS: { id: Platform; name: string; icon: string }[] = [
     { id: 'telegram', name: 'Telegram', icon: 'send' },
     { id: 'tiktok', name: 'TikTok', icon: 'music' }
 ];
+
+export const PHONE_MODELS: PhoneModel[] = [
+    {
+        id: 'iphone-15-pro-max',
+        name: 'iPhone 15 Pro Max',
+        width: 430,
+        height: 932,
+        borderRadius: '3.5rem',
+        hasHomeButton: false,
+        notchType: 'dynamic-island'
+    },
+    {
+        id: 'iphone-15-pro',
+        name: 'iPhone 15 Pro',
+        width: 393,
+        height: 852,
+        borderRadius: '3rem',
+        hasHomeButton: false,
+        notchType: 'dynamic-island'
+    },
+    {
+        id: 'iphone-15',
+        name: 'iPhone 15',
+        width: 393,
+        height: 852,
+        borderRadius: '3rem',
+        hasHomeButton: false,
+        notchType: 'notch'
+    },
+    {
+        id: 'iphone-se',
+        name: 'iPhone SE 2',
+        width: 375,
+        height: 667,
+        borderRadius: '0',
+        hasHomeButton: true,
+        notchType: 'none'
+    },
+    {
+        id: 'pixel-8-pro',
+        name: 'Pixel 8 Pro',
+        width: 412,
+        height: 892,
+        borderRadius: '2.5rem',
+        hasHomeButton: false,
+        notchType: 'none'
+    },
+    {
+        id: 'galaxy-s24',
+        name: 'Galaxy S24',
+        width: 412,
+        height: 892,
+        borderRadius: '2.5rem',
+        hasHomeButton: false,
+        notchType: 'none'
+    }
+];
+
+export const DEFAULT_PHONE_MODEL = PHONE_MODELS[0];
 
 // Common emoji stickers for quick insert
 export const EMOJI_STICKERS: string[] = [

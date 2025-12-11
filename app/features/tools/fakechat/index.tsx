@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
 import { toPng } from 'html-to-image';
-import { ArrowLeft, MessageCircle, Smartphone, Wand2, Download } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Smartphone, Wand2, Download, ChevronDown } from 'lucide-react';
 import { getLocalValue, setLocalValue } from '@carry0987/utils';
-import type { ChatSettings, Message, Platform } from './types';
-import { DEFAULT_SETTINGS, INITIAL_MESSAGES } from './constants';
+import type { ChatSettings, Message, Platform, PhoneModel } from './types';
+import { DEFAULT_SETTINGS, INITIAL_MESSAGES, PHONE_MODELS, DEFAULT_PHONE_MODEL } from './constants';
 import ChatPreview from './components/ChatPreview';
 import Editor, { type EditorRef } from './components/Editor';
 import AIGeneratorModal from './components/AIGeneratorModal';
@@ -22,6 +22,7 @@ const App: React.FC = () => {
     const [platform, setPlatform] = useState<Platform>('instagram');
     const [messages, setMessages] = useState<Message[]>(INITIAL_MESSAGES);
     const [settings, setSettings] = useState<ChatSettings>(DEFAULT_SETTINGS);
+    const [phoneModel, setPhoneModel] = useState<PhoneModel>(DEFAULT_PHONE_MODEL);
     const [isLoaded, setIsLoaded] = useState(false);
     const [isAIModalOpen, setIsAIModalOpen] = useState(false);
     const [isGenerating, setIsGenerating] = useState(false);
@@ -172,10 +173,31 @@ const App: React.FC = () => {
                         <div className="absolute inset-0 bg-[radial-gradient(rgba(56,189,248,0.03)_1px,transparent_1px)] bg-size-[20px_20px] pointer-events-none"></div>
                         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.05)_0%,transparent_70%)] pointer-events-none"></div>
 
-                        {/* Preview Label */}
-                        <div className="flex items-center gap-2 mb-4 text-slate-500">
-                            <Smartphone size={14} />
-                            <span className="text-xs font-medium uppercase tracking-wider">Live Preview</span>
+                        {/* Preview Header with Phone Model Selector */}
+                        <div className="flex items-center gap-3 mb-4">
+                            <div className="flex items-center gap-2 text-slate-500">
+                                <Smartphone size={14} />
+                                <span className="text-xs font-medium uppercase tracking-wider">Preview</span>
+                            </div>
+                            <div className="relative">
+                                <select
+                                    value={phoneModel.id}
+                                    onChange={(e) => {
+                                        const model = PHONE_MODELS.find((m) => m.id === e.target.value);
+                                        if (model) setPhoneModel(model);
+                                    }}
+                                    className="appearance-none bg-slate-800/80 text-slate-300 text-xs font-medium pl-3 pr-7 py-1.5 rounded-lg border border-white/10 hover:border-white/20 focus:border-tech-500/50 focus:ring-2 focus:ring-tech-500/20 outline-none cursor-pointer transition-all">
+                                    {PHONE_MODELS.map((model) => (
+                                        <option key={model.id} value={model.id}>
+                                            {model.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                <ChevronDown
+                                    size={12}
+                                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none"
+                                />
+                            </div>
                         </div>
 
                         {/* Phone Preview with Shadow */}
@@ -185,6 +207,7 @@ const App: React.FC = () => {
                             <ChatPreview
                                 ref={previewRef}
                                 platform={platform}
+                                phoneModel={phoneModel}
                                 messages={messages}
                                 settings={settings}
                                 onUpdateMessage={handleUpdateMessage}

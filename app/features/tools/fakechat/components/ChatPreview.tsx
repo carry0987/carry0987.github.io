@@ -1,5 +1,5 @@
 import { forwardRef, useState, useEffect, useRef } from 'react';
-import type { ChatSettings, Message, Platform } from '../types';
+import type { ChatSettings, Message, Platform, PhoneModel } from '../types';
 import {
     Wifi,
     Battery,
@@ -19,6 +19,7 @@ import {
 
 interface ChatPreviewProps {
     platform: Platform;
+    phoneModel: PhoneModel;
     messages: Message[];
     settings: ChatSettings;
     onUpdateMessage: (id: string, updates: Partial<Message>) => void;
@@ -34,7 +35,7 @@ const formatDuration = (seconds: number) => {
 };
 
 const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
-    ({ platform, messages, settings, onUpdateMessage, onSelectMessage }, ref) => {
+    ({ platform, phoneModel, messages, settings, onUpdateMessage, onSelectMessage }, ref) => {
         const [activeReactionId, setActiveReactionId] = useState<string | null>(null);
         const [longPressTimer, setLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
         const [reactionPosition, setReactionPosition] = useState<'top' | 'bottom'>('top');
@@ -535,44 +536,67 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
 
         return (
             <div className="w-full flex justify-center">
-                {/* Phone Container */}
+                {/* Phone Frame (decorative only, not captured in screenshot) */}
                 <div
-                    ref={ref}
-                    className="relative w-[375px] h-[812px] bg-white shadow-2xl overflow-hidden flex flex-col font-sans rounded-[2.5rem] border-8 border-slate-800"
-                    style={{ fontFamily: platform === 'line' ? 'sans-serif' : 'inherit' }}>
-                    {/* Status Bar */}
+                    className={`relative shadow-2xl border-8 border-slate-800 overflow-hidden ${
+                        phoneModel.hasHomeButton ? '' : 'rounded-[2.5rem]'
+                    }`}
+                    style={{
+                        borderRadius: phoneModel.borderRadius
+                    }}>
+                    {/* Dynamic Island / Notch (decorative only) */}
+                    {phoneModel.notchType === 'dynamic-island' && (
+                        <div className="absolute top-3 left-1/2 -translate-x-1/2 w-[126px] h-[37px] bg-black rounded-full z-30 pointer-events-none"></div>
+                    )}
+                    {phoneModel.notchType === 'notch' && (
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-40 h-[34px] bg-black rounded-b-3xl z-30 pointer-events-none"></div>
+                    )}
+
+                    {/* Screen Content (this is what gets captured in screenshot) */}
                     <div
-                        className={`px-5 py-2 flex justify-between items-end text-sm font-semibold h-11 ${statusBarColor} z-10`}>
-                        <div className="tracking-wide">{settings.time}</div>
-                        <div className="flex gap-1.5 items-center">
-                            <Signal size={16} className="fill-current" />
-                            <Wifi size={16} />
-                            <div className="flex items-center gap-1">
-                                <span className="text-xs font-normal">{settings.batteryLevel}%</span>
-                                <Battery size={18} className="fill-current" />
+                        ref={ref}
+                        className="relative bg-white overflow-hidden flex flex-col font-sans"
+                        style={{
+                            width: `${phoneModel.width}px`,
+                            height: `${phoneModel.height}px`,
+                            fontFamily: platform === 'line' ? 'sans-serif' : 'inherit'
+                        }}>
+                        {/* Status Bar */}
+                        <div
+                            className={`px-5 py-2 flex justify-between items-end text-sm font-semibold ${phoneModel.notchType !== 'none' ? 'h-14 pt-4' : 'h-11'} ${statusBarColor} z-10`}>
+                            <div className="tracking-wide">{settings.time}</div>
+                            <div className="flex gap-1.5 items-center">
+                                <Signal size={16} className="fill-current" />
+                                <Wifi size={16} />
+                                <div className="flex items-center gap-1">
+                                    <span className="text-xs font-normal">{settings.batteryLevel}%</span>
+                                    <Battery size={18} className="fill-current" />
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    {/* App Header */}
-                    <div className="z-10">{renderHeader()}</div>
+                        {/* App Header */}
+                        <div className="z-10">{renderHeader()}</div>
 
-                    {/* Chat Area */}
-                    <div
-                        ref={chatAreaRef}
-                        className={`flex-1 overflow-y-auto no-scrollbar p-4 flex flex-col ${settings.backgroundImage ? 'bg-no-repeat bg-cover bg-center' : renderBackground()}`}
-                        style={settings.backgroundImage ? { backgroundImage: `url(${settings.backgroundImage})` } : {}}>
-                        {messages.map(renderMessage)}
-                        {/* Typing Indicator */}
-                        {settings.isTyping && renderTypingIndicator()}
-                    </div>
-
-                    {/* Footer / Input */}
-                    <div className="z-10 relative">
-                        {renderFooter()}
-                        {/* Home Indicator */}
+                        {/* Chat Area */}
                         <div
-                            className={`absolute bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-1 rounded-full ${platform === 'tiktok' || platform === 'line' ? 'bg-white/20' : 'bg-black/20'}`}></div>
+                            ref={chatAreaRef}
+                            className={`flex-1 overflow-y-auto no-scrollbar p-4 flex flex-col ${settings.backgroundImage ? 'bg-no-repeat bg-cover bg-center' : renderBackground()}`}
+                            style={
+                                settings.backgroundImage ? { backgroundImage: `url(${settings.backgroundImage})` } : {}
+                            }>
+                            {messages.map(renderMessage)}
+                            {/* Typing Indicator */}
+                            {settings.isTyping && renderTypingIndicator()}
+                        </div>
+
+                        {/* Footer / Input */}
+                        <div className="z-10 relative">
+                            {renderFooter()}
+                            {/* Home Indicator */}
+                            <div
+                                className={`absolute bottom-1 left-1/2 transform -translate-x-1/2 w-32 h-1 rounded-full ${platform === 'tiktok' || platform === 'line' ? 'bg-white/20' : 'bg-black/20'}`}></div>
+                        </div>
                     </div>
                 </div>
             </div>
