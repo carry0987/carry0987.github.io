@@ -942,21 +942,19 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                                 <label className="block text-xs font-medium text-slate-400 mb-2">
                                     Time Offset (minutes)
                                 </label>
-                                <div className="flex items-center gap-3">
+                                <div className="flex items-center gap-2">
                                     <input
-                                        type="range"
-                                        min="-120"
-                                        max="120"
+                                        type="number"
                                         value={batchTimeOffset}
-                                        onChange={(e) => setBatchTimeOffset(parseInt(e.target.value))}
-                                        className="flex-1 h-2 bg-slate-700 rounded-lg appearance-none cursor-pointer accent-tech-500"
+                                        onChange={(e) => setBatchTimeOffset(parseInt(e.target.value) || 0)}
+                                        className="flex-1 px-3 py-2 bg-slate-800/50 border border-white/10 rounded-lg text-white text-sm focus:outline-none focus:border-tech-500/50 focus:ring-2 focus:ring-tech-500/20 transition-all"
+                                        placeholder="0"
                                     />
-                                    <span
-                                        className={`w-16 text-center text-sm font-medium ${batchTimeOffset > 0 ? 'text-green-400' : batchTimeOffset < 0 ? 'text-red-400' : 'text-slate-400'}`}>
-                                        {batchTimeOffset > 0 ? '+' : ''}
-                                        {batchTimeOffset}m
-                                    </span>
+                                    <span className="text-sm text-slate-400">min</span>
                                 </div>
+                                <p className="text-xs text-slate-500 mt-1">
+                                    Use positive values to move forward, negative to move backward.
+                                </p>
                             </div>
                             <div className="flex gap-2">
                                 <button
