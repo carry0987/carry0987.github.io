@@ -389,7 +389,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                 )}
                                 <div
                                     onClick={() => handleMessageClick(msg)}
-                                    className={`max-w-[220px] px-3 py-2 text-[14px] rounded-2xl shadow-sm relative leading-relaxed wrap-break-words cursor-pointer ${
+                                    className={`max-w-60 px-3 py-2 text-[14px] rounded-2xl shadow-sm relative leading-relaxed cursor-pointer ${
                                         isSender
                                             ? 'bg-[#85E249] text-black after:absolute after:top-2 after:-right-1 after:w-3 after:h-3 after:bg-[#85E249] after:rotate-45'
                                             : 'bg-white text-black after:absolute after:top-2 after:-left-1 after:w-3 after:h-3 after:bg-white after:rotate-45'
@@ -399,7 +399,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                     ) : msg.audioDuration ? (
                                         renderVoiceVisual(isSender, msg.audioDuration, 'line')
                                     ) : (
-                                        <span className="whitespace-pre-wrap wrap-break-words">{msg.text}</span>
+                                        <span className="whitespace-pre-wrap break-words">{msg.text}</span>
                                     )}
                                 </div>
                                 {!isSender && (
