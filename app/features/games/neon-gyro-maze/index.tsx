@@ -60,6 +60,10 @@ function App() {
         setGameState(GameState.PLAYING);
     };
 
+    const handleMenu = () => {
+        setGameState(GameState.MENU);
+    };
+
     return (
         <div className="relative w-full h-screen overflow-hidden bg-black select-none">
             <MazeGame gameState={gameState} onGameStateChange={setGameState} hasPermission={hasPermission} />
@@ -67,6 +71,7 @@ function App() {
                 gameState={gameState}
                 onStart={handleStartGame}
                 onReset={handleReset}
+                onMenu={handleMenu}
                 needsPermission={isIOS && !hasPermission}
                 onRequestPermission={handleRequestPermission}
             />

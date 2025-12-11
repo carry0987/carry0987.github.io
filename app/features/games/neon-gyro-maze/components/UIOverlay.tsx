@@ -1,16 +1,24 @@
 import React from 'react';
 import { GameState } from '../types';
-import { Play, RotateCcw, Smartphone, Trophy } from 'lucide-react';
+import { Play, RotateCcw, Smartphone, Trophy, AlertTriangle, Home } from 'lucide-react';
 
 interface UIOverlayProps {
     gameState: GameState;
     onStart: () => void;
     onReset: () => void;
+    onMenu: () => void;
     needsPermission: boolean;
     onRequestPermission: () => void;
 }
 
-const UIOverlay: React.FC<UIOverlayProps> = ({ gameState, onStart, onReset, needsPermission, onRequestPermission }) => {
+const UIOverlay: React.FC<UIOverlayProps> = ({
+    gameState,
+    onStart,
+    onReset,
+    onMenu,
+    needsPermission,
+    onRequestPermission
+}) => {
     if (gameState === GameState.PLAYING) {
         return (
             <div className="absolute top-4 left-0 right-0 flex justify-between px-6 pointer-events-none z-10">
@@ -29,6 +37,14 @@ const UIOverlay: React.FC<UIOverlayProps> = ({ gameState, onStart, onReset, need
                         <h2 className="text-3xl font-bold text-transparent bg-clip-text bg-linear-to-r from-yellow-300 to-yellow-600">
                             VICTORY!
                         </h2>
+                    </div>
+                )}
+
+                {gameState === GameState.GAME_OVER && (
+                    <div className="mb-6">
+                        <AlertTriangle className="w-16 h-16 text-red-500 mx-auto mb-2 animate-pulse" />
+                        <h2 className="text-3xl font-bold text-red-500">YOU FELL!</h2>
+                        <p className="text-gray-400 text-sm mt-2">Watch out for the holes!</p>
                     </div>
                 )}
 
@@ -51,16 +67,35 @@ const UIOverlay: React.FC<UIOverlayProps> = ({ gameState, onStart, onReset, need
                             Enable Sensors & Play
                         </button>
                     ) : (
-                        <button
-                            onClick={onStart}
-                            className="w-full group flex items-center justify-center gap-2 bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 px-6 rounded-xl transition-all active:scale-95 shadow-lg">
-                            {gameState === GameState.WON ? <RotateCcw /> : <Play />}
-                            {gameState === GameState.WON ? 'Play Again' : 'Start Game'}
-                        </button>
+                        <div className="space-y-3">
+                            <button
+                                onClick={gameState === GameState.GAME_OVER ? onReset : onStart}
+                                className="w-full group flex items-center justify-center gap-2 bg-linear-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-bold py-4 px-6 rounded-xl transition-all active:scale-95 shadow-lg">
+                                {gameState === GameState.WON || gameState === GameState.GAME_OVER ? (
+                                    <RotateCcw />
+                                ) : (
+                                    <Play />
+                                )}
+                                {gameState === GameState.WON
+                                    ? 'Play Again'
+                                    : gameState === GameState.GAME_OVER
+                                      ? 'Try Again'
+                                      : 'Start Game'}
+                            </button>
+
+                            {(gameState === GameState.WON || gameState === GameState.GAME_OVER) && (
+                                <button
+                                    onClick={onMenu}
+                                    className="w-full group flex items-center justify-center gap-2 bg-gray-800 hover:bg-gray-700 text-gray-300 font-bold py-3 px-6 rounded-xl transition-all active:scale-95">
+                                    <Home className="w-5 h-5" />
+                                    Main Menu
+                                </button>
+                            )}
+                        </div>
                     )}
 
                     {/* Desktop Hint */}
-                    {!needsPermission && (
+                    {!needsPermission && gameState === GameState.MENU && (
                         <p className="text-xs text-gray-500 mt-4">
                             Desktop: Use mouse to tilt board.
                             <br />
