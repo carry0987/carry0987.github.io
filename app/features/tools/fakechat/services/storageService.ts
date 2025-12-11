@@ -42,11 +42,7 @@ const openDB = (): Promise<IDBDatabase> => {
     });
 };
 
-export const saveChatData = async (
-    platform: Platform,
-    settings: ChatSettings,
-    messages: Message[]
-): Promise<void> => {
+export const saveChatData = async (platform: Platform, settings: ChatSettings, messages: Message[]): Promise<void> => {
     try {
         const db = await openDB();
         const transaction = db.transaction(STORE_NAME, 'readwrite');
