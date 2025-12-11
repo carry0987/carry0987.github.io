@@ -467,13 +467,13 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                 {/* Platform Selection */}
                 <div className="space-y-2">
                     <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Platform</h3>
-                    <div className="grid grid-cols-4 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                         {PLATFORMS.map((p) => (
                             <button
                                 key={p.id}
                                 onClick={() => setPlatform(p.id)}
                                 className={`
-                                    py-2 px-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer text-center
+                                    py-2 px-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer text-center truncate
                                     ${
                                         platform === p.id
                                             ? 'bg-tech-500/20 text-tech-400 border border-tech-500/30'
