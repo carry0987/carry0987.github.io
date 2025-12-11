@@ -116,7 +116,9 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                         className="w-8 h-8 rounded-full object-cover border border-gray-200"
                                     />
                                     <div>
-                                        <h3 className="text-sm font-bold leading-tight">{settings.partnerName}</h3>
+                                        <h3 className="text-sm font-bold leading-tight whitespace-nowrap">
+                                            {settings.partnerName}
+                                        </h3>
                                         <p className="text-[10px] text-gray-400 leading-tight">Active now</p>
                                     </div>
                                 </div>
@@ -132,7 +134,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                         <div className="flex items-center justify-between px-4 py-3 bg-[#202732] text-white">
                             <div className="flex items-center gap-3">
                                 <ChevronLeft size={24} />
-                                <h3 className="text-lg font-medium">{settings.partnerName}</h3>
+                                <h3 className="text-lg font-medium whitespace-nowrap">{settings.partnerName}</h3>
                             </div>
                             <div className="flex items-center gap-4">
                                 <Phone size={20} />
@@ -152,7 +154,9 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                         className="w-9 h-9 rounded-full object-cover"
                                     />
                                     <div>
-                                        <h3 className="text-sm font-semibold leading-tight">{settings.partnerName}</h3>
+                                        <h3 className="text-sm font-semibold leading-tight whitespace-nowrap">
+                                            {settings.partnerName}
+                                        </h3>
                                         <p className="text-[11px] text-gray-200 opacity-80 leading-tight">
                                             last seen recently
                                         </p>
@@ -168,7 +172,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                             <div className="flex items-center gap-4">
                                 <ChevronLeft size={24} />
                                 <div className="text-center">
-                                    <h3 className="text-sm font-bold">{settings.partnerName}</h3>
+                                    <h3 className="text-sm font-bold whitespace-nowrap">{settings.partnerName}</h3>
                                 </div>
                             </div>
                             <MoreHorizontal size={24} />
@@ -339,7 +343,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                 ) : msg.audioDuration ? (
                                     renderVoiceVisual(isSender, msg.audioDuration, 'bars')
                                 ) : (
-                                    msg.text
+                                    <span className="whitespace-pre-wrap wrap-break-words">{msg.text}</span>
                                 )}
                                 {/* Timestamp inside bubble */}
                                 <div
@@ -391,7 +395,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                     ) : msg.audioDuration ? (
                                         renderVoiceVisual(isSender, msg.audioDuration, 'line')
                                     ) : (
-                                        msg.text
+                                        <span className="whitespace-pre-wrap wrap-break-words">{msg.text}</span>
                                     )}
                                 </div>
                                 {!isSender && (
@@ -425,7 +429,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                 ) : msg.audioDuration ? (
                                     renderVoiceVisual(isSender, msg.audioDuration, 'line')
                                 ) : (
-                                    msg.text
+                                    <span className="whitespace-pre-wrap wrap-break-words">{msg.text}</span>
                                 )}
                             </div>
                             <div
@@ -461,7 +465,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                             ) : msg.audioDuration ? (
                                 renderVoiceVisual(isSender, msg.audioDuration, 'bars')
                             ) : (
-                                msg.text
+                                <span className="whitespace-pre-wrap wrap-break-word">{msg.text}</span>
                             )}
                             {/* Timestamp inside bubble */}
                             <div
