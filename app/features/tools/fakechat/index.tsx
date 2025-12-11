@@ -167,9 +167,9 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Right Panel - Preview */}
-                    <div className="flex-1 bg-gradient-to-br from-slate-900/80 via-slate-900/50 to-slate-800/30 flex flex-col items-center justify-center p-4 lg:p-8 relative min-h-[500px] lg:min-h-0 overflow-hidden">
+                    <div className="flex-1 bg-linear-to-br from-slate-900/80 via-slate-900/50 to-slate-800/30 flex flex-col items-center justify-center p-4 lg:p-8 relative min-h-[500px] lg:min-h-0 overflow-hidden">
                         {/* Background Pattern */}
-                        <div className="absolute inset-0 bg-[radial-gradient(rgba(56,189,248,0.03)_1px,transparent_1px)] bg-[length:20px_20px] pointer-events-none"></div>
+                        <div className="absolute inset-0 bg-[radial-gradient(rgba(56,189,248,0.03)_1px,transparent_1px)] bg-size-[20px_20px] pointer-events-none"></div>
                         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.05)_0%,transparent_70%)] pointer-events-none"></div>
 
                         {/* Preview Label */}
@@ -181,7 +181,7 @@ const App: React.FC = () => {
                         {/* Phone Preview with Shadow */}
                         <div className="relative">
                             {/* Glow Effect */}
-                            <div className="absolute -inset-4 bg-gradient-to-b from-tech-500/10 via-purple-500/5 to-transparent blur-2xl rounded-[3rem] pointer-events-none"></div>
+                            <div className="absolute -inset-4 bg-linear-to-b from-tech-500/10 via-purple-500/5 to-transparent blur-2xl rounded-[3rem] pointer-events-none"></div>
                             <ChatPreview
                                 ref={previewRef}
                                 platform={platform}

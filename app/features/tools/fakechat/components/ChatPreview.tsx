@@ -538,7 +538,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                 {/* Phone Container */}
                 <div
                     ref={ref}
-                    className="relative w-[375px] h-[812px] bg-white shadow-2xl overflow-hidden flex flex-col font-sans rounded-[2.5rem] border-[8px] border-slate-800"
+                    className="relative w-[375px] h-[812px] bg-white shadow-2xl overflow-hidden flex flex-col font-sans rounded-[2.5rem] border-8 border-slate-800"
                     style={{ fontFamily: platform === 'line' ? 'sans-serif' : 'inherit' }}>
                     {/* Status Bar */}
                     <div
