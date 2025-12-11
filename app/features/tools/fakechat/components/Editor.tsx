@@ -20,9 +20,10 @@ import {
     Clock3,
     List,
     Globe,
-    HardDrive
+    HardDrive,
+    RotateCcw
 } from 'lucide-react';
-import { PLATFORMS, EMOJI_STICKERS, getRandomPicsumAvatar } from '../constants';
+import { PLATFORMS, EMOJI_STICKERS, getRandomPicsumAvatar, DEFAULT_AVATAR_PARTNER } from '../constants';
 import { Modal, AlertDialog, ConfirmDialog, TimeInput } from './ui';
 
 interface EditorProps {
@@ -519,6 +520,15 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                             {/* Avatar source dropdown menu */}
                             {showAvatarMenu && (
                                 <div className="absolute top-full left-0 mt-2 w-48 bg-slate-800 border border-white/10 rounded-lg shadow-xl z-20 overflow-hidden">
+                                    <button
+                                        onClick={() => {
+                                            setSettings({ ...settings, partnerAvatar: DEFAULT_AVATAR_PARTNER });
+                                            setShowAvatarMenu(false);
+                                        }}
+                                        className="w-full flex items-center gap-2 px-3 py-2.5 text-sm text-slate-300 hover:bg-slate-700/50 transition cursor-pointer">
+                                        <RotateCcw size={16} className="text-amber-400" />
+                                        <span>Reset to default</span>
+                                    </button>
                                     <button
                                         onClick={() => {
                                             setSettings({ ...settings, partnerAvatar: getRandomPicsumAvatar() });
