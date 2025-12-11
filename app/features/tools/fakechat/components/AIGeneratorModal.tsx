@@ -10,6 +10,7 @@ const AI_PROVIDER_NAMES: Record<AIProvider, string> = {
 };
 
 const MOOD_OPTIONS = [
+    { id: 'general', label: 'General', emoji: '💬' },
     { id: 'casual', label: 'Casual & Funny', emoji: '😄' },
     { id: 'romantic', label: 'Romantic', emoji: '💕' },
     { id: 'angry', label: 'Angry / Argument', emoji: '😡' },

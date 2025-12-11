@@ -11,12 +11,12 @@ export const generateConversation = async (
     const ai = new GoogleGenAI({ apiKey });
     const modelId = 'gemini-2.5-flash'; // Fast and sufficient for text generation
 
-    const prompt = `Generate a realistic chat conversation script in ${language} between two people.
+    const prompt = `Generate a realistic and natural chat conversation script in ${language} between two people.
   Platform style: ${platform}.
   Topic: ${topic}.
-  Mood: ${mood}.
+  Tone/Mood: ${mood}.
   Length: 5-8 messages.
-  Include emojis appropriate for the platform.
+  IMPORTANT: Write like real people text - use minimal emojis (0-2 per message at most), include natural typos occasionally, vary message lengths, and avoid overly dramatic or exaggerated expressions. The conversation should feel authentic and everyday.
   Return a JSON array where each item has 'text' (string), 'isSender' (boolean, true for 'Me', false for 'Partner'), and 'timeOffset' (minutes from start).`;
 
     try {
