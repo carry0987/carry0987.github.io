@@ -61,6 +61,7 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
     const ballPosition = useRef({ x: 0, y: BALL_RADIUS, z: 0 });
     const boardTilt = useRef({ x: 0, z: 0 });
     const lastShakeTime = useRef(0);
+    const isGamepadActive = useRef(false);
 
     // Animation Refs
     const globalLightRef = useRef<THREE.PointLight | null>(null);
@@ -87,6 +88,7 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
         sceneRef.current = scene;
 
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 100);
+        // Initial position, updated in resize
         camera.position.set(0, 22, 18);
         camera.lookAt(0, 0, 0);
         cameraRef.current = camera;
@@ -136,11 +138,45 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
 
         // Instead of one big plane, we use individual tiles to allow for holes
         const floorGeo = new THREE.BoxGeometry(TILE_SIZE, 0.5, TILE_SIZE);
+
+        // Custom Shader for Floor to show tilt direction
         const floorMat = new THREE.MeshStandardMaterial({
             color: 0x050505,
             roughness: 0.5,
             metalness: 0.5
         });
+
+        // Inject shader logic for tilt feedback
+        floorMat.onBeforeCompile = (shader) => {
+            shader.uniforms.tiltX = { value: 0 };
+            shader.uniforms.tiltZ = { value: 0 };
+            shader.uniforms.time = { value: 0 };
+
+            floorMat.userData.uniforms = shader.uniforms;
+
+            shader.fragmentShader =
+                `
+        uniform float tiltX;
+        uniform float tiltZ;
+        uniform float time;
+      ` + shader.fragmentShader;
+
+            shader.fragmentShader = shader.fragmentShader.replace(
+                '#include <emissivemap_fragment>',
+                `
+        #include <emissivemap_fragment>
+        
+        vec2 tiltDir = vec2(tiltZ, tiltX); 
+        float tiltLen = length(tiltDir);
+        
+        if (tiltLen > 0.1) {
+          float pulse = sin(time * 5.0) * 0.5 + 0.5;
+          vec3 tiltColor = vec3(0.0, 1.0, 1.0) * tiltLen * 0.5; 
+          totalEmissiveRadiance += tiltColor * pulse;
+        }
+        `
+            );
+        };
 
         const offsetX = (LEVEL_1[0].length * TILE_SIZE) / 2 - TILE_SIZE / 2;
         const offsetZ = (LEVEL_1.length * TILE_SIZE) / 2 - TILE_SIZE / 2;
@@ -270,7 +306,7 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
 
         // --- Trail System Init ---
         const tGeo = new THREE.BufferGeometry();
-        const tPositions = new Float32Array(TRAIL_LENGTH * 2 * 3); // 2 vertices per segment step
+        const tPositions = new Float32Array(TRAIL_LENGTH * 2 * 3);
         const tAlphas = new Float32Array(TRAIL_LENGTH * 2);
 
         tGeo.setAttribute('position', new THREE.BufferAttribute(tPositions, 3));
@@ -443,7 +479,34 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
         const animate = () => {
             requestAnimationFrame(animate);
 
+            // --- Gamepad Input ---
+            const gamepads = navigator.getGamepads ? navigator.getGamepads() : [];
+            const gp = gamepads[0];
+            if (gp) {
+                const deadzone = 0.1;
+                const axisX = gp.axes[0]; // Left Stick Horizontal
+                const axisY = gp.axes[1]; // Left Stick Vertical
+
+                if (Math.abs(axisX) > deadzone || Math.abs(axisY) > deadzone) {
+                    isGamepadActive.current = true;
+                }
+
+                if (isGamepadActive.current) {
+                    boardTilt.current = {
+                        x: Math.abs(axisY) < deadzone ? 0 : axisY,
+                        z: Math.abs(axisX) < deadzone ? 0 : axisX
+                    };
+                }
+            }
+
             const time = Date.now() * 0.001;
+
+            // Update Shader Uniforms for Floor
+            if (floorMat.userData.uniforms) {
+                floorMat.userData.uniforms.time.value = time;
+                floorMat.userData.uniforms.tiltX.value = boardTilt.current.x;
+                floorMat.userData.uniforms.tiltZ.value = boardTilt.current.z;
+            }
 
             // Board visuals
             if (boardGroupRef.current) {
@@ -451,7 +514,16 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
                     (boardTilt.current.x * 0.5 - boardGroupRef.current.rotation.x) * 0.1;
                 boardGroupRef.current.rotation.z +=
                     (-boardTilt.current.z * 0.5 - boardGroupRef.current.rotation.z) * 0.1;
+
+                // Dynamic Squash
+                const tiltIntensity = Math.sqrt(boardTilt.current.x ** 2 + boardTilt.current.z ** 2);
+                const targetScaleY = 1.0 - tiltIntensity * 0.1;
+                boardGroupRef.current.scale.y += (targetScaleY - boardGroupRef.current.scale.y) * 0.1;
             }
+
+            // Dynamic Wall Emissivity based on tilt
+            const tiltIntensity = Math.sqrt(boardTilt.current.x ** 2 + boardTilt.current.z ** 2);
+            wallMat.emissiveIntensity = 0.1 + tiltIntensity * 0.8;
 
             // Lighting & Parallax
             if (globalLightRef.current) {
@@ -535,9 +607,8 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
 
             // Update Trail
             if (gameState === GameState.PLAYING && ballRef.current) {
-                // Push new point
                 const pos = ballRef.current.position.clone();
-                pos.y += 0.05; // Slightly above floor
+                pos.y += 0.05;
                 trailPositions.current.push(pos);
                 if (trailPositions.current.length > TRAIL_LENGTH) {
                     trailPositions.current.shift();
@@ -564,7 +635,6 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
                     }
                     dir.normalize();
 
-                    // Perpendicular vector for ribbon width
                     const perp = new THREE.Vector3(-dir.z, 0, dir.x).multiplyScalar(TRAIL_WIDTH * 0.5);
 
                     const v1 = new THREE.Vector3().addVectors(p, perp);
@@ -574,12 +644,11 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
                     posAttr.setXYZ(idx, v1.x, v1.y, v1.z);
                     posAttr.setXYZ(idx + 1, v2.x, v2.y, v2.z);
 
-                    const alpha = i / (count - 1); // Fade out tail
+                    const alpha = i / (count - 1);
                     alphaAttr.setX(idx, alpha);
                     alphaAttr.setX(idx + 1, alpha);
                 }
 
-                // Zero out unused
                 for (let k = count * 2; k < TRAIL_LENGTH * 2; k++) {
                     posAttr.setXYZ(k, 0, 0, 0);
                     alphaAttr.setX(k, 0);
@@ -594,13 +663,36 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
             renderer.render(scene, camera);
         };
 
+        const updateCameraPosition = () => {
+            const aspect = window.innerWidth / window.innerHeight;
+            // Default position vector
+            const baseVec = new THREE.Vector3(0, 22, 18);
+
+            // If aspect ratio is small (portrait), we need to zoom out
+            // Logic: if aspect < 1.0, increase distance proportionally
+            let zoomFactor = 1.0;
+            if (aspect < 1.0) {
+                // Mobile portrait: Zoom out significantly to fit the board width
+                // 0.8 adds a slight padding so edges aren't touching screen
+                zoomFactor = Math.max(1, 1.2 / aspect);
+            }
+
+            camera.position.copy(baseVec).multiplyScalar(zoomFactor);
+            camera.lookAt(0, 0, 0);
+        };
+
         const handleResize = () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            updateCameraPosition();
         };
 
         window.addEventListener('resize', handleResize);
+
+        // Initial update
+        handleResize();
+
         const animId = requestAnimationFrame(animate);
 
         return () => {
@@ -650,6 +742,7 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
         }
 
         const handleOrientation = (event: DeviceOrientationEvent) => {
+            isGamepadActive.current = false;
             if (!hasPermission) return;
             let { beta, gamma } = event;
             if (beta === null || gamma === null) return;
@@ -676,6 +769,7 @@ const MazeGame: React.FC<MazeGameProps> = ({ gameState, onGameStateChange, hasPe
         };
 
         const handleMouseMove = (e: MouseEvent) => {
+            isGamepadActive.current = false;
             if (hasPermission) return;
             const x = (e.clientY / window.innerHeight) * 2 - 1;
             const z = (e.clientX / window.innerWidth) * 2 - 1;
