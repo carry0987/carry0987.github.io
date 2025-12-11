@@ -82,18 +82,23 @@ const TimeInput: React.FC<TimeInputProps> = ({ value, onChange, className = '' }
         }
     }, [isOpen, updateDropdownPosition]);
 
-    // Update position on scroll/resize
+    // Close dropdown on scroll, update position on resize
     useEffect(() => {
         if (!isOpen) return;
 
-        const handleUpdate = () => updateDropdownPosition();
+        const handleScroll = () => {
+            // Close dropdown when scrolling to avoid lag
+            setIsOpen(false);
+        };
 
-        window.addEventListener('scroll', handleUpdate, true);
-        window.addEventListener('resize', handleUpdate);
+        const handleResize = () => updateDropdownPosition();
+
+        window.addEventListener('scroll', handleScroll, true);
+        window.addEventListener('resize', handleResize);
 
         return () => {
-            window.removeEventListener('scroll', handleUpdate, true);
-            window.removeEventListener('resize', handleUpdate);
+            window.removeEventListener('scroll', handleScroll, true);
+            window.removeEventListener('resize', handleResize);
         };
     }, [isOpen, updateDropdownPosition]);
 
