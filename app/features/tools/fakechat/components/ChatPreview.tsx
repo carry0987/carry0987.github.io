@@ -1,5 +1,6 @@
 import { forwardRef, useState, useEffect, useRef } from 'react';
 import type { ChatSettings, Message, Platform, PhoneModel } from '../types';
+import { DEFAULT_PHONE_MODEL } from '../constants';
 import {
     Wifi,
     Battery,
@@ -35,7 +36,10 @@ const formatDuration = (seconds: number) => {
 };
 
 const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
-    ({ platform, phoneModel, messages, settings, onUpdateMessage, onSelectMessage }, ref) => {
+    ({ platform, phoneModel: phoneModelProp, messages, settings, onUpdateMessage, onSelectMessage }, ref) => {
+        // Fallback to default phone model if undefined
+        const phoneModel = phoneModelProp ?? DEFAULT_PHONE_MODEL;
+
         const [activeReactionId, setActiveReactionId] = useState<string | null>(null);
         const [longPressTimer, setLongPressTimer] = useState<ReturnType<typeof setTimeout> | null>(null);
         const [reactionPosition, setReactionPosition] = useState<'top' | 'bottom'>('top');
