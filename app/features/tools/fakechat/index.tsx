@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { Link } from 'react-router';
 import { toPng } from 'html-to-image';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { ArrowLeft, MessageCircle, Smartphone, ChevronDown, Check } from 'lucide-react';
 import { getLocalValue, setLocalValue } from '@carry0987/utils';
-import type { ChatSettings, Message, Platform, PhoneModel, AIProvider } from './types';
+import type { ChatSettings, Message, Platform, PhoneModel, AIProvider, AIGeneratorSettings } from './types';
 import { DEFAULT_SETTINGS, INITIAL_MESSAGES, PHONE_MODELS, DEFAULT_PHONE_MODEL } from './constants';
 import ChatPreview from './components/ChatPreview';
 import Editor, { type EditorRef } from './components/Editor';
@@ -13,7 +13,14 @@ import ApiKeyInput from './components/ApiKeyInput';
 import { AlertDialog, ConfirmDialog } from './components/ui';
 import { generateConversation as generateConversationGemini } from './services/geminiService';
 import { generateConversationOpenAI } from './services/openaiService';
-import { saveChatData, loadChatData, clearChatData } from './services/storageService';
+import {
+    saveChatData,
+    loadChatData,
+    clearChatData,
+    saveAIGeneratorSettings,
+    loadAIGeneratorSettings,
+    clearAIGeneratorSettings
+} from './services/storageService';
 import { useResponsiveScale } from '@/hooks';
 
 // Import styles
@@ -32,6 +39,7 @@ const App: React.FC = () => {
     const [isGenerating, setIsGenerating] = useState(false);
     const [aiProvider, setAiProvider] = useState<AIProvider>('openai');
     const [apiKey, setApiKey] = useState<string>('');
+    const [aiGeneratorSettings, setAiGeneratorSettings] = useState<AIGeneratorSettings | null>(null);
 
     // Dialog states
     const [showImageErrorAlert, setShowImageErrorAlert] = useState(false);
@@ -56,6 +64,11 @@ const App: React.FC = () => {
                     setPlatform(savedData.platform);
                     setSettings(savedData.settings);
                     setMessages(savedData.messages);
+                }
+                // Load AI generator settings
+                const savedAISettings = await loadAIGeneratorSettings();
+                if (savedAISettings) {
+                    setAiGeneratorSettings(savedAISettings);
                 }
             } catch (error) {
                 console.error('Failed to load saved chat data:', error);
@@ -90,6 +103,11 @@ const App: React.FC = () => {
         setAiProvider(provider);
         setLocalValue(AI_PROVIDER_STORAGE_KEY, provider);
     };
+
+    const handleAISettingsChange = useCallback((settings: AIGeneratorSettings) => {
+        setAiGeneratorSettings(settings);
+        saveAIGeneratorSettings(settings);
+    }, []);
 
     const handleApiKeyChange = (key: string) => {
         setApiKey(key);
@@ -146,7 +164,9 @@ const App: React.FC = () => {
         setMessages(INITIAL_MESSAGES);
         setSettings(DEFAULT_SETTINGS);
         setPlatform('instagram');
+        setAiGeneratorSettings(null);
         await clearChatData();
+        await clearAIGeneratorSettings();
     };
 
     return (
@@ -183,6 +203,8 @@ const App: React.FC = () => {
                             setMessages={setMessages}
                             platform={platform}
                             setPlatform={setPlatform}
+                            aiGeneratorSettings={aiGeneratorSettings}
+                            setAiGeneratorSettings={setAiGeneratorSettings}
                             onGenerateAI={() => setIsAIModalOpen(true)}
                             onDownload={handleDownload}
                             onReset={handleReset}
@@ -268,6 +290,8 @@ const App: React.FC = () => {
                 isOpen={isAIModalOpen}
                 onClose={() => setIsAIModalOpen(false)}
                 onGenerate={handleGenerateAI}
+                onSettingsChange={handleAISettingsChange}
+                savedSettings={aiGeneratorSettings}
                 isLoading={isGenerating}
                 hasApiKey={!!apiKey}
                 provider={aiProvider}

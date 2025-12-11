@@ -46,7 +46,14 @@ export interface ExportData {
     platform: Platform;
     settings: ChatSettings;
     messages: Message[];
+    aiGeneratorSettings?: AIGeneratorSettings;
     exportedAt: string;
+}
+
+export interface AIGeneratorSettings {
+    lastTopic: string;
+    lastMoodId: string;
+    lastLanguageId: string;
 }
 
 export interface GeneratorResponse {

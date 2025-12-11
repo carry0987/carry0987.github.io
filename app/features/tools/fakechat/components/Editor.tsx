@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, forwardRef, useImperativeHandle } from 'react';
-import type { ChatSettings, Message, Platform, ExportData } from '../types';
+import type { ChatSettings, Message, Platform, ExportData, AIGeneratorSettings } from '../types';
 import {
     Plus,
     Trash2,
@@ -40,6 +40,8 @@ interface EditorProps {
     setMessages: React.Dispatch<React.SetStateAction<Message[]>>;
     platform: Platform;
     setPlatform: (p: Platform) => void;
+    aiGeneratorSettings: AIGeneratorSettings | null;
+    setAiGeneratorSettings: React.Dispatch<React.SetStateAction<AIGeneratorSettings | null>>;
     onGenerateAI: () => void;
     onDownload: () => void;
     onReset: () => void;
@@ -51,7 +53,19 @@ export interface EditorRef {
 
 const Editor = forwardRef<EditorRef, EditorProps>(
     (
-        { settings, setSettings, messages, setMessages, platform, setPlatform, onGenerateAI, onDownload, onReset },
+        {
+            settings,
+            setSettings,
+            messages,
+            setMessages,
+            platform,
+            setPlatform,
+            aiGeneratorSettings,
+            setAiGeneratorSettings,
+            onGenerateAI,
+            onDownload,
+            onReset
+        },
         ref
     ) => {
         const [inputType, setInputType] = useState<'text' | 'voice'>('text');
@@ -212,7 +226,8 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                 platform,
                 settings,
                 messages,
-                exportedAt: new Date().toISOString()
+                exportedAt: new Date().toISOString(),
+                aiGeneratorSettings: aiGeneratorSettings || undefined
             };
 
             const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
@@ -253,6 +268,9 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                 setPlatform(pendingImportData.platform);
                 setSettings(pendingImportData.settings);
                 setMessages(pendingImportData.messages);
+                if (pendingImportData.aiGeneratorSettings) {
+                    setAiGeneratorSettings(pendingImportData.aiGeneratorSettings);
+                }
                 setPendingImportData(null);
             }
         };

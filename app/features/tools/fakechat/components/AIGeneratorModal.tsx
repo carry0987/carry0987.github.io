@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { Sparkles, Loader2, AlertCircle, ChevronDown, Check } from 'lucide-react';
 import { Modal } from './ui';
-import type { AIProvider } from '../types';
+import type { AIProvider, AIGeneratorSettings } from '../types';
 
 const AI_PROVIDER_NAMES: Record<AIProvider, string> = {
     openai: 'OpenAI',
@@ -31,6 +31,8 @@ interface AIGeneratorModalProps {
     isOpen: boolean;
     onClose: () => void;
     onGenerate: (topic: string, mood: string, language: string) => Promise<void>;
+    onSettingsChange: (settings: AIGeneratorSettings) => void;
+    savedSettings: AIGeneratorSettings | null;
     isLoading: boolean;
     hasApiKey: boolean;
     provider: AIProvider;
@@ -40,6 +42,8 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({
     isOpen,
     onClose,
     onGenerate,
+    onSettingsChange,
+    savedSettings,
     isLoading,
     hasApiKey,
     provider
@@ -47,6 +51,26 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({
     const [topic, setTopic] = useState('');
     const [selectedMood, setSelectedMood] = useState(MOOD_OPTIONS[0]);
     const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE_OPTIONS[0]);
+
+    // Load saved settings when modal opens
+    useEffect(() => {
+        if (isOpen && savedSettings) {
+            setTopic(savedSettings.lastTopic || '');
+            const savedMood = MOOD_OPTIONS.find((m) => m.id === savedSettings.lastMoodId);
+            if (savedMood) setSelectedMood(savedMood);
+            const savedLang = LANGUAGE_OPTIONS.find((l) => l.id === savedSettings.lastLanguageId);
+            if (savedLang) setSelectedLanguage(savedLang);
+        }
+    }, [isOpen, savedSettings]);
+
+    // Save settings when they change
+    useEffect(() => {
+        onSettingsChange({
+            lastTopic: topic,
+            lastMoodId: selectedMood.id,
+            lastLanguageId: selectedLanguage.id
+        });
+    }, [topic, selectedMood, selectedLanguage, onSettingsChange]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();

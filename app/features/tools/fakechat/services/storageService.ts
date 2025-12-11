@@ -1,15 +1,22 @@
-import type { Message, ChatSettings, Platform } from '../types';
+import type { Message, ChatSettings, Platform, AIGeneratorSettings } from '../types';
 
 const DB_NAME = 'fakechat_db';
-const DB_VERSION = 1;
+const DB_VERSION = 2;
 const STORE_NAME = 'chat_data';
 const DATA_KEY = 'current_chat';
+const AI_SETTINGS_KEY = 'ai_generator_settings';
 
 interface StoredChatData {
     id: string;
     platform: Platform;
     settings: ChatSettings;
     messages: Message[];
+    updatedAt: string;
+}
+
+interface StoredAISettings {
+    id: string;
+    settings: AIGeneratorSettings;
     updatedAt: string;
 }
 
@@ -116,5 +123,63 @@ export const clearChatData = async (): Promise<void> => {
         });
     } catch (error) {
         console.error('Error clearing IndexedDB:', error);
+    }
+};
+
+export const saveAIGeneratorSettings = async (settings: AIGeneratorSettings): Promise<void> => {
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+
+        const data: StoredAISettings = {
+            id: AI_SETTINGS_KEY,
+            settings,
+            updatedAt: new Date().toISOString()
+        };
+
+        return new Promise((resolve, reject) => {
+            const request = store.put(data);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(new Error('Failed to save AI generator settings'));
+        });
+    } catch (error) {
+        console.error('Error saving AI settings to IndexedDB:', error);
+    }
+};
+
+export const loadAIGeneratorSettings = async (): Promise<AIGeneratorSettings | null> => {
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(STORE_NAME, 'readonly');
+        const store = transaction.objectStore(STORE_NAME);
+
+        return new Promise((resolve, reject) => {
+            const request = store.get(AI_SETTINGS_KEY);
+            request.onsuccess = () => {
+                const result = request.result as StoredAISettings | undefined;
+                resolve(result?.settings || null);
+            };
+            request.onerror = () => reject(new Error('Failed to load AI generator settings'));
+        });
+    } catch (error) {
+        console.error('Error loading AI settings from IndexedDB:', error);
+        return null;
+    }
+};
+
+export const clearAIGeneratorSettings = async (): Promise<void> => {
+    try {
+        const db = await openDB();
+        const transaction = db.transaction(STORE_NAME, 'readwrite');
+        const store = transaction.objectStore(STORE_NAME);
+
+        return new Promise((resolve, reject) => {
+            const request = store.delete(AI_SETTINGS_KEY);
+            request.onsuccess = () => resolve();
+            request.onerror = () => reject(new Error('Failed to clear AI generator settings'));
+        });
+    } catch (error) {
+        console.error('Error clearing AI settings from IndexedDB:', error);
     }
 };
