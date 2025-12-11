@@ -85,6 +85,12 @@ const App: React.FC = () => {
         saveChatData(platform, settings, messages);
     }, [platform, settings, messages, isLoaded]);
 
+    // Save AI generator settings to IndexedDB whenever it changes
+    useEffect(() => {
+        if (!isLoaded || !aiGeneratorSettings) return;
+        saveAIGeneratorSettings(aiGeneratorSettings);
+    }, [aiGeneratorSettings, isLoaded]);
+
     // Load API key and provider from localStorage on mount
     useEffect(() => {
         const savedProvider = getLocalValue<AIProvider>(AI_PROVIDER_STORAGE_KEY);
@@ -106,7 +112,6 @@ const App: React.FC = () => {
 
     const handleAISettingsChange = useCallback((settings: AIGeneratorSettings) => {
         setAiGeneratorSettings(settings);
-        saveAIGeneratorSettings(settings);
     }, []);
 
     const handleApiKeyChange = (key: string) => {
