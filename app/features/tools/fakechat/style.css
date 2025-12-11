@@ -6,3 +6,24 @@
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
+/* Custom styled scrollbar for textareas and inputs */
+.styled-scrollbar::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+.styled-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    border-radius: 3px;
+}
+.styled-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 3px;
+}
+.styled-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: rgba(148, 163, 184, 0.5);
+}
+.styled-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(148, 163, 184, 0.3) transparent;
+}

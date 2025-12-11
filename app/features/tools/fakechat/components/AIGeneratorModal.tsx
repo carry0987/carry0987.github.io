@@ -18,10 +18,18 @@ const MOOD_OPTIONS = [
     { id: 'sarcastic', label: 'Sarcastic', emoji: '😏' }
 ];
 
+const LANGUAGE_OPTIONS = [
+    { id: 'zh-TW', label: '繁體中文', flag: '🇹🇼' },
+    { id: 'en', label: 'English', flag: '🇺🇸' },
+    { id: 'ja', label: '日本語', flag: '🇯🇵' },
+    { id: 'th', label: 'ภาษาไทย', flag: '🇹🇭' },
+    { id: 'vi', label: 'Tiếng Việt', flag: '🇻🇳' }
+];
+
 interface AIGeneratorModalProps {
     isOpen: boolean;
     onClose: () => void;
-    onGenerate: (topic: string, mood: string) => Promise<void>;
+    onGenerate: (topic: string, mood: string, language: string) => Promise<void>;
     isLoading: boolean;
     hasApiKey: boolean;
     provider: AIProvider;
@@ -37,11 +45,12 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({
 }) => {
     const [topic, setTopic] = useState('');
     const [selectedMood, setSelectedMood] = useState(MOOD_OPTIONS[0]);
+    const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE_OPTIONS[0]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         if (topic.trim()) {
-            onGenerate(topic, selectedMood.label);
+            onGenerate(topic, selectedMood.label, selectedLanguage.label);
         }
     };
 
@@ -81,7 +90,7 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({
                         value={topic}
                         onChange={(e) => setTopic(e.target.value)}
                         placeholder="e.g., Breaking up over text, planning a surprise party, complaining about work..."
-                        className="w-full p-3 bg-slate-800/50 border border-white/10 rounded-xl text-white placeholder-slate-500 focus:ring-2 focus:ring-purple-500 focus:border-purple-500 outline-none h-24 resize-none"
+                        className="styled-scrollbar w-full px-3 py-2 bg-slate-800/50 border border-white/10 rounded-xl text-sm text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-purple-500/50 focus:border-purple-500/50 h-28 resize-none leading-relaxed transition-all"
                         autoFocus
                     />
                 </div>
@@ -114,6 +123,40 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({
                                     />
                                     <span>{mood.emoji}</span>
                                     <span>{mood.label}</span>
+                                </ListboxOption>
+                            ))}
+                        </ListboxOptions>
+                    </Listbox>
+                </div>
+
+                <div>
+                    <label className="block text-sm font-medium text-slate-300 mb-2">Language</label>
+                    <Listbox value={selectedLanguage} onChange={setSelectedLanguage}>
+                        <ListboxButton className="relative w-full p-3 pr-10 bg-slate-800/50 border border-white/10 rounded-xl text-left text-white focus:outline-none data-focus:ring-2 data-focus:ring-purple-500 cursor-pointer hover:bg-slate-800/70 transition-colors">
+                            <span className="flex items-center gap-2">
+                                <span>{selectedLanguage.flag}</span>
+                                <span>{selectedLanguage.label}</span>
+                            </span>
+                            <ChevronDown
+                                size={18}
+                                className="pointer-events-none absolute top-1/2 right-3 -translate-y-1/2 text-slate-400"
+                            />
+                        </ListboxButton>
+                        <ListboxOptions
+                            anchor="bottom"
+                            transition
+                            className="w-(--button-width) rounded-xl border border-white/10 bg-slate-800 p-1 shadow-xl [--anchor-gap:4px] focus:outline-none transition duration-100 ease-in data-leave:data-closed:opacity-0 z-50">
+                            {LANGUAGE_OPTIONS.map((lang) => (
+                                <ListboxOption
+                                    key={lang.id}
+                                    value={lang}
+                                    className="group flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2.5 select-none data-focus:bg-purple-500/20 text-slate-300 data-selected:text-purple-400">
+                                    <Check
+                                        size={16}
+                                        className="invisible text-purple-400 group-data-selected:visible"
+                                    />
+                                    <span>{lang.flag}</span>
+                                    <span>{lang.label}</span>
                                 </ListboxOption>
                             ))}
                         </ListboxOptions>

@@ -116,7 +116,7 @@ const App: React.FC = () => {
         }
     };
 
-    const handleGenerateAI = async (topic: string, mood: string) => {
+    const handleGenerateAI = async (topic: string, mood: string, language: string) => {
         if (!apiKey) {
             setShowApiKeyAlert(true);
             return;
@@ -124,7 +124,7 @@ const App: React.FC = () => {
         setIsGenerating(true);
         try {
             const generateFn = aiProvider === 'openai' ? generateConversationOpenAI : generateConversationGemini;
-            const newMessages = await generateFn(topic, platform, mood, apiKey);
+            const newMessages = await generateFn(topic, platform, mood, language, apiKey);
             setMessages(newMessages);
             setIsAIModalOpen(false);
         } catch (error) {

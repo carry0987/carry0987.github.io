@@ -5,12 +5,13 @@ export const generateConversation = async (
     topic: string,
     platform: string,
     mood: string,
+    language: string,
     apiKey: string
 ): Promise<Message[]> => {
     const ai = new GoogleGenAI({ apiKey });
     const modelId = 'gemini-2.5-flash'; // Fast and sufficient for text generation
 
-    const prompt = `Generate a realistic chat conversation script in Traditional Chinese (Taiwanese style) between two people.
+    const prompt = `Generate a realistic chat conversation script in ${language} between two people.
   Platform style: ${platform}.
   Topic: ${topic}.
   Mood: ${mood}.

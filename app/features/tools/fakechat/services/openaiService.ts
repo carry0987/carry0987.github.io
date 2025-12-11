@@ -4,9 +4,10 @@ export const generateConversationOpenAI = async (
     topic: string,
     platform: string,
     mood: string,
+    language: string,
     apiKey: string
 ): Promise<Message[]> => {
-    const prompt = `Generate a realistic chat conversation script in Traditional Chinese (Taiwanese style) between two people.
+    const prompt = `Generate a realistic chat conversation script in ${language} between two people.
 Platform style: ${platform}.
 Topic: ${topic}.
 Mood: ${mood}.
