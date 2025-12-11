@@ -807,13 +807,13 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                         </div>
                     </div>
 
-                    {/* Message List Header - Collapsible */}
-                    <div className="flex items-center justify-between p-3 bg-slate-800/30 rounded-lg border border-white/5">
+                    {/* Message List & Batch Time Buttons */}
+                    <div className="grid grid-cols-2 gap-3">
                         <button
                             onClick={() => setShowMessageList(true)}
-                            className="flex items-center gap-2 text-slate-300 hover:text-white transition-colors cursor-pointer">
+                            className="flex items-center justify-center gap-2 p-3 bg-slate-800/30 rounded-lg border border-white/5 hover:bg-slate-800/50 transition-colors cursor-pointer">
                             <List size={16} className="text-slate-400" />
-                            <span className="text-sm font-medium">Message List</span>
+                            <span className="text-sm font-medium text-slate-300">Messages</span>
                             <span className="text-xs text-slate-500 bg-slate-700/50 px-2 py-0.5 rounded-full">
                                 {messages.length}
                             </span>
@@ -821,10 +821,9 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                         <button
                             onClick={() => setShowBatchTimeModal(true)}
                             disabled={messages.length === 0}
-                            className="flex items-center gap-1 text-xs text-slate-400 hover:text-white disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
-                            title="Batch adjust timestamps">
-                            <Clock3 size={12} />
-                            Batch Time
+                            className="flex items-center justify-center gap-2 p-3 bg-slate-800/30 rounded-lg border border-white/5 hover:bg-slate-800/50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                            <Clock3 size={16} className="text-slate-400" />
+                            <span className="text-sm font-medium text-slate-300">Batch Time</span>
                         </button>
                     </div>
                 </div>
