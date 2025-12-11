@@ -58,11 +58,14 @@ export const ApiKeyInput: React.FC<ApiKeyInputProps> = ({ apiKey, onApiKeyChange
                     <div className="flex gap-2">
                         <div className="relative flex-1">
                             <input
-                                type={showKey ? 'text' : 'password'}
+                                type="text"
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                                 placeholder="Enter your Gemini API key..."
+                                autoComplete="off"
+                                data-form-type="other"
                                 className="w-full bg-dark-card border border-dark-border rounded-lg px-4 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-tech-500/50 focus:ring-1 focus:ring-tech-500/20 transition-all pr-10"
+                                style={!showKey ? ({ WebkitTextSecurity: 'disc' } as React.CSSProperties) : undefined}
                             />
                             <button
                                 type="button"
