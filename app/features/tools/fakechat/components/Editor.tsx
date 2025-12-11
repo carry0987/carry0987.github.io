@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { PLATFORMS, EMOJI_STICKERS, getRandomPicsumAvatar, DEFAULT_AVATAR_PARTNER } from '../constants';
 import { Modal, AlertDialog, ConfirmDialog, TimeInput } from './ui';
+import { fileToBase64 } from '../services/storageService';
 
 interface EditorProps {
     settings: ChatSettings;
@@ -349,12 +350,32 @@ const Editor = forwardRef<EditorRef, EditorProps>(
             setMessageTimestamp(settings.time);
         };
 
-        const handleImageUpload = (
+        const handleImageUpload = async (
             e: React.ChangeEvent<HTMLInputElement>,
             target: 'message' | 'partner' | 'me' | 'background'
         ) => {
             if (e.target.files && e.target.files[0]) {
-                const url = URL.createObjectURL(e.target.files[0]);
+                const file = e.target.files[0];
+
+                // For avatars (partner/me) and background, convert to base64 for persistent storage
+                if (target === 'partner' || target === 'me' || target === 'background') {
+                    try {
+                        const base64Url = await fileToBase64(file);
+                        if (target === 'partner') {
+                            setSettings({ ...settings, partnerAvatar: base64Url });
+                        } else if (target === 'me') {
+                            setSettings({ ...settings, myAvatar: base64Url });
+                        } else {
+                            setSettings({ ...settings, backgroundImage: base64Url });
+                        }
+                    } catch (error) {
+                        console.error('Failed to convert image to base64:', error);
+                    }
+                    return;
+                }
+
+                // For message images, use blob URL (not persisted)
+                const url = URL.createObjectURL(file);
                 if (target === 'message') {
                     if (editingMessageId) {
                         // Replace content of editing message with image
@@ -384,12 +405,6 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                         };
                         setMessages([...messages, newMsg]);
                     }
-                } else if (target === 'partner') {
-                    setSettings({ ...settings, partnerAvatar: url });
-                } else if (target === 'me') {
-                    setSettings({ ...settings, myAvatar: url });
-                } else if (target === 'background') {
-                    setSettings({ ...settings, backgroundImage: url });
                 }
             }
         };
