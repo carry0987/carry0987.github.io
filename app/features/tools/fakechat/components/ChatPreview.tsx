@@ -534,11 +534,11 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                     : 'bg-white text-black';
 
         return (
-            <div className="w-full flex justify-center py-4 bg-gray-100 min-h-full">
+            <div className="w-full flex justify-center">
                 {/* Phone Container */}
                 <div
                     ref={ref}
-                    className="relative w-[375px] h-[812px] bg-white shadow-2xl overflow-hidden flex flex-col font-sans"
+                    className="relative w-[375px] h-[812px] bg-white shadow-2xl overflow-hidden flex flex-col font-sans rounded-[2.5rem] border-[8px] border-slate-800"
                     style={{ fontFamily: platform === 'line' ? 'sans-serif' : 'inherit' }}>
                     {/* Status Bar */}
                     <div

@@ -167,16 +167,35 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Right Panel - Preview */}
-                    <div className="flex-1 bg-slate-900/50 flex items-center justify-center p-4 lg:p-8 relative min-h-[500px] lg:min-h-0">
-                        <div className="absolute inset-0 bg-[radial-gradient(rgba(56,189,248,0.03)_1px,transparent_1px)] bg-size-[16px_16px] pointer-events-none"></div>
-                        <ChatPreview
-                            ref={previewRef}
-                            platform={platform}
-                            messages={messages}
-                            settings={settings}
-                            onUpdateMessage={handleUpdateMessage}
-                            onSelectMessage={(msg) => editorRef.current?.selectMessage(msg)}
-                        />
+                    <div className="flex-1 bg-gradient-to-br from-slate-900/80 via-slate-900/50 to-slate-800/30 flex flex-col items-center justify-center p-4 lg:p-8 relative min-h-[500px] lg:min-h-0 overflow-hidden">
+                        {/* Background Pattern */}
+                        <div className="absolute inset-0 bg-[radial-gradient(rgba(56,189,248,0.03)_1px,transparent_1px)] bg-[length:20px_20px] pointer-events-none"></div>
+                        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.05)_0%,transparent_70%)] pointer-events-none"></div>
+
+                        {/* Preview Label */}
+                        <div className="flex items-center gap-2 mb-4 text-slate-500">
+                            <Smartphone size={14} />
+                            <span className="text-xs font-medium uppercase tracking-wider">Live Preview</span>
+                        </div>
+
+                        {/* Phone Preview with Shadow */}
+                        <div className="relative">
+                            {/* Glow Effect */}
+                            <div className="absolute -inset-4 bg-gradient-to-b from-tech-500/10 via-purple-500/5 to-transparent blur-2xl rounded-[3rem] pointer-events-none"></div>
+                            <ChatPreview
+                                ref={previewRef}
+                                platform={platform}
+                                messages={messages}
+                                settings={settings}
+                                onUpdateMessage={handleUpdateMessage}
+                                onSelectMessage={(msg) => editorRef.current?.selectMessage(msg)}
+                            />
+                        </div>
+
+                        {/* Hint Text */}
+                        <p className="mt-4 text-xs text-slate-600 text-center">
+                            Click on a message to edit • Long press for reactions (Instagram)
+                        </p>
                     </div>
                 </div>
             </div>
