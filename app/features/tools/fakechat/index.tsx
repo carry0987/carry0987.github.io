@@ -209,7 +209,7 @@ const App: React.FC = () => {
                         </div>
 
                         {/* Phone Preview with Shadow */}
-                        <div className="relative">
+                        <div className="relative transform scale-[0.55] sm:scale-[0.65] md:scale-75 lg:scale-90 xl:scale-100 origin-top">
                             {/* Glow Effect */}
                             <div className="absolute -inset-4 bg-linear-to-b from-tech-500/10 via-purple-500/5 to-transparent blur-2xl rounded-[3rem] pointer-events-none"></div>
                             <ChatPreview
