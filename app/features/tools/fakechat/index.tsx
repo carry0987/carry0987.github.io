@@ -13,7 +13,7 @@ import ApiKeyInput from './components/ApiKeyInput';
 import { AlertDialog, ConfirmDialog } from './components/ui';
 import { generateConversation } from './services/geminiService';
 import { saveChatData, loadChatData, clearChatData } from './services/storageService';
-import { useScaledPreview } from './hooks';
+import { useResponsiveScale } from '@/hooks';
 
 // Import styles
 import './style.css';
@@ -38,7 +38,11 @@ const App: React.FC = () => {
 
     const previewRef = useRef<HTMLDivElement>(null);
     const editorRef = useRef<EditorRef>(null);
-    const { wrapperRef, contentRef, scale, wrapperStyle } = useScaledPreview();
+    const { wrapperRef, contentRef, wrapperStyle, contentStyle } = useResponsiveScale({
+        minScale: 0.5,
+        maxScale: 1,
+        padding: 32
+    });
 
     // Load saved data from IndexedDB on mount
     useEffect(() => {
@@ -212,10 +216,7 @@ const App: React.FC = () => {
 
                         {/* Phone Preview with Shadow */}
                         <div ref={wrapperRef} style={wrapperStyle}>
-                            <div
-                                ref={contentRef}
-                                className="relative origin-top"
-                                style={{ transform: `scale(${scale})` }}>
+                            <div ref={contentRef} className="relative" style={contentStyle}>
                                 {/* Glow Effect */}
                                 <div className="absolute -inset-4 bg-linear-to-b from-tech-500/10 via-purple-500/5 to-transparent blur-2xl rounded-[3rem] pointer-events-none"></div>
                                 <ChatPreview
