@@ -56,6 +56,13 @@ export default function GamesPage() {
             tech: ['Three.js', 'GLSL Shaders', 'Procedural Generation'],
             genre: '3D',
             playUrl: '/games/perlin-noise'
+        },
+        {
+            title: 'Neon Gyro Maze',
+            desc: 'A neon-themed maze game controlled by tilting your device. Navigate the glowing ball through the maze using your gyroscope.',
+            tech: ['Three.js', 'Device Orientation', 'Gyroscope'],
+            genre: '3D',
+            playUrl: '/games/neon-gyro-maze'
         }
     ];
 
