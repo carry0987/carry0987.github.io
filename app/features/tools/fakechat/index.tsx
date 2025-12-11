@@ -1,8 +1,8 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router';
 import { toPng } from 'html-to-image';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
-import { ArrowLeft, MessageCircle, Smartphone, Wand2, Download, ChevronDown, Check } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Smartphone, ChevronDown, Check } from 'lucide-react';
 import { getLocalValue, setLocalValue } from '@carry0987/utils';
 import type { ChatSettings, Message, Platform, PhoneModel } from './types';
 import { DEFAULT_SETTINGS, INITIAL_MESSAGES, PHONE_MODELS, DEFAULT_PHONE_MODEL } from './constants';
