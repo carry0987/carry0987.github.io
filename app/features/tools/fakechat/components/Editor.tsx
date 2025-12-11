@@ -365,19 +365,25 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                 </div>
 
                 {/* Platform Selection */}
-                <div className="flex p-1 bg-slate-800/50 rounded-xl border border-white/5">
-                    {PLATFORMS.map((p) => (
-                        <button
-                            key={p.id}
-                            onClick={() => setPlatform(p.id)}
-                            className={`flex-1 py-2 text-sm font-medium rounded-lg transition-all ${
-                                platform === p.id
-                                    ? 'bg-tech-500/20 text-tech-400 border border-tech-500/30'
-                                    : 'text-slate-400 hover:text-white hover:bg-white/5'
-                            }`}>
-                            {p.name}
-                        </button>
-                    ))}
+                <div className="space-y-2">
+                    <h3 className="text-sm font-semibold text-slate-300 uppercase tracking-wider">Platform</h3>
+                    <div className="grid grid-cols-4 gap-2">
+                        {PLATFORMS.map((p) => (
+                            <button
+                                key={p.id}
+                                onClick={() => setPlatform(p.id)}
+                                className={`
+                                    py-2 px-2 rounded-lg text-sm font-medium transition-all duration-200 cursor-pointer text-center
+                                    ${
+                                        platform === p.id
+                                            ? 'bg-tech-500/20 text-tech-400 border border-tech-500/30'
+                                            : 'bg-slate-800/50 text-slate-400 border border-white/10 hover:bg-slate-700/50 hover:text-white'
+                                    }
+                                `}>
+                                {p.name}
+                            </button>
+                        ))}
+                    </div>
                 </div>
 
                 {/* Settings Group */}
