@@ -197,9 +197,9 @@ const App: React.FC = () => {
 
             {/* Main Content - Editor and Preview */}
             <div className="rounded-2xl overflow-hidden border border-white/10 bg-dark-card/30">
-                <div className="flex flex-col lg:flex-row min-h-[700px]">
+                <div className="flex flex-col lg:flex-row min-h-175">
                     {/* Left Panel - Editor */}
-                    <div className="w-full lg:w-[420px] lg:shrink-0 border-b lg:border-b-0 lg:border-r border-white/10">
+                    <div className="w-full lg:w-105 lg:shrink-0 border-b lg:border-b-0 lg:border-r border-white/10">
                         <Editor
                             ref={editorRef}
                             settings={settings}
@@ -217,7 +217,7 @@ const App: React.FC = () => {
                     </div>
 
                     {/* Right Panel - Preview */}
-                    <div className="flex-1 bg-linear-to-br from-slate-900/80 via-slate-900/50 to-slate-800/30 flex flex-col items-center justify-center p-4 lg:p-8 relative min-h-[500px] lg:min-h-0 overflow-hidden">
+                    <div className="flex-1 bg-linear-to-br from-slate-900/80 via-slate-900/50 to-slate-800/30 flex flex-col items-center justify-center p-4 lg:p-8 relative min-h-125 lg:min-h-0 overflow-hidden">
                         {/* Background Pattern */}
                         <div className="absolute inset-0 bg-[radial-gradient(rgba(56,189,248,0.03)_1px,transparent_1px)] bg-size-[20px_20px] pointer-events-none"></div>
                         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(56,189,248,0.05)_0%,transparent_70%)] pointer-events-none"></div>
