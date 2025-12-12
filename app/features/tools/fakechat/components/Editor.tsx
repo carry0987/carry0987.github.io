@@ -877,7 +877,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                         <p className="text-xs text-slate-500 mb-3">Drag the handle to reorder messages</p>
                         <div
                             ref={messageListRef}
-                            className="space-y-2 max-h-[400px] overflow-y-auto pr-1"
+                            className="space-y-2 max-h-100 overflow-y-auto pr-1"
                             onTouchMove={handleTouchMove}
                             onTouchEnd={handleTouchEnd}>
                             {messages.map((msg) => (
@@ -920,7 +920,7 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                                             {msg.isSender ? 'Me' : 'Them'}
                                         </span>
                                         <div className="flex flex-col overflow-hidden">
-                                            <p className="text-sm text-slate-300 truncate max-w-[250px]">
+                                            <p className="text-sm text-slate-300 truncate max-w-62.5">
                                                 {msg.image
                                                     ? '📷 [Image]'
                                                     : msg.audioDuration
