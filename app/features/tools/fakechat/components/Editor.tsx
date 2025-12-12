@@ -540,6 +540,19 @@ const Editor = forwardRef<EditorRef, EditorProps>(
                         />
                     </div>
 
+                    {platform === 'instagram' && (
+                        <div>
+                            <label className="block text-xs font-medium text-slate-400 mb-1">Partner Username</label>
+                            <input
+                                type="text"
+                                placeholder="@username"
+                                value={settings.partnerUsername || ''}
+                                onChange={(e) => setSettings({ ...settings, partnerUsername: e.target.value })}
+                                className="w-full p-2 bg-slate-800/50 border border-white/10 rounded-lg text-sm text-white focus:ring-2 focus:ring-tech-500 outline-none"
+                            />
+                        </div>
+                    )}
+
                     <div className="grid grid-cols-2 gap-4">
                         <div className="relative" ref={avatarMenuRef}>
                             <label className="block text-xs font-medium text-slate-400 mb-1">Partner Avatar</label>

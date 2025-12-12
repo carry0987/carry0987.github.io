@@ -35,6 +35,7 @@ export interface ChatSettings {
     time: string;
     batteryLevel: number;
     partnerName: string;
+    partnerUsername?: string; // Instagram username (e.g., @username)
     partnerAvatar: string;
     myAvatar: string; // Only used for some platforms like TikTok/Line if needed
     backgroundImage?: string;
