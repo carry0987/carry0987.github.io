@@ -221,7 +221,7 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                             <img src={settings.partnerAvatar} className="w-10 h-10 rounded-full object-cover" />
                             <div className="flex flex-col items-start">
                                 <span className="text-xs text-gray-600 mb-1 ml-1">{settings.partnerName}</span>
-                                <div className="bg-white px-4 py-2.5 rounded-2xl shadow-sm flex items-center gap-1.5 relative after:absolute after:top-2 after:-left-1 after:w-3 after:h-3 after:bg-white after:rotate-45">
+                                <div className="bg-white px-4 py-2.5 rounded-2xl shadow-sm flex items-center gap-1.5 relative after:absolute after:top-[12px] after:-left-1 after:w-3 after:h-3 after:bg-white after:rotate-45">
                                     <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '0ms' }} />
                                     <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '150ms' }} />
                                     <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '300ms' }} />
@@ -391,8 +391,8 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                     onClick={() => handleMessageClick(msg)}
                                     className={`max-w-60 px-3 py-2 text-[14px] rounded-2xl shadow-sm relative leading-relaxed cursor-pointer ${
                                         isSender
-                                            ? 'bg-[#85E249] text-black after:absolute after:top-2 after:-right-1 after:w-3 after:h-3 after:bg-[#85E249] after:rotate-45'
-                                            : 'bg-white text-black after:absolute after:top-2 after:-left-1 after:w-3 after:h-3 after:bg-white after:rotate-45'
+                                            ? 'bg-[#85E249] text-black after:absolute after:top-[12px] after:-right-1 after:w-3 after:h-3 after:bg-[#85E249] after:rotate-45'
+                                            : 'bg-white text-black after:absolute after:top-[12px] after:-left-1 after:w-3 after:h-3 after:bg-white after:rotate-45'
                                     }`}>
                                     {msg.image ? (
                                         <img src={msg.image} className="rounded-lg max-w-full" />
