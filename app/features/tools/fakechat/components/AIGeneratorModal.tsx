@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { Sparkles, Loader2, AlertCircle, ChevronDown, Check } from 'lucide-react';
 import { Modal } from './ui';
@@ -52,25 +52,49 @@ const AIGeneratorModal: React.FC<AIGeneratorModalProps> = ({
     const [selectedMood, setSelectedMood] = useState(MOOD_OPTIONS[0]);
     const [selectedLanguage, setSelectedLanguage] = useState(LANGUAGE_OPTIONS[0]);
 
-    // Load saved settings when modal opens
+    // Track if we've loaded initial settings to prevent re-loading
+    const hasLoadedRef = useRef(false);
+    // Track the last saved values to prevent unnecessary updates
+    const lastSavedRef = useRef<string>('');
+
+    // Load saved settings only once when modal opens
     useEffect(() => {
-        if (isOpen && savedSettings) {
+        if (isOpen && savedSettings && !hasLoadedRef.current) {
+            hasLoadedRef.current = true;
             setTopic(savedSettings.lastTopic || '');
             const savedMood = MOOD_OPTIONS.find((m) => m.id === savedSettings.lastMoodId);
             if (savedMood) setSelectedMood(savedMood);
             const savedLang = LANGUAGE_OPTIONS.find((l) => l.id === savedSettings.lastLanguageId);
             if (savedLang) setSelectedLanguage(savedLang);
         }
+        // Reset the flag when modal closes
+        if (!isOpen) {
+            hasLoadedRef.current = false;
+        }
     }, [isOpen, savedSettings]);
 
-    // Save settings when they change
-    useEffect(() => {
-        onSettingsChange({
+    // Memoized save function to prevent unnecessary calls
+    const saveSettings = useCallback(() => {
+        const newSettings = {
             lastTopic: topic,
             lastMoodId: selectedMood.id,
             lastLanguageId: selectedLanguage.id
-        });
-    }, [topic, selectedMood, selectedLanguage, onSettingsChange]);
+        };
+        const settingsKey = JSON.stringify(newSettings);
+
+        // Only call onSettingsChange if values actually changed
+        if (settingsKey !== lastSavedRef.current) {
+            lastSavedRef.current = settingsKey;
+            onSettingsChange(newSettings);
+        }
+    }, [topic, selectedMood.id, selectedLanguage.id, onSettingsChange]);
+
+    // Save settings when they change, but only after initial load
+    useEffect(() => {
+        if (hasLoadedRef.current) {
+            saveSettings();
+        }
+    }, [saveSettings]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
