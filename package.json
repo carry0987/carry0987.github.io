@@ -23,7 +23,7 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@google/genai": "^1.32.0",
+    "@google/genai": "^1.33.0",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@mediapipe/pose": "^0.5.1675469404",
@@ -35,25 +35,25 @@
     "@react-three/fiber": "^9.4.2",
     "html-to-image": "^1.11.13",
     "isbot": "^5.1.32",
-    "lucide-react": "^0.556.0",
-    "react": "^19.2.1",
-    "react-dom": "^19.2.1",
+    "lucide-react": "^0.560.0",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3",
     "react-router": "^7.10.1",
-    "three": "^0.181.2"
+    "three": "^0.182.0"
   },
   "devDependencies": {
     "@adakrei/stats": "^1.0.1",
     "@carry0987/darkmode": "^1.2.1",
     "@carry0987/utils": "^3.9.3",
-    "@tailwindcss/vite": "^4.1.17",
+    "@tailwindcss/vite": "^4.1.18",
     "@types/jquery": "^3.5.33",
-    "@types/node": "^24.10.2",
+    "@types/node": "^25.0.1",
     "@types/react": "^19.2.7",
     "@types/react-dom": "^19.2.3",
-    "@types/three": "^0.181.0",
+    "@types/three": "^0.182.0",
     "jquery": "^3.7.1",
     "prettier": "^3.7.4",
-    "tailwindcss": "^4.1.17",
+    "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
     "vite": "^7.2.7",
     "vite-tsconfig-paths": "^5.1.4"
