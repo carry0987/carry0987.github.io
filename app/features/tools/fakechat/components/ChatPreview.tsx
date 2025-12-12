@@ -110,26 +110,30 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
             switch (platform) {
                 case 'instagram':
                     return (
-                        <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-100 text-black">
+                        <div className="flex items-center justify-between px-3 py-2 bg-white text-black">
                             <div className="flex items-center gap-3">
-                                <ChevronLeft size={28} />
-                                <div className="flex items-center gap-2">
-                                    <img
-                                        src={settings.partnerAvatar}
-                                        alt="avatar"
-                                        className="w-8 h-8 rounded-full object-cover border border-gray-200"
-                                    />
+                                <ChevronLeft size={26} strokeWidth={1.5} />
+                                <div className="flex items-center gap-3">
+                                    <div className="relative">
+                                        <img
+                                            src={settings.partnerAvatar}
+                                            alt="avatar"
+                                            className="w-11 h-11 rounded-full object-cover"
+                                        />
+                                        {/* Online status indicator */}
+                                        <div className="absolute bottom-0 right-0 w-3.5 h-3.5 bg-[#1CD14F] rounded-full border-[2.5px] border-white"></div>
+                                    </div>
                                     <div>
-                                        <h3 className="text-sm font-bold leading-tight whitespace-nowrap">
+                                        <h3 className="text-[15px] font-semibold leading-tight whitespace-nowrap">
                                             {settings.partnerName}
                                         </h3>
-                                        <p className="text-[10px] text-gray-400 leading-tight">Active now</p>
+                                        <p className="text-[13px] text-gray-500 leading-tight">Active now</p>
                                     </div>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-5 text-black">
-                                <Phone size={24} />
-                                <Video size={26} />
+                            <div className="flex items-center gap-4 text-black">
+                                <Phone size={26} strokeWidth={1.5} />
+                                <Video size={28} strokeWidth={1.5} />
                             </div>
                         </div>
                     );
@@ -206,12 +210,12 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
             switch (platform) {
                 case 'instagram':
                     return (
-                        <div className="flex w-full mb-3 justify-start items-end gap-2">
-                            <img src={settings.partnerAvatar} className="w-7 h-7 rounded-full object-cover mb-1" />
-                            <div className="bg-[#efefef] px-4 py-3 rounded-3xl rounded-bl-md flex items-center gap-1.5">
-                                <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '0ms' }} />
-                                <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '150ms' }} />
-                                <div className={`${dotClasses} bg-gray-400`} style={{ animationDelay: '300ms' }} />
+                        <div className="flex w-full mb-2 justify-start items-end gap-2">
+                            <img src={settings.partnerAvatar} className="w-7 h-7 rounded-full object-cover" />
+                            <div className="bg-[#EFEFEF] px-4 py-3 rounded-[22px] flex items-center gap-1">
+                                <div className={`${dotClasses} bg-[#8E8E8E]`} style={{ animationDelay: '0ms' }} />
+                                <div className={`${dotClasses} bg-[#8E8E8E]`} style={{ animationDelay: '150ms' }} />
+                                <div className={`${dotClasses} bg-[#8E8E8E]`} style={{ animationDelay: '300ms' }} />
                             </div>
                         </div>
                     );
@@ -303,20 +307,20 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                 return (
                     <div
                         key={msg.id}
-                        className={`flex w-full mb-3 relative group ${isSender ? 'justify-end' : 'justify-start items-end gap-2'}`}>
+                        className={`flex w-full mb-1 relative group ${isSender ? 'justify-end' : 'justify-start items-end gap-2'} ${msg.reaction ? 'mb-4' : ''}`}>
                         {!isSender && (
-                            <img src={settings.partnerAvatar} className="w-7 h-7 rounded-full object-cover mb-1" />
+                            <img src={settings.partnerAvatar} className="w-7 h-7 rounded-full object-cover" />
                         )}
 
                         <div
-                            className="relative"
+                            className="relative max-w-[75%]"
                             ref={(el) => {
                                 if (el) messageRefs.current.set(msg.id, el);
                             }}>
                             {/* Reaction Picker Overlay */}
                             {isReacting && (
                                 <div
-                                    className={`reaction-picker absolute ${reactionPosition === 'top' ? '-top-14' : 'top-full mt-2'} ${isSender ? 'right-0' : 'left-0'} bg-[#262626] rounded-full px-2 py-1.5 flex gap-1 z-30 shadow-xl animate-in zoom-in duration-200`}>
+                                    className={`reaction-picker absolute ${reactionPosition === 'top' ? '-top-12' : 'top-full mt-2'} ${isSender ? 'right-0' : 'left-0'} bg-white rounded-full px-2 py-1.5 flex gap-0.5 z-30 shadow-lg border border-gray-100 animate-in zoom-in duration-200`}>
                                     {INSTAGRAM_REACTIONS.map((emoji) => (
                                         <button
                                             key={emoji}
@@ -337,33 +341,39 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
                                 onTouchEnd={handleTouchEnd}
                                 onClick={() => handleMessageClick(msg)}
                                 onContextMenu={(e) => e.preventDefault()}
-                                className={`max-w-60 px-4 py-2.5 text-[15px] leading-snug rounded-3xl relative select-none cursor-pointer transition-transform active:scale-95 ${
+                                style={
                                     isSender
-                                        ? 'bg-[#3797f0] text-white rounded-br-md'
-                                        : 'bg-[#efefef] text-black rounded-bl-md'
+                                        ? {
+                                              background:
+                                                  'linear-gradient(83deg, #6157FF 0%, #EE49FD 50%, #FF8F64 100%)'
+                                          }
+                                        : {}
+                                }
+                                className={`px-4 py-2 text-[15px] leading-[1.35] rounded-[22px] relative select-none cursor-pointer transition-transform active:scale-[0.98] ${
+                                    isSender ? 'text-white' : 'bg-[#EFEFEF] text-black'
                                 }`}>
                                 {msg.image ? (
-                                    <img src={msg.image} className="rounded-lg max-w-full" />
+                                    <img src={msg.image} className="rounded-2xl max-w-full" />
                                 ) : msg.audioDuration ? (
                                     renderVoiceVisual(isSender, msg.audioDuration, 'bars')
                                 ) : (
-                                    <span className="whitespace-pre-wrap wrap-break-words">{msg.text}</span>
+                                    <span className="whitespace-pre-wrap break-words">{msg.text}</span>
                                 )}
-                                {/* Timestamp inside bubble */}
-                                <div
-                                    className={`text-[9px] mt-1 text-right ${isSender ? 'text-blue-100/80' : 'text-gray-400'}`}>
-                                    {msg.timestamp}
-                                </div>
                             </div>
 
                             {/* Displayed Reaction */}
                             {msg.reaction && (
                                 <div
-                                    className={`absolute -bottom-2 ${isSender ? '-left-1' : '-right-1'} bg-white border-2 border-white rounded-full p-0.5 w-[22px] h-[22px] flex items-center justify-center shadow-sm z-10 text-[12px]`}>
+                                    className={`absolute -bottom-3 ${isSender ? 'left-2' : 'right-2'} bg-white rounded-full px-1 py-0.5 shadow-md border border-gray-100 z-10 text-[13px]`}>
                                     {msg.reaction}
                                 </div>
                             )}
                         </div>
+
+                        {/* Read receipt - small avatar shown after last sender message */}
+                        {isSender && msg.isRead && (
+                            <img src={settings.partnerAvatar} className="w-4 h-4 rounded-full object-cover self-end" />
+                        )}
                     </div>
                 );
             }
@@ -486,16 +496,21 @@ const ChatPreview = forwardRef<HTMLDivElement, ChatPreviewProps>(
             switch (platform) {
                 case 'instagram':
                     return (
-                        <div className="px-4 py-3 bg-white flex items-center gap-3 border-t border-gray-100">
-                            <div className="bg-[#efefef] flex-1 rounded-full px-2 py-2 flex items-center gap-2">
-                                <div className="bg-blue-500 rounded-full p-1.5 text-white">
-                                    <Camera size={16} />
-                                </div>
-                                <span className="text-gray-400 text-sm">Message...</span>
-                                <div className="ml-auto mr-1 flex gap-3 text-gray-500">
-                                    <Mic size={20} />
-                                    <ImageIcon size={20} />
-                                    <Smile size={20} />
+                        <div className="px-3 py-2 bg-white flex items-center gap-3">
+                            <div
+                                className="w-10 h-10 rounded-full flex items-center justify-center"
+                                style={{
+                                    background:
+                                        'linear-gradient(135deg, #405DE6 0%, #5851DB 10%, #833AB4 25%, #C13584 40%, #E1306C 55%, #FD1D1D 70%, #F56040 85%, #FFDC80 100%)'
+                                }}>
+                                <Camera size={22} className="text-white" strokeWidth={2} />
+                            </div>
+                            <div className="flex-1 bg-transparent border border-gray-300 rounded-full px-4 py-2.5 flex items-center">
+                                <span className="text-gray-400 text-[15px]">Message...</span>
+                                <div className="ml-auto flex gap-4 text-black">
+                                    <Mic size={22} strokeWidth={1.5} />
+                                    <ImageIcon size={22} strokeWidth={1.5} />
+                                    <Smile size={22} strokeWidth={1.5} />
                                 </div>
                             </div>
                         </div>
