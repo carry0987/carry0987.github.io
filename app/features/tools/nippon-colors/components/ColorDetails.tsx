@@ -78,22 +78,10 @@ const CopyableValue = ({ label, value, textColor }: { label: string; value: stri
 };
 
 const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
-    const [animateIn, setAnimateIn] = useState(false);
-
-    // Reset animation when color changes
-    useEffect(() => {
-        setAnimateIn(false);
-        // Small delay to trigger animation
-        const timer = setTimeout(() => setAnimateIn(true), 50);
-        return () => clearTimeout(timer);
-    }, [color]);
-
     return (
         <div className="relative z-10 flex flex-col h-full pl-6 md:pl-16 pt-10 md:pt-20 pb-10 justify-between pointer-events-none">
             {/* Top Left: Color Codes */}
-            <div
-                className={`pointer-events-auto transition-opacity duration-1000 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
-                style={{ color: textColor }}>
+            <div className="pointer-events-auto transition-colors duration-1000" style={{ color: textColor }}>
                 <div className="flex items-center gap-4 md:gap-5 mb-6">
                     {/* Hinomaru (Japanese Sun Circle) */}
                     <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-[#bc002d] shadow-sm shrink-0" />
