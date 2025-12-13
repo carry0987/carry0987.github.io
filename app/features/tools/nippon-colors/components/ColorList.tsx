@@ -87,11 +87,11 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                 group flex items-center justify-end w-full transition-all duration-300 outline-none
                 ${isActive ? 'opacity-100 scale-105' : 'opacity-50 hover:opacity-80 focus:opacity-80'}
               `}
-                            aria-label={`Select color ${color.name}`}>
+                            aria-label={`Select color ${color.ja}`}>
                             <span
                                 className={`mr-3 text-xs md:text-sm font-roman tracking-wider transition-colors duration-500`}
                                 style={{ color: textColor }}>
-                                {color.romaji}
+                                {color.en}
                             </span>
                             <div
                                 className={`

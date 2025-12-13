@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { NipponColor } from '../types';
+import { hexToRgb, hexToCmyk } from '../types';
 
 interface ColorDetailsProps {
     color: NipponColor;
@@ -100,9 +101,9 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
                 <div
                     className="space-y-4 font-roman text-sm md:text-base tracking-widest border-l-2 pl-4"
                     style={{ borderColor: textColor }}>
-                    <CopyableValue label="ROMAN" value={color.romaji} textColor={textColor} />
-                    <CopyableValue label="RGB" value={color.rgb} textColor={textColor} />
-                    <CopyableValue label="CMYK" value={color.cmyk} textColor={textColor} />
+                    <CopyableValue label="ROMAN" value={color.en} textColor={textColor} />
+                    <CopyableValue label="RGB" value={hexToRgb(color.hex)} textColor={textColor} />
+                    <CopyableValue label="CMYK" value={hexToCmyk(color.hex)} textColor={textColor} />
                     <CopyableValue label="HEX" value={color.hex} textColor={textColor} />
                 </div>
             </div>
@@ -113,7 +114,7 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
                 <div
                     className="vertical-text font-serif font-black text-[25vh] md:text-[40vh] opacity-20 select-none leading-none"
                     style={{ color: textColor }}>
-                    {color.name}
+                    {color.ja}
                 </div>
             </div>
         </div>
