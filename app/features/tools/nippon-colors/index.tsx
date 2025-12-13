@@ -2,21 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
 import { NIPPON_COLORS } from './constants';
+import { getContrastColor } from './utils/color';
 import ColorList from './components/ColorList';
 import ColorDetails from './components/ColorDetails';
 import ParticlesBackground from './components/ParticlesBackground';
 
 // Import relevant styles
 import './style.css';
-
-// Helper to determine text contrast (simple version)
-const getContrastColor = (hex: string) => {
-    const r = parseInt(hex.substr(1, 2), 16);
-    const g = parseInt(hex.substr(3, 2), 16);
-    const b = parseInt(hex.substr(5, 2), 16);
-    const yiq = (r * 299 + g * 587 + b * 114) / 1000;
-    return yiq >= 128 ? '#1a1a1a' : '#f5f5f5'; // Dark text for light bg, Light text for dark bg
-};
 
 const App: React.FC = () => {
     const [activeColor, setActiveColor] = useState(NIPPON_COLORS[0]);
