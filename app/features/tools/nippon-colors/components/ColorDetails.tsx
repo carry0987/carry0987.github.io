@@ -276,11 +276,15 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
 
                     {/* CMYK Visual */}
                     <CopyableVisual label="CMYK" value={hexToCmyk(color.hex)} textColor={textColor}>
-                        <div className="flex gap-2 md:gap-3">
-                            <CMYKDonutLarge label="C" value={c} color={cmykColors[0]} textColor={textColor} />
-                            <CMYKDonutLarge label="M" value={m} color={cmykColors[1]} textColor={textColor} />
-                            <CMYKDonutLarge label="Y" value={y} color={cmykColors[2]} textColor={textColor} />
-                            <CMYKDonutLarge label="K" value={k} color={cmykColors[3]} textColor={textColor} />
+                        <div className="flex flex-col gap-2 md:flex-row md:gap-3">
+                            <div className="flex gap-2 md:gap-3">
+                                <CMYKDonutLarge label="C" value={c} color={cmykColors[0]} textColor={textColor} />
+                                <CMYKDonutLarge label="M" value={m} color={cmykColors[1]} textColor={textColor} />
+                            </div>
+                            <div className="flex gap-2 md:gap-3">
+                                <CMYKDonutLarge label="Y" value={y} color={cmykColors[2]} textColor={textColor} />
+                                <CMYKDonutLarge label="K" value={k} color={cmykColors[3]} textColor={textColor} />
+                            </div>
                         </div>
                     </CopyableVisual>
 
