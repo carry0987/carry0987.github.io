@@ -143,7 +143,7 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                 {/* Right Section: Romaji, RGB Lines, Hex */}
                                 <div className="flex flex-col items-start flex-1">
                                     <span
-                                        className="font-roman text-lg md:text-xl tracking-widest mb-2"
+                                        className="font-roman text-sm md:text-base tracking-widest mb-2"
                                         style={{ color: textColor }}>
                                         {color.en}
                                     </span>
