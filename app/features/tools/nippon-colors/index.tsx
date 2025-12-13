@@ -1,8 +1,9 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Link } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
 import { NIPPON_COLORS } from './constants';
 import { getContrastColor } from './utils/color';
+import { saveManager } from './utils/saveManager';
 import ColorList from './components/ColorList';
 import ColorDetails from './components/ColorDetails';
 import ParticlesBackground from './components/ParticlesBackground';
@@ -10,9 +11,24 @@ import ParticlesBackground from './components/ParticlesBackground';
 // Import relevant styles
 import './style.css';
 
+const DEFAULT_DURATION = 1500;
+
 const App: React.FC = () => {
     const [activeColor, setActiveColor] = useState(NIPPON_COLORS[0]);
-    const [duration, setDuration] = useState(1500);
+    const [duration, setDuration] = useState(DEFAULT_DURATION);
+    const [isReady, setIsReady] = useState(false);
+
+    // Load saved duration on mount
+    useEffect(() => {
+        const saved = saveManager.getTransitionDuration();
+        setDuration(saved);
+        setIsReady(true);
+    }, []);
+
+    const handleDurationChange = useCallback((value: number) => {
+        setDuration(value);
+        saveManager.save(value);
+    }, []);
 
     const textColor = useMemo(() => getContrastColor(activeColor.hex), [activeColor.hex]);
     const borderColor = useMemo(() => {
@@ -59,7 +75,8 @@ const App: React.FC = () => {
             </main>
 
             {/* Duration Slider Control */}
-            <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 group">
+            <div
+                className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 group transition-opacity duration-300 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
                 <label
                     className="text-[10px] uppercase tracking-[0.2em] font-roman opacity-40 group-hover:opacity-100 transition-opacity duration-300 select-none"
                     style={{ color: textColor }}>
@@ -71,7 +88,7 @@ const App: React.FC = () => {
                     max="3000"
                     step="100"
                     value={duration}
-                    onChange={(e) => setDuration(Number(e.target.value))}
+                    onChange={(e) => handleDurationChange(Number(e.target.value))}
                     className="w-32 h-1 bg-current opacity-30 hover:opacity-100 rounded-lg appearance-none cursor-pointer transition-opacity duration-300"
                     style={{ color: textColor, accentColor: textColor }}
                 />
