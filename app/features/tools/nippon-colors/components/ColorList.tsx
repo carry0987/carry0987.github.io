@@ -125,16 +125,18 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                             <div className="flex w-full pr-4 md:pr-8 gap-4">
                                 {/* Left Section: ID, Kanji, CMYK */}
                                 <div className="flex flex-col items-start">
-                                    <span
-                                        className="font-serif text-sm tracking-widest opacity-80 mb-1"
-                                        style={{ color: accentColor }}>
-                                        {String(color.id).padStart(3, '0')}
-                                    </span>
-                                    <span
-                                        className="font-serif text-lg md:text-xl font-bold mb-2"
-                                        style={{ color: textColor }}>
-                                        {color.ja}
-                                    </span>
+                                    <div className="flex items-baseline gap-2 mb-2">
+                                        <span
+                                            className="font-serif text-sm tracking-widest opacity-80"
+                                            style={{ color: accentColor }}>
+                                            {String(color.id).padStart(3, '0')}
+                                        </span>
+                                        <span
+                                            className="font-serif text-lg md:text-xl font-bold"
+                                            style={{ color: textColor }}>
+                                            {color.ja}
+                                        </span>
+                                    </div>
                                     <div className="flex gap-1 md:gap-1.5">
                                         {cmykValues.map((val, i) => (
                                             <CMYKDonut key={i} value={val} color={textColor} />
