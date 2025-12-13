@@ -7,6 +7,100 @@ interface ColorDetailsProps {
     textColor: string;
 }
 
+// CMYK Donut Chart with label and centered value
+const CMYKDonutLarge: React.FC<{ label: string; value: number; color: string; textColor: string }> = ({
+    label,
+    value,
+    color,
+    textColor
+}) => {
+    return (
+        <div className="flex flex-col items-center">
+            <span
+                className="text-[8px] md:text-[10px] font-sans tracking-widest opacity-60 mb-0.5 md:mb-1 border-b pb-0.5"
+                style={{ color: textColor, borderColor: `${textColor}40` }}>
+                {label}
+            </span>
+            {/* Mobile size */}
+            <div className="relative block md:hidden" style={{ width: 32, height: 32 }}>
+                <svg width={32} height={32} className="-rotate-90">
+                    <circle
+                        cx={16}
+                        cy={16}
+                        r={12}
+                        fill="transparent"
+                        stroke={textColor}
+                        strokeOpacity="0.2"
+                        strokeWidth={4}
+                    />
+                    <circle
+                        cx={16}
+                        cy={16}
+                        r={12}
+                        fill="transparent"
+                        stroke={color}
+                        strokeWidth={4}
+                        strokeDasharray={2 * Math.PI * 12}
+                        strokeDashoffset={2 * Math.PI * 12 - (value / 100) * 2 * Math.PI * 12}
+                        strokeLinecap="butt"
+                        className="transition-all duration-500"
+                    />
+                </svg>
+                <span
+                    className="absolute inset-0 flex items-center justify-center text-[10px] font-serif"
+                    style={{ color }}>
+                    {value}
+                </span>
+            </div>
+            {/* Desktop size */}
+            <div className="relative hidden md:block" style={{ width: 50, height: 50 }}>
+                <svg width={50} height={50} className="-rotate-90">
+                    <circle
+                        cx={25}
+                        cy={25}
+                        r={20}
+                        fill="transparent"
+                        stroke={textColor}
+                        strokeOpacity="0.2"
+                        strokeWidth={6}
+                    />
+                    <circle
+                        cx={25}
+                        cy={25}
+                        r={20}
+                        fill="transparent"
+                        stroke={color}
+                        strokeWidth={6}
+                        strokeDasharray={2 * Math.PI * 20}
+                        strokeDashoffset={2 * Math.PI * 20 - (value / 100) * 2 * Math.PI * 20}
+                        strokeLinecap="butt"
+                        className="transition-all duration-500"
+                    />
+                </svg>
+                <span className="absolute inset-0 flex items-center justify-center text-sm" style={{ color }}>
+                    {value}
+                </span>
+            </div>
+        </div>
+    );
+};
+
+// RGB Value Display with label
+const RGBValue: React.FC<{ label: string; value: number; textColor: string }> = ({ label, value, textColor }) => {
+    return (
+        <div className="flex flex-col items-center">
+            <span
+                className="text-[8px] md:text-[10px] font-sans tracking-widest opacity-60 mb-0.5 md:mb-1 border-b pb-0.5"
+                style={{ color: textColor, borderColor: `${textColor}40` }}>
+                {label}
+            </span>
+            <span className="text-base md:text-xl" style={{ color: textColor }}>
+                {value}
+            </span>
+        </div>
+    );
+};
+
 const CopyableValue = ({ label, value, textColor }: { label: string; value: string; textColor: string }) => {
     const [copied, setCopied] = useState(false);
 
@@ -78,6 +172,20 @@ const CopyableValue = ({ label, value, textColor }: { label: string; value: stri
 };
 
 const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
+    // Parse CMYK values
+    const cmykValues = hexToCmyk(color.hex)
+        .split(',')
+        .map((v) => parseInt(v.trim()));
+    const [c, m, y, k] = cmykValues;
+
+    // Parse RGB values
+    const r = parseInt(color.hex.substring(1, 3), 16);
+    const g = parseInt(color.hex.substring(3, 5), 16);
+    const b = parseInt(color.hex.substring(5, 7), 16);
+
+    // CMYK colors
+    const cmykColors = ['#00BFFF', '#FF1493', '#FFD700', '#333333'];
+
     return (
         <div className="relative z-10 flex flex-col h-full pl-6 md:pl-16 pt-10 md:pt-20 pb-10 justify-between pointer-events-none">
             {/* Top Left: Color Codes */}
@@ -94,9 +202,28 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
                     className="space-y-4 font-roman text-sm md:text-base tracking-widest border-l-2 pl-4"
                     style={{ borderColor: textColor }}>
                     <CopyableValue label="ROMAN" value={color.en} textColor={textColor} />
-                    <CopyableValue label="RGB" value={hexToRgb(color.hex)} textColor={textColor} />
-                    <CopyableValue label="CMYK" value={hexToCmyk(color.hex)} textColor={textColor} />
                     <CopyableValue label="HEX" value={color.hex} textColor={textColor} />
+
+                    {/* CMYK Visual */}
+                    <div>
+                        <span className="block text-xs opacity-60 mb-2">CMYK</span>
+                        <div className="flex gap-2 md:gap-3">
+                            <CMYKDonutLarge label="C" value={c} color={cmykColors[0]} textColor={textColor} />
+                            <CMYKDonutLarge label="M" value={m} color={cmykColors[1]} textColor={textColor} />
+                            <CMYKDonutLarge label="Y" value={y} color={cmykColors[2]} textColor={textColor} />
+                            <CMYKDonutLarge label="K" value={k} color={cmykColors[3]} textColor={textColor} />
+                        </div>
+                    </div>
+
+                    {/* RGB Visual */}
+                    <div>
+                        <span className="block text-xs opacity-60 mb-2">RGB</span>
+                        <div className="flex gap-4 md:gap-6">
+                            <RGBValue label="R" value={r} textColor={textColor} />
+                            <RGBValue label="G" value={g} textColor={textColor} />
+                            <RGBValue label="B" value={b} textColor={textColor} />
+                        </div>
+                    </div>
                 </div>
             </div>
 
