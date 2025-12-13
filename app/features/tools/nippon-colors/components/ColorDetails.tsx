@@ -17,37 +17,37 @@ const CMYKDonutLarge: React.FC<{ label: string; value: number; color: string; te
     return (
         <div className="flex flex-col items-center">
             <span
-                className="text-[8px] md:text-[10px] font-sans tracking-widest opacity-60 mb-0.5 md:mb-1 border-b pb-0.5"
+                className="text-[10px] md:text-[12px] font-sans tracking-widest opacity-60 mb-0.5 md:mb-1 border-b pb-0.5"
                 style={{ color: textColor, borderColor: `${textColor}40` }}>
                 {label}
             </span>
             {/* Mobile size */}
-            <div className="relative block md:hidden" style={{ width: 32, height: 32 }}>
-                <svg width={32} height={32} className="-rotate-90">
+            <div className="relative block md:hidden" style={{ width: 38, height: 38 }}>
+                <svg width={38} height={38} className="-rotate-90">
                     <circle
-                        cx={16}
-                        cy={16}
-                        r={12}
+                        cx={19}
+                        cy={19}
+                        r={14}
                         fill="transparent"
                         stroke={textColor}
                         strokeOpacity="0.2"
-                        strokeWidth={4}
+                        strokeWidth={5}
                     />
                     <circle
-                        cx={16}
-                        cy={16}
-                        r={12}
+                        cx={19}
+                        cy={19}
+                        r={14}
                         fill="transparent"
                         stroke={color}
-                        strokeWidth={4}
-                        strokeDasharray={2 * Math.PI * 12}
-                        strokeDashoffset={2 * Math.PI * 12 - (value / 100) * 2 * Math.PI * 12}
+                        strokeWidth={5}
+                        strokeDasharray={2 * Math.PI * 14}
+                        strokeDashoffset={2 * Math.PI * 14 - (value / 100) * 2 * Math.PI * 14}
                         strokeLinecap="butt"
                         className="transition-all duration-500"
                     />
                 </svg>
                 <span
-                    className="absolute inset-0 flex items-center justify-center text-[10px] font-serif"
+                    className="absolute inset-0 flex items-center justify-center text-xs font-serif"
                     style={{ color }}>
                     {value}
                 </span>
@@ -90,11 +90,11 @@ const RGBValue: React.FC<{ label: string; value: number; textColor: string }> = 
     return (
         <div className="flex flex-col items-center">
             <span
-                className="text-[8px] md:text-[10px] font-sans tracking-widest opacity-60 mb-0.5 md:mb-1 border-b pb-0.5"
+                className="text-[10px] md:text-[12px] font-sans tracking-widest opacity-60 mb-0.5 md:mb-1 border-b pb-0.5"
                 style={{ color: textColor, borderColor: `${textColor}40` }}>
                 {label}
             </span>
-            <span className="text-base md:text-xl" style={{ color: textColor }}>
+            <span className="text-lg md:text-xl" style={{ color: textColor }}>
                 {value}
             </span>
         </div>
