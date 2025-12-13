@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { getContrastColor } from '../utils/color';
 import type { NipponColor } from '../types';
 import { hexToCmyk } from '../types';
@@ -36,6 +36,7 @@ const CMYKDonut: React.FC<{ value: number; color: string }> = ({ value, color })
 
 const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, textColor, borderColor }) => {
     const listRef = useRef<HTMLDivElement>(null);
+    const [hoveredColorId, setHoveredColorId] = useState<number | null>(null);
 
     useEffect(() => {
         if (listRef.current) {
@@ -87,10 +88,17 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                     const isActive = color.id === activeColor.id;
                     const contrastColor = getContrastColor(color.hex);
 
+                    // Determine if this item is being hovered
+                    const isHovered = hoveredColorId === color.id;
+
                     // Determine accent color for the ID and Bar.
                     // If the item is active (bg matches item color), we use the text color for visibility.
                     // If inactive, we use the item's own hex color to make it pop against the global background.
                     const accentColor = isActive ? textColor : color.hex;
+
+                    // Determine the display color for text elements
+                    // On hover (when not active), use the item's own hex color
+                    const displayColor = isActive ? textColor : isHovered ? color.hex : textColor;
 
                     // Parse CMYK for the donuts (calculate from hex)
                     const cmykValues = hexToCmyk(color.hex)
@@ -107,9 +115,11 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                             key={color.id}
                             data-id={color.id}
                             onClick={() => onSelect(color)}
+                            onMouseEnter={() => setHoveredColorId(color.id)}
+                            onMouseLeave={() => setHoveredColorId(null)}
                             className={`
                                 group relative flex w-full text-left transition-all duration-300 outline-none
-                                ${isActive ? 'opacity-100' : 'opacity-60 hover:opacity-90'}
+                                ${isActive ? 'opacity-100' : 'opacity-60 hover:opacity-100'}
                             `}
                             aria-label={`Select color ${color.ja}`}>
                             {/* Active/Selection Indicator Bar */}
@@ -128,14 +138,14 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                             {String(color.id).padStart(3, '0')}
                                         </span>
                                         <span
-                                            className="font-serif text-sm md:text-base font-bold"
-                                            style={{ color: textColor }}>
+                                            className="font-serif text-sm md:text-base font-bold transition-colors duration-300"
+                                            style={{ color: displayColor }}>
                                             {color.ja}
                                         </span>
                                     </div>
                                     <div className="flex justify-between w-full">
                                         {cmykValues.map((val, i) => (
-                                            <CMYKDonut key={i} value={val} color={textColor} />
+                                            <CMYKDonut key={i} value={val} color={displayColor} />
                                         ))}
                                     </div>
                                 </div>
@@ -143,11 +153,13 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                 {/* Right Section: Romaji, RGB Lines, Hex */}
                                 <div className="flex flex-col items-start flex-1">
                                     <span
-                                        className="font-roman text-sm md:text-base tracking-widest mb-2"
-                                        style={{ color: textColor }}>
+                                        className="font-roman text-sm md:text-base tracking-widest mb-2 transition-colors duration-300"
+                                        style={{ color: displayColor }}>
                                         {color.en}
                                     </span>
-                                    <div className="flex flex-col w-full mb-1 space-y-1" style={{ color: textColor }}>
+                                    <div
+                                        className="flex flex-col w-full mb-1 space-y-1 transition-colors duration-300"
+                                        style={{ color: displayColor }}>
                                         <div className="relative h-px w-full">
                                             <div className="absolute inset-0 bg-current opacity-25"></div>
                                             <div
@@ -168,8 +180,8 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                         </div>
                                     </div>
                                     <span
-                                        className="text-xs font-sans tracking-widest opacity-70 uppercase"
-                                        style={{ color: textColor }}>
+                                        className="text-xs font-sans tracking-widest opacity-70 uppercase transition-colors duration-300"
+                                        style={{ color: displayColor }}>
                                         {color.hex}
                                     </span>
                                 </div>
