@@ -9,6 +9,14 @@ export function meta({}: Route.MetaArgs) {
 export default function ToolsPage() {
     const tools = [
         {
+            title: 'Nippon Colors',
+            desc: 'Browse traditional Japanese colors (日本の伝統色), search by name, and copy HEX/RGB/CMYK.',
+            tech: ['React', 'Color Utils', 'Clipboard API'],
+            category: 'Design',
+            icon: Palette,
+            toolUrl: '/tools/nippon-colors'
+        },
+        {
             title: 'SVG Generator',
             desc: 'Generate custom SVG graphics using AI-powered prompts. Create unique vector artwork with the help of Gemini API.',
             tech: ['React', 'Gemini API', 'SVG'],
@@ -39,14 +47,6 @@ export default function ToolsPage() {
             category: 'Creative',
             icon: MessageCircle,
             toolUrl: '/tools/fakechat'
-        },
-        {
-            title: 'Nippon Colors',
-            desc: 'Browse traditional Japanese colors (日本の伝統色), search by name, and copy HEX/RGB/CMYK.',
-            tech: ['React', 'Color Utils', 'Clipboard API'],
-            category: 'Design',
-            icon: Palette,
-            toolUrl: '/tools/nippon-colors'
         }
     ];
 

@@ -12,11 +12,11 @@ export default [
     route('/games/perlin-noise', './features/games/perlin-noise/index.tsx'),
     route('/games/neon-gyro-maze', './features/games/neon-gyro-maze/index.tsx'),
     /* Tools */
+    route('/tools/nippon-colors', './features/tools/nippon-colors/index.tsx'),
     route('/tools/svg-generator', './features/tools/svg-generator/index.tsx'),
     route('/tools/focusflow-widget', './features/tools/focusflow-widget/index.tsx'),
     route('/tools/imgur-drop', './features/tools/imgur-drop/index.tsx'),
     route('/tools/fakechat', './features/tools/fakechat/index.tsx'),
-    route('/tools/nippon-colors', './features/tools/nippon-colors/index.tsx'),
     /* Other Routes */
     ...(await flatRoutes({
         ignoredRouteFiles: ['**/.*', '**/*.css', '**/*.scss']
