@@ -76,7 +76,7 @@ const App: React.FC = () => {
 
             {/* Duration Slider Control */}
             <div
-                className={`fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex flex-col items-center gap-2 group transition-opacity duration-300 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
+                className={`fixed bottom-6 left-6 md:left-1/2 md:-translate-x-1/2 z-40 flex flex-col items-start md:items-center gap-2 group transition-opacity duration-300 ${isReady ? 'opacity-100' : 'opacity-0'}`}>
                 <label
                     className="text-[10px] uppercase tracking-[0.2em] font-roman opacity-40 group-hover:opacity-100 transition-opacity duration-300 select-none"
                     style={{ color: textColor }}>

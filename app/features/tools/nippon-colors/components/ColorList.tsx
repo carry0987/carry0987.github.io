@@ -86,7 +86,7 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
     return (
         <div
             className={`absolute right-0 top-0 bottom-0 overflow-y-auto no-scrollbar z-20 py-10 outline-none transition-opacity duration-300 ${
-                isMobile ? 'w-36' : 'w-104'
+                isMobile ? 'w-40' : 'w-104'
             }`}
             ref={listRef}
             onKeyDown={handleKeyDown}
@@ -151,11 +151,11 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                             {color.ja}
                                         </span>
                                     </div>
-                                    {/* Hex code */}
+                                    {/* Romaji */}
                                     <span
-                                        className="text-[10px] font-sans tracking-widest opacity-70 uppercase transition-colors duration-300"
+                                        className="text-[10px] font-roman tracking-widest opacity-70 transition-colors duration-300"
                                         style={{ color: displayColor }}>
-                                        {color.hex}
+                                        {color.en}
                                     </span>
                                 </div>
                             </button>
