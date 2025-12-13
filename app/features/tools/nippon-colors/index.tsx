@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Link } from 'react-router';
 import { ArrowLeft } from 'lucide-react';
+import { getHashParam, setHashParam } from '@carry0987/utils';
 import { NIPPON_COLORS } from './constants';
 import { getContrastColor } from './utils/color';
 import { saveManager } from './utils/saveManager';
@@ -14,15 +15,54 @@ import './style.css';
 const DEFAULT_DURATION = 1500;
 
 const App: React.FC = () => {
-    const [activeColor, setActiveColor] = useState(NIPPON_COLORS[0]);
+    const [activeColor, setActiveColor] = useState(() => {
+        // Check URL hash on initial load (client-side only)
+        if (typeof window !== 'undefined') {
+            const hash = getHashParam()?.toLowerCase();
+            if (hash) {
+                const found = NIPPON_COLORS.find((c) => c.en.toLowerCase() === hash);
+                if (found) return found;
+            }
+        }
+        return NIPPON_COLORS[0];
+    });
     const [duration, setDuration] = useState(DEFAULT_DURATION);
     const [isReady, setIsReady] = useState(false);
 
-    // Load saved duration on mount
+    // Load saved duration on mount and handle hash changes
     useEffect(() => {
         const saved = saveManager.getTransitionDuration();
         setDuration(saved);
+
+        // Handle initial hash on client-side
+        const hash = getHashParam()?.toLowerCase();
+        if (hash) {
+            const found = NIPPON_COLORS.find((c) => c.en.toLowerCase() === hash);
+            if (found) setActiveColor(found);
+        }
+
         setIsReady(true);
+
+        // Listen for hash changes (e.g., browser back/forward)
+        const handleHashChange = () => {
+            const newHash = getHashParam()?.toLowerCase();
+            if (newHash) {
+                const found = NIPPON_COLORS.find((c) => c.en.toLowerCase() === newHash);
+                if (found) setActiveColor(found);
+            } else {
+                setActiveColor(NIPPON_COLORS[0]);
+            }
+        };
+
+        window.addEventListener('hashchange', handleHashChange);
+        return () => window.removeEventListener('hashchange', handleHashChange);
+    }, []);
+
+    // Update URL hash when color changes
+    const handleColorSelect = useCallback((color: (typeof NIPPON_COLORS)[0]) => {
+        setActiveColor(color);
+        const newUrl = setHashParam(window.location.href, color.en.toLowerCase());
+        window.history.replaceState(null, '', newUrl);
     }, []);
 
     const handleDurationChange = useCallback((value: number) => {
@@ -68,7 +108,7 @@ const App: React.FC = () => {
                 <ColorList
                     colors={NIPPON_COLORS}
                     activeColor={activeColor}
-                    onSelect={setActiveColor}
+                    onSelect={handleColorSelect}
                     textColor={textColor}
                     borderColor={borderColor}
                 />
