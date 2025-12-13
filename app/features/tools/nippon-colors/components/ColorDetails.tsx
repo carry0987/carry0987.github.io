@@ -104,7 +104,7 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
             <div
                 className={`absolute top-1/2 left-1/2 md:left-2/3 -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-all duration-1000 ease-in-out`}>
                 <div
-                    className="vertical-text font-serif font-black text-[25vh] md:text-[40vh] opacity-20 select-none leading-none"
+                    className="vertical-text font-serif font-black text-[15vh] md:text-[40vh] opacity-20 select-none leading-none"
                     style={{ color: textColor }}>
                     {color.ja}
                 </div>
