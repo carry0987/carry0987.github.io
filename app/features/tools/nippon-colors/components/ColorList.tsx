@@ -1,5 +1,6 @@
-import React, { useRef, useEffect, useMemo } from 'react';
+import React, { useRef, useEffect } from 'react';
 import type { NipponColor } from '../types';
+import { hexToCmyk } from '../types';
 
 interface ColorListProps {
     colors: NipponColor[];
@@ -9,110 +10,42 @@ interface ColorListProps {
     borderColor: string;
 }
 
-// Helper to determine text contrast (matches App.tsx logic)
-// Returns the ideal text color for a given background hex
+// Helper to determine text contrast
 const getContrastColor = (hex: string) => {
-    const r = parseInt(hex.substr(1, 2), 16);
-    const g = parseInt(hex.substr(3, 2), 16);
-    const b = parseInt(hex.substr(5, 2), 16);
+    const r = parseInt(hex.substring(1, 3), 16);
+    const g = parseInt(hex.substring(3, 5), 16);
+    const b = parseInt(hex.substring(5, 7), 16);
     const yiq = (r * 299 + g * 587 + b * 114) / 1000;
+
     return yiq >= 128 ? '#1a1a1a' : '#f5f5f5';
 };
 
-// Helper to parse hex to RGB values
-const hexToRgbValues = (hex: string): { r: number; g: number; b: number } => {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    if (!result) return { r: 0, g: 0, b: 0 };
-    return {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    };
-};
-
-// Helper to convert RGB to CMYK values (0-100)
-const rgbToCmykValues = (r: number, g: number, b: number): { c: number; m: number; y: number; k: number } => {
-    const rNorm = r / 255;
-    const gNorm = g / 255;
-    const bNorm = b / 255;
-
-    const k = 1 - Math.max(rNorm, gNorm, bNorm);
-    if (k === 1) return { c: 0, m: 0, y: 0, k: 100 };
-
-    const c = Math.round(((1 - rNorm - k) / (1 - k)) * 100);
-    const m = Math.round(((1 - gNorm - k) / (1 - k)) * 100);
-    const y = Math.round(((1 - bNorm - k) / (1 - k)) * 100);
-    const kPercent = Math.round(k * 100);
-
-    return { c, m, y, k: kPercent };
-};
-
-// CMYK Ring Component - displays a donut chart style ring
-const CmykRing: React.FC<{ value: number; size?: number; strokeWidth?: number; color: string }> = ({
-    value,
-    size = 16,
-    strokeWidth = 3,
-    color
-}) => {
-    const radius = (size - strokeWidth) / 2;
+const CMYKDonut: React.FC<{ value: number; color: string }> = ({ value, color }) => {
+    const radius = 6;
     const circumference = 2 * Math.PI * radius;
-    const strokeDashoffset = circumference - (value / 100) * circumference;
+    const offset = circumference - (value / 100) * circumference;
 
     return (
-        <svg width={size} height={size} className="transform -rotate-90">
-            {/* Background circle */}
+        <svg width="18" height="18" className="-rotate-90">
+            <circle cx="9" cy="9" r={radius} fill="transparent" stroke={color} strokeOpacity="0.2" strokeWidth="3" />
             <circle
-                cx={size / 2}
-                cy={size / 2}
+                cx="9"
+                cy="9"
                 r={radius}
-                fill="none"
+                fill="transparent"
                 stroke={color}
-                strokeWidth={strokeWidth}
-                opacity={0.2}
-            />
-            {/* Value arc */}
-            <circle
-                cx={size / 2}
-                cy={size / 2}
-                r={radius}
-                fill="none"
-                stroke={color}
-                strokeWidth={strokeWidth}
+                strokeWidth="3"
                 strokeDasharray={circumference}
-                strokeDashoffset={strokeDashoffset}
+                strokeDashoffset={offset}
                 strokeLinecap="round"
-                opacity={0.8}
             />
         </svg>
-    );
-};
-
-// RGB Bar Component - displays a horizontal bar
-const RgbBar: React.FC<{ value: number; maxWidth?: number; height?: number; color: string }> = ({
-    value,
-    maxWidth = 32,
-    height = 2,
-    color
-}) => {
-    const width = (value / 255) * maxWidth;
-
-    return (
-        <div className="relative" style={{ width: maxWidth, height }}>
-            {/* Background bar */}
-            <div className="absolute inset-0 rounded-full opacity-20" style={{ backgroundColor: color }} />
-            {/* Value bar */}
-            <div
-                className="absolute left-0 top-0 bottom-0 rounded-full opacity-80"
-                style={{ backgroundColor: color, width }}
-            />
-        </div>
     );
 };
 
 const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, textColor, borderColor }) => {
     const listRef = useRef<HTMLDivElement>(null);
 
-    // Scroll active color into view smoothly
     useEffect(() => {
         if (listRef.current) {
             const activeEl = listRef.current.querySelector(`[data-id="${activeColor.id}"]`);
@@ -122,7 +55,6 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
         }
     }, [activeColor.id]);
 
-    // Handle keyboard navigation
     const handleKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
         const isArrowUp = e.key === 'ArrowUp';
         const isArrowDown = e.key === 'ArrowDown';
@@ -142,7 +74,6 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                     nextIndex = (currentIndex - 1 + buttons.length) % buttons.length;
                 }
             } else {
-                // If focus is lost or on container, try to start from the active color
                 const activeBtnIndex = buttons.findIndex((btn) => btn.dataset.id === String(activeColor.id));
                 nextIndex = activeBtnIndex !== -1 ? activeBtnIndex : 0;
             }
@@ -155,16 +86,25 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
 
     return (
         <div
-            className="absolute right-0 top-0 bottom-0 w-52 md:w-96 overflow-y-auto no-scrollbar z-20 py-10 outline-none"
+            className="absolute right-0 top-0 bottom-0 w-64 md:w-80 overflow-y-auto no-scrollbar z-20 py-10 outline-none"
             ref={listRef}
             onKeyDown={handleKeyDown}
-            tabIndex={0} // Make container focusable to catch initial key events
+            tabIndex={0}
             aria-label="Color list">
-            <div className="flex flex-col items-end pr-4 md:pr-10 space-y-4">
+            <div className="flex flex-col items-end space-y-4 pb-20">
                 {colors.map((color) => {
                     const isActive = color.id === activeColor.id;
-                    const rgb = hexToRgbValues(color.hex);
-                    const cmyk = rgbToCmykValues(rgb.r, rgb.g, rgb.b);
+                    const contrastColor = getContrastColor(color.hex);
+
+                    // Determine accent color for the ID and Bar.
+                    // If the item is active (bg matches item color), we use the text color for visibility.
+                    // If inactive, we use the item's own hex color to make it pop against the global background.
+                    const accentColor = isActive ? textColor : color.hex;
+
+                    // Parse CMYK for the donuts (calculate from hex)
+                    const cmykValues = hexToCmyk(color.hex)
+                        .split(',')
+                        .map((v) => parseInt(v.trim()));
 
                     return (
                         <button
@@ -172,57 +112,56 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                             data-id={color.id}
                             onClick={() => onSelect(color)}
                             className={`
-                group flex flex-col items-end w-full transition-all duration-300 outline-none
-                ${isActive ? 'opacity-100 scale-105' : 'opacity-50 hover:opacity-80 focus:opacity-80'}
+                group relative flex w-full text-left transition-all duration-300 outline-none
+                ${isActive ? 'opacity-100' : 'opacity-60 hover:opacity-90'}
               `}
                             aria-label={`Select color ${color.ja}`}>
-                            {/* Top row: Color code, Kanji, English name */}
-                            <div className="flex items-center justify-end w-full mb-1">
-                                <span className="mr-2 text-[10px] font-mono opacity-60" style={{ color: textColor }}>
-                                    {color.code.replace('col', '')}
-                                </span>
-                                <span className="mr-2 text-xs font-serif opacity-80" style={{ color: textColor }}>
-                                    {color.ja}
-                                </span>
-                                <span
-                                    className="text-xs md:text-sm font-roman tracking-wider font-medium"
-                                    style={{ color: textColor }}>
-                                    {color.en}
-                                </span>
-                            </div>
+                            {/* Active/Selection Indicator Bar */}
+                            <div
+                                className={`w-1.5 md:w-2 mr-3 md:mr-4 transition-all duration-300 shrink-0`}
+                                style={{ backgroundColor: accentColor }}
+                            />
 
-                            {/* Bottom row: CMYK circles + RGB bars + Color swatch + HEX */}
-                            <div className="flex items-center gap-2">
-                                {/* CMYK Rings */}
-                                <div className="hidden md:flex items-center gap-1">
-                                    <CmykRing value={cmyk.c} color={textColor} />
-                                    <CmykRing value={cmyk.m} color={textColor} />
-                                    <CmykRing value={cmyk.y} color={textColor} />
-                                    <CmykRing value={cmyk.k} color={textColor} />
+                            <div className="flex w-full pr-4 md:pr-8 gap-4">
+                                {/* Left Section: ID, Kanji, CMYK */}
+                                <div className="flex flex-col items-start">
+                                    <span
+                                        className="font-serif text-sm tracking-widest opacity-80 mb-1"
+                                        style={{ color: accentColor }}>
+                                        {String(color.id).padStart(3, '0')}
+                                    </span>
+                                    <span
+                                        className="font-serif text-lg md:text-xl font-bold mb-2"
+                                        style={{ color: textColor }}>
+                                        {color.ja}
+                                    </span>
+                                    <div className="flex gap-1 md:gap-1.5">
+                                        {cmykValues.map((val, i) => (
+                                            <CMYKDonut key={i} value={val} color={textColor} />
+                                        ))}
+                                    </div>
                                 </div>
 
-                                {/* RGB Bars */}
-                                <div className="hidden md:flex flex-col gap-0.5">
-                                    <RgbBar value={rgb.r} color={textColor} />
-                                    <RgbBar value={rgb.g} color={textColor} />
-                                    <RgbBar value={rgb.b} color={textColor} />
+                                {/* Right Section: Romaji, RGB Lines, Hex */}
+                                <div className="flex flex-col items-end flex-1">
+                                    <span
+                                        className="font-roman text-lg md:text-xl tracking-widest mb-2"
+                                        style={{ color: textColor }}>
+                                        {color.en}
+                                    </span>
+                                    <div
+                                        className="flex flex-col items-end w-full opacity-40 mb-1 space-y-0.5"
+                                        style={{ color: textColor }}>
+                                        <div className="h-px bg-current w-full"></div>
+                                        <div className="h-px bg-current w-[70%]"></div>
+                                        <div className="h-px bg-current w-full"></div>
+                                    </div>
+                                    <span
+                                        className="text-xs font-sans tracking-widest opacity-70 uppercase"
+                                        style={{ color: textColor }}>
+                                        {color.hex}
+                                    </span>
                                 </div>
-
-                                {/* Color swatch */}
-                                <div
-                                    className={`
-                      w-6 h-6 md:w-8 md:h-8 shadow-md transition-all duration-500
-                      ${isActive ? 'rounded-none' : 'rounded-sm'}
-                    `}
-                                    style={{ backgroundColor: color.hex }}
-                                />
-
-                                {/* HEX code */}
-                                <span
-                                    className="text-[10px] font-mono w-14 text-left opacity-70"
-                                    style={{ color: textColor }}>
-                                    {color.hex}
-                                </span>
                             </div>
                         </button>
                     );
