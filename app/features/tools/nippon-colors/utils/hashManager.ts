@@ -2,8 +2,6 @@ import { getHashParam, setHashParam } from '@carry0987/utils';
 import { NIPPON_COLORS } from '../constants';
 import type { NipponColor } from '../types';
 
-const HASH_PARAM_KEY = 'color';
-
 /**
  * Get color from URL hash parameter
  * @returns The found color or null if not found
@@ -11,7 +9,7 @@ const HASH_PARAM_KEY = 'color';
 export function getColorFromHash(): NipponColor | null {
     if (typeof window === 'undefined') return null;
 
-    const hash = getHashParam(HASH_PARAM_KEY)?.toLowerCase();
+    const hash = getHashParam()?.toLowerCase();
     if (hash) {
         const found = NIPPON_COLORS.find((c) => c.en.toLowerCase() === hash);
         if (found) return found;
@@ -24,7 +22,7 @@ export function getColorFromHash(): NipponColor | null {
  * @param color The color to set
  */
 export function setColorToHash(color: NipponColor): void {
-    const newUrl = setHashParam(window.location.href, { [HASH_PARAM_KEY]: color.en.toLowerCase() });
+    const newUrl = setHashParam(window.location.href, color.en.toLowerCase());
     window.history.replaceState(null, '', newUrl);
 }
 
