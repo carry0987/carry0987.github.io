@@ -86,4 +86,21 @@ const App: React.FC = () => {
     );
 };
 
+// Mark this route as fullscreen (no navbar, footer, background)
+export const handle = { fullscreen: true };
+
+export function meta() {
+    return [
+        { title: 'Nippon Colors | 日本の伝統色' },
+        {
+            property: 'og:title',
+            content: 'Nippon Colors | 日本の伝統色'
+        },
+        {
+            name: 'description',
+            content: 'Browse traditional Japanese colors (日本の伝統色), search by name, and copy HEX/RGB/CMYK values.'
+        }
+    ];
+}
+
 export default App;
