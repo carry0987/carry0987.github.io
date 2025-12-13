@@ -5,9 +5,10 @@ const MOBILE_BREAKPOINT = 768; // md breakpoint in Tailwind
 /**
  * Hook to detect if the current viewport is mobile using ResizeObserver.
  * Uses the md breakpoint (768px) as the threshold.
+ * Returns null initially until device detection is complete.
  */
-export function useIsMobile(): boolean {
-    const [isMobile, setIsMobile] = useState(false);
+export function useIsMobile(): boolean | null {
+    const [isMobile, setIsMobile] = useState<boolean | null>(null);
     const observerRef = useRef<ResizeObserver | null>(null);
 
     useEffect(() => {

@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { getContrastColor } from '../utils/color';
+import { useIsMobile } from '@/hooks';
 import type { NipponColor } from '../types';
 import { hexToCmyk } from '../types';
 
@@ -37,6 +38,7 @@ const CMYKDonut: React.FC<{ value: number; color: string }> = ({ value, color })
 const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, textColor, borderColor }) => {
     const listRef = useRef<HTMLDivElement>(null);
     const [hoveredColorId, setHoveredColorId] = useState<number | null>(null);
+    const isMobile = useIsMobile();
 
     useEffect(() => {
         if (listRef.current) {
@@ -76,14 +78,21 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
         }
     };
 
+    // Hide until device detection is complete
+    if (isMobile === null) {
+        return null;
+    }
+
     return (
         <div
-            className="absolute right-0 top-0 bottom-0 w-80 md:w-104 overflow-y-auto no-scrollbar z-20 py-10 outline-none"
+            className={`absolute right-0 top-0 bottom-0 overflow-y-auto no-scrollbar z-20 py-10 outline-none transition-opacity duration-300 ${
+                isMobile ? 'w-36' : 'w-104'
+            }`}
             ref={listRef}
             onKeyDown={handleKeyDown}
             tabIndex={0}
             aria-label="Color list">
-            <div className="flex flex-col items-end space-y-4 pb-20">
+            <div className={`flex flex-col items-end pb-20 ${isMobile ? 'space-y-3' : 'space-y-4'}`}>
                 {colors.map((color) => {
                     const isActive = color.id === activeColor.id;
                     const contrastColor = getContrastColor(color.hex);
@@ -110,6 +119,50 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                     const g = parseInt(color.hex.substring(3, 5), 16);
                     const b = parseInt(color.hex.substring(5, 7), 16);
 
+                    // Mobile Layout
+                    if (isMobile) {
+                        return (
+                            <button
+                                key={color.id}
+                                data-id={color.id}
+                                onClick={() => onSelect(color)}
+                                className={`
+                                    group relative flex w-full text-left transition-all duration-300 outline-none
+                                    ${isActive ? 'opacity-100' : 'opacity-60'}
+                                `}
+                                aria-label={`Select color ${color.ja}`}>
+                                {/* Active/Selection Indicator Bar */}
+                                <div
+                                    className="w-1 mr-2 transition-all duration-300 shrink-0"
+                                    style={{ backgroundColor: accentColor }}
+                                />
+
+                                <div className="flex flex-col w-full pr-3">
+                                    {/* ID and Kanji */}
+                                    <div className="flex items-baseline justify-between w-full mb-1">
+                                        <span
+                                            className="font-serif text-xs tracking-widest opacity-80"
+                                            style={{ color: accentColor }}>
+                                            {String(color.id).padStart(3, '0')}
+                                        </span>
+                                        <span
+                                            className="font-serif text-sm font-bold transition-colors duration-300"
+                                            style={{ color: displayColor }}>
+                                            {color.ja}
+                                        </span>
+                                    </div>
+                                    {/* Hex code */}
+                                    <span
+                                        className="text-[10px] font-sans tracking-widest opacity-70 uppercase transition-colors duration-300"
+                                        style={{ color: displayColor }}>
+                                        {color.hex}
+                                    </span>
+                                </div>
+                            </button>
+                        );
+                    }
+
+                    // Desktop Layout
                     return (
                         <button
                             key={color.id}
@@ -124,13 +177,13 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                             aria-label={`Select color ${color.ja}`}>
                             {/* Active/Selection Indicator Bar */}
                             <div
-                                className={`w-1.5 md:w-2 mr-3 md:mr-4 transition-all duration-300 shrink-0`}
+                                className="w-2 mr-4 transition-all duration-300 shrink-0"
                                 style={{ backgroundColor: accentColor }}
                             />
 
-                            <div className="flex w-full pr-4 md:pr-8 gap-2">
+                            <div className="flex w-full pr-8 gap-2">
                                 {/* Left Section: ID, Kanji, CMYK */}
-                                <div className="flex flex-col items-start min-w-24 md:min-w-28">
+                                <div className="flex flex-col items-start min-w-28">
                                     <div className="flex items-baseline justify-between w-full mb-2">
                                         <span
                                             className="font-serif text-sm tracking-widest opacity-80"
@@ -138,7 +191,7 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                             {String(color.id).padStart(3, '0')}
                                         </span>
                                         <span
-                                            className="font-serif text-sm md:text-base font-bold transition-colors duration-300"
+                                            className="font-serif text-base font-bold transition-colors duration-300"
                                             style={{ color: displayColor }}>
                                             {color.ja}
                                         </span>
@@ -153,7 +206,7 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                 {/* Right Section: Romaji, RGB Lines, Hex */}
                                 <div className="flex flex-col items-start flex-1">
                                     <span
-                                        className="font-roman text-sm md:text-base tracking-widest mb-2 transition-colors duration-300"
+                                        className="font-roman text-base tracking-widest mb-2 transition-colors duration-300"
                                         style={{ color: displayColor }}>
                                         {color.en}
                                     </span>
