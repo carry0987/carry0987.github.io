@@ -156,21 +156,21 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                         style={{ color: textColor }}>
                                         {color.en}
                                     </span>
-                                    <div className="flex flex-col w-full mb-1 space-y-0.5" style={{ color: textColor }}>
+                                    <div className="flex flex-col w-full mb-1 space-y-1" style={{ color: textColor }}>
                                         <div className="relative h-px w-full">
-                                            <div className="absolute inset-0 bg-current opacity-20"></div>
+                                            <div className="absolute inset-0 bg-current opacity-25"></div>
                                             <div
                                                 className="absolute top-0 left-0 h-full bg-current opacity-80"
                                                 style={{ width: `${(r / 255) * 100}%` }}></div>
                                         </div>
                                         <div className="relative h-px w-full">
-                                            <div className="absolute inset-0 bg-current opacity-20"></div>
+                                            <div className="absolute inset-0 bg-current opacity-25"></div>
                                             <div
                                                 className="absolute top-0 left-0 h-full bg-current opacity-80"
                                                 style={{ width: `${(g / 255) * 100}%` }}></div>
                                         </div>
                                         <div className="relative h-px w-full">
-                                            <div className="absolute inset-0 bg-current opacity-20"></div>
+                                            <div className="absolute inset-0 bg-current opacity-25"></div>
                                             <div
                                                 className="absolute top-0 left-0 h-full bg-current opacity-80"
                                                 style={{ width: `${(b / 255) * 100}%` }}></div>
