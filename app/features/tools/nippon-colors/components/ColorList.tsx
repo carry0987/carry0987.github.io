@@ -133,8 +133,8 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                 aria-label={`Select color ${color.ja}`}>
                                 {/* Active/Selection Indicator Bar */}
                                 <div
-                                    className="w-1 mr-2 transition-all duration-300 shrink-0"
-                                    style={{ backgroundColor: accentColor }}
+                                    className="w-1 mr-2 transition-all duration-300 shrink-0 self-stretch"
+                                    style={{ backgroundColor: accentColor, minHeight: '100%' }}
                                 />
 
                                 <div className="flex flex-col w-full pr-3">
