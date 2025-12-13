@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import type { NipponColor } from '../types';
 
 interface ColorListProps {
@@ -17,6 +17,96 @@ const getContrastColor = (hex: string) => {
     const b = parseInt(hex.substr(5, 2), 16);
     const yiq = (r * 299 + g * 587 + b * 114) / 1000;
     return yiq >= 128 ? '#1a1a1a' : '#f5f5f5';
+};
+
+// Helper to parse hex to RGB values
+const hexToRgbValues = (hex: string): { r: number; g: number; b: number } => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    if (!result) return { r: 0, g: 0, b: 0 };
+    return {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    };
+};
+
+// Helper to convert RGB to CMYK values (0-100)
+const rgbToCmykValues = (r: number, g: number, b: number): { c: number; m: number; y: number; k: number } => {
+    const rNorm = r / 255;
+    const gNorm = g / 255;
+    const bNorm = b / 255;
+
+    const k = 1 - Math.max(rNorm, gNorm, bNorm);
+    if (k === 1) return { c: 0, m: 0, y: 0, k: 100 };
+
+    const c = Math.round(((1 - rNorm - k) / (1 - k)) * 100);
+    const m = Math.round(((1 - gNorm - k) / (1 - k)) * 100);
+    const y = Math.round(((1 - bNorm - k) / (1 - k)) * 100);
+    const kPercent = Math.round(k * 100);
+
+    return { c, m, y, k: kPercent };
+};
+
+// CMYK Ring Component - displays a donut chart style ring
+const CmykRing: React.FC<{ value: number; size?: number; strokeWidth?: number; color: string }> = ({
+    value,
+    size = 16,
+    strokeWidth = 3,
+    color
+}) => {
+    const radius = (size - strokeWidth) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const strokeDashoffset = circumference - (value / 100) * circumference;
+
+    return (
+        <svg width={size} height={size} className="transform -rotate-90">
+            {/* Background circle */}
+            <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke={color}
+                strokeWidth={strokeWidth}
+                opacity={0.2}
+            />
+            {/* Value arc */}
+            <circle
+                cx={size / 2}
+                cy={size / 2}
+                r={radius}
+                fill="none"
+                stroke={color}
+                strokeWidth={strokeWidth}
+                strokeDasharray={circumference}
+                strokeDashoffset={strokeDashoffset}
+                strokeLinecap="round"
+                opacity={0.8}
+            />
+        </svg>
+    );
+};
+
+// RGB Bar Component - displays a horizontal bar
+const RgbBar: React.FC<{ value: number; maxWidth?: number; height?: number; color: string }> = ({
+    value,
+    maxWidth = 32,
+    height = 2,
+    color
+}) => {
+    const width = (value / 255) * maxWidth;
+
+    return (
+        <div className="relative" style={{ width: maxWidth, height }}>
+            {/* Background bar */}
+            <div className="absolute inset-0 rounded-full opacity-20" style={{ backgroundColor: color }} />
+            {/* Value bar */}
+            <div
+                className="absolute left-0 top-0 bottom-0 rounded-full opacity-80"
+                style={{ backgroundColor: color, width }}
+            />
+        </div>
+    );
 };
 
 const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, textColor, borderColor }) => {
@@ -65,18 +155,16 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
 
     return (
         <div
-            className="absolute right-0 top-0 bottom-0 w-48 md:w-80 overflow-y-auto no-scrollbar z-20 py-10 outline-none"
+            className="absolute right-0 top-0 bottom-0 w-52 md:w-96 overflow-y-auto no-scrollbar z-20 py-10 outline-none"
             ref={listRef}
             onKeyDown={handleKeyDown}
             tabIndex={0} // Make container focusable to catch initial key events
             aria-label="Color list">
-            <div className="flex flex-col items-end pr-4 md:pr-10 space-y-1">
+            <div className="flex flex-col items-end pr-4 md:pr-10 space-y-4">
                 {colors.map((color) => {
                     const isActive = color.id === activeColor.id;
-
-                    // Determine if the current global text color works well with this specific color swatch
-                    const idealColorForSwatch = getContrastColor(color.hex);
-                    const hasGoodContrast = idealColorForSwatch === textColor;
+                    const rgb = hexToRgbValues(color.hex);
+                    const cmyk = rgbToCmykValues(rgb.r, rgb.g, rgb.b);
 
                     return (
                         <button
@@ -84,66 +172,57 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                             data-id={color.id}
                             onClick={() => onSelect(color)}
                             className={`
-                group flex items-center justify-end w-full transition-all duration-300 outline-none
+                group flex flex-col items-end w-full transition-all duration-300 outline-none
                 ${isActive ? 'opacity-100 scale-105' : 'opacity-50 hover:opacity-80 focus:opacity-80'}
               `}
                             aria-label={`Select color ${color.ja}`}>
-                            <span
-                                className={`mr-3 text-xs md:text-sm font-roman tracking-wider transition-colors duration-500`}
-                                style={{ color: textColor }}>
-                                {color.en}
-                            </span>
-                            <div
-                                className={`
-                  h-px bg-current transition-all duration-500 
-                  ${isActive ? 'w-8 md:w-12' : 'w-4 md:w-6 group-hover:w-8 group-focus:w-8'}
-                `}
-                                style={{ backgroundColor: borderColor }}
-                            />
-                            <div
-                                className={`
-                  w-8 h-8 md:w-10 md:h-10 ml-2 flex items-center justify-center text-xs shadow-md transition-all duration-500
-                  ${isActive ? 'rounded-none' : 'rounded-sm'}
-                  hover:scale-110
-                `}
-                                style={{
-                                    backgroundColor: color.hex,
-                                    // We use the 'ideal' color for the icon so it is always visible against the swatch
-                                    color: idealColorForSwatch
-                                }}
-                                title={
-                                    hasGoodContrast
-                                        ? 'Good contrast with current text theme'
-                                        : 'Poor contrast with current text theme'
-                                }>
-                                {hasGoodContrast ? (
-                                    // Animated flourish for good contrast: Layered pulsing diamond ripples
-                                    <div className="relative flex items-center justify-center w-full h-full">
-                                        {/* Core Steady Diamond */}
-                                        <div className="relative z-10 w-1.5 h-1.5 bg-current rotate-45 shadow-[0_0_6px_currentColor]"></div>
+                            {/* Top row: Color code, Kanji, English name */}
+                            <div className="flex items-center justify-end w-full mb-1">
+                                <span className="mr-2 text-[10px] font-mono opacity-60" style={{ color: textColor }}>
+                                    {color.code.replace('col', '')}
+                                </span>
+                                <span className="mr-2 text-xs font-serif opacity-80" style={{ color: textColor }}>
+                                    {color.ja}
+                                </span>
+                                <span
+                                    className="text-xs md:text-sm font-roman tracking-wider font-medium"
+                                    style={{ color: textColor }}>
+                                    {color.en}
+                                </span>
+                            </div>
 
-                                        {/* First Ripple */}
-                                        <div className="absolute w-2 h-2 border-[0.5px] border-current rotate-45 opacity-60 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"></div>
+                            {/* Bottom row: CMYK circles + RGB bars + Color swatch + HEX */}
+                            <div className="flex items-center gap-2">
+                                {/* CMYK Rings */}
+                                <div className="hidden md:flex items-center gap-1">
+                                    <CmykRing value={cmyk.c} color={textColor} />
+                                    <CmykRing value={cmyk.m} color={textColor} />
+                                    <CmykRing value={cmyk.y} color={textColor} />
+                                    <CmykRing value={cmyk.k} color={textColor} />
+                                </div>
 
-                                        {/* Delayed Trail Ripple */}
-                                        <div
-                                            className="absolute w-2 h-2 border-[0.5px] border-current rotate-45 opacity-40 animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]"
-                                            style={{ animationDelay: '0.6s' }}></div>
-                                    </div>
-                                ) : (
-                                    // Static X for poor contrast
-                                    <svg
-                                        className="w-3 h-3 opacity-50"
-                                        viewBox="0 0 24 24"
-                                        fill="none"
-                                        stroke="currentColor"
-                                        strokeWidth="2.5"
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round">
-                                        <line x1="18" y1="6" x2="6" y2="18" />
-                                        <line x1="6" y1="6" x2="18" y2="18" />
-                                    </svg>
-                                )}
+                                {/* RGB Bars */}
+                                <div className="hidden md:flex flex-col gap-0.5">
+                                    <RgbBar value={rgb.r} color={textColor} />
+                                    <RgbBar value={rgb.g} color={textColor} />
+                                    <RgbBar value={rgb.b} color={textColor} />
+                                </div>
+
+                                {/* Color swatch */}
+                                <div
+                                    className={`
+                      w-6 h-6 md:w-8 md:h-8 shadow-md transition-all duration-500
+                      ${isActive ? 'rounded-none' : 'rounded-sm'}
+                    `}
+                                    style={{ backgroundColor: color.hex }}
+                                />
+
+                                {/* HEX code */}
+                                <span
+                                    className="text-[10px] font-mono w-14 text-left opacity-70"
+                                    style={{ color: textColor }}>
+                                    {color.hex}
+                                </span>
                             </div>
                         </button>
                     );
