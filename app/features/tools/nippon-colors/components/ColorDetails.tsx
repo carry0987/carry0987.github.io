@@ -171,6 +171,76 @@ const CopyableValue = ({ label, value, textColor }: { label: string; value: stri
     );
 };
 
+// Copyable wrapper for visual elements (CMYK donuts, RGB values)
+const CopyableVisual = ({
+    label,
+    value,
+    textColor,
+    children
+}: {
+    label: string;
+    value: string;
+    textColor: string;
+    children: React.ReactNode;
+}) => {
+    const [copied, setCopied] = useState(false);
+
+    useEffect(() => {
+        setCopied(false);
+    }, [value]);
+
+    const handleCopy = (e: React.MouseEvent) => {
+        e.stopPropagation();
+        navigator.clipboard.writeText(value);
+        setCopied(true);
+        setTimeout(() => setCopied(false), 2000);
+    };
+
+    return (
+        <div className="group">
+            <div className="flex items-center gap-2 mb-2">
+                <span className="block text-xs opacity-60">{label}</span>
+                <button
+                    onClick={handleCopy}
+                    className="opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity duration-300 p-1 rounded hover:bg-white/20 outline-none"
+                    style={{ color: textColor }}
+                    aria-label={`Copy ${label} value`}
+                    title="Copy to clipboard">
+                    {copied ? (
+                        <svg
+                            className="w-3 h-3"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round">
+                            <polyline points="20 6 9 17 4 12" />
+                        </svg>
+                    ) : (
+                        <svg
+                            className="w-3 h-3"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2.5"
+                            strokeLinecap="round"
+                            strokeLinejoin="round">
+                            <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
+                            <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+                        </svg>
+                    )}
+                </button>
+                <span
+                    className={`text-[10px] tracking-wider font-sans transition-all duration-300 ${copied ? 'opacity-70 translate-x-0' : 'opacity-0 -translate-x-2 pointer-events-none'}`}>
+                    COPIED
+                </span>
+            </div>
+            {children}
+        </div>
+    );
+};
+
 const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
     // Parse CMYK values
     const cmykValues = hexToCmyk(color.hex)
@@ -205,25 +275,23 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
                     <CopyableValue label="HEX" value={color.hex} textColor={textColor} />
 
                     {/* CMYK Visual */}
-                    <div>
-                        <span className="block text-xs opacity-60 mb-2">CMYK</span>
+                    <CopyableVisual label="CMYK" value={hexToCmyk(color.hex)} textColor={textColor}>
                         <div className="flex gap-2 md:gap-3">
                             <CMYKDonutLarge label="C" value={c} color={cmykColors[0]} textColor={textColor} />
                             <CMYKDonutLarge label="M" value={m} color={cmykColors[1]} textColor={textColor} />
                             <CMYKDonutLarge label="Y" value={y} color={cmykColors[2]} textColor={textColor} />
                             <CMYKDonutLarge label="K" value={k} color={cmykColors[3]} textColor={textColor} />
                         </div>
-                    </div>
+                    </CopyableVisual>
 
                     {/* RGB Visual */}
-                    <div>
-                        <span className="block text-xs opacity-60 mb-2">RGB</span>
+                    <CopyableVisual label="RGB" value={hexToRgb(color.hex)} textColor={textColor}>
                         <div className="flex gap-4 md:gap-6">
                             <RGBValue label="R" value={r} textColor={textColor} />
                             <RGBValue label="G" value={g} textColor={textColor} />
                             <RGBValue label="B" value={b} textColor={textColor} />
                         </div>
-                    </div>
+                    </CopyableVisual>
                 </div>
             </div>
 
