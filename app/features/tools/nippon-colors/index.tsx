@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+import { Link } from 'react-router';
+import { ArrowLeft } from 'lucide-react';
 import { NIPPON_COLORS } from './constants';
 import ColorList from './components/ColorList';
 import ColorDetails from './components/ColorDetails';
@@ -35,6 +37,15 @@ const App: React.FC = () => {
             }}>
             {/* Interactive Particles Layer */}
             <ParticlesBackground color={textColor} />
+
+            {/* Back to Tools Button */}
+            <Link
+                to="/tools"
+                className="fixed top-6 left-6 z-50 inline-flex items-center gap-2 px-4 py-2 rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 transition-all duration-300 group"
+                style={{ color: textColor }}>
+                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
+                <span className="text-sm font-medium">Back to Tools</span>
+            </Link>
 
             {/* Background Texture Overlay to give it a paper feel */}
             <div
