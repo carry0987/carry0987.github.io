@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import type { NipponColor, AiInsight } from '../types';
-import { getColorInsight } from '../services/geminiService';
+import type { NipponColor } from '../types';
 
 interface ColorDetailsProps {
     color: NipponColor;
@@ -78,26 +77,15 @@ const CopyableValue = ({ label, value, textColor }: { label: string; value: stri
 };
 
 const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
-    const [insight, setInsight] = useState<AiInsight | null>(null);
-    const [loading, setLoading] = useState(false);
     const [animateIn, setAnimateIn] = useState(false);
 
-    // Reset insight when color changes
+    // Reset animation when color changes
     useEffect(() => {
-        setInsight(null);
         setAnimateIn(false);
         // Small delay to trigger animation
         const timer = setTimeout(() => setAnimateIn(true), 50);
         return () => clearTimeout(timer);
     }, [color]);
-
-    const handleAiAnalysis = async () => {
-        if (loading || insight) return;
-        setLoading(true);
-        const data = await getColorInsight(color.name, color.hex);
-        setInsight(data);
-        setLoading(false);
-    };
 
     return (
         <div className="relative z-10 flex flex-col h-full pl-6 md:pl-16 pt-10 md:pt-20 pb-10 justify-between pointer-events-none">
@@ -117,56 +105,6 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
                     <CopyableValue label="CMYK" value={color.cmyk} textColor={textColor} />
                     <CopyableValue label="HEX" value={color.hex} textColor={textColor} />
                 </div>
-
-                {/* AI Action */}
-                <div className="mt-8">
-                    <button
-                        onClick={handleAiAnalysis}
-                        disabled={loading}
-                        className={`
-              pointer-events-auto px-6 py-2 border border-current font-serif tracking-widest text-sm
-              transition-all duration-300 hover:bg-white/20 active:scale-95
-              disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2
-            `}>
-                        {loading ? (
-                            <>
-                                <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
-                                    <circle
-                                        className="opacity-25"
-                                        cx="12"
-                                        cy="12"
-                                        r="10"
-                                        stroke="currentColor"
-                                        strokeWidth="4"
-                                        fill="none"></circle>
-                                    <path
-                                        className="opacity-75"
-                                        fill="currentColor"
-                                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                </svg>
-                                <span>THINKING...</span>
-                            </>
-                        ) : insight ? (
-                            <span>INSIGHT REVEALED</span>
-                        ) : (
-                            <>
-                                <svg
-                                    className="w-4 h-4"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    viewBox="0 0 24 24"
-                                    xmlns="http://www.w3.org/2000/svg">
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M13 10V3L4 14h7v7l9-11h-7z"></path>
-                                </svg>
-                                <span>ASK GEMINI</span>
-                            </>
-                        )}
-                    </button>
-                </div>
             </div>
 
             {/* Center/Right: Giant Kanji Background Watermark-like */}
@@ -178,19 +116,6 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
                     {color.name}
                 </div>
             </div>
-
-            {/* Bottom Left: AI Insight Display */}
-            {insight && (
-                <div
-                    className="pointer-events-auto max-w-md mt-auto backdrop-blur-md bg-white/10 p-6 border-l-4 shadow-xl transition-all duration-500 animate-[fadeIn_0.5s_ease-out]"
-                    style={{ borderColor: textColor, color: textColor }}>
-                    <div className="font-serif italic mb-3 text-lg opacity-90">"{insight.haiku}"</div>
-                    <p className="text-sm md:text-base leading-relaxed mb-3 opacity-90 font-light">{insight.history}</p>
-                    <div className="text-xs tracking-widest uppercase opacity-70 border-t pt-2 border-current">
-                        Vibe: {insight.emotionalVibe}
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

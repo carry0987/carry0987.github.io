@@ -6,9 +6,3 @@ export interface NipponColor {
     rgb: string; // R, G, B
     cmyk: string; // C, M, Y, K
 }
-
-export interface AiInsight {
-    haiku: string;
-    history: string;
-    emotionalVibe: string;
-}
