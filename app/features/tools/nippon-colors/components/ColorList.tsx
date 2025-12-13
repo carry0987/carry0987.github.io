@@ -65,12 +65,12 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
 
     return (
         <div
-            className="absolute right-0 top-0 bottom-0 w-32 md:w-48 overflow-y-auto no-scrollbar z-20 py-10 outline-none"
+            className="absolute right-0 top-0 bottom-0 w-48 md:w-80 overflow-y-auto no-scrollbar z-20 py-10 outline-none"
             ref={listRef}
             onKeyDown={handleKeyDown}
             tabIndex={0} // Make container focusable to catch initial key events
             aria-label="Color list">
-            <div className="flex flex-col items-end pr-4 md:pr-8 space-y-1">
+            <div className="flex flex-col items-end pr-4 md:pr-10 space-y-1">
                 {colors.map((color) => {
                     const isActive = color.id === activeColor.id;
 
