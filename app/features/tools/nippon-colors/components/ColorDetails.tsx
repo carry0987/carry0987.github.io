@@ -5,6 +5,7 @@ import { hexToRgb, hexToCmyk } from '../types';
 interface ColorDetailsProps {
     color: NipponColor;
     textColor: string;
+    duration: number;
 }
 
 // CMYK Donut Chart with label and centered value
@@ -241,7 +242,7 @@ const CopyableVisual = ({
     );
 };
 
-const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
+const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor, duration }) => {
     const [displayedKanji, setDisplayedKanji] = useState(color.ja);
     const [kanjiOpacity, setKanjiOpacity] = useState(1);
 
@@ -254,10 +255,10 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
             const timeout = setTimeout(() => {
                 setDisplayedKanji(color.ja);
                 setKanjiOpacity(1);
-            }, 500); // Match the transition duration
+            }, duration / 2); // Half of transition duration for fade out
             return () => clearTimeout(timeout);
         }
-    }, [color.ja, displayedKanji]);
+    }, [color.ja, displayedKanji, duration]);
 
     // Parse CMYK values
     const cmykValues = hexToCmyk(color.hex)
@@ -320,8 +321,8 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
             <div
                 className={`absolute inset-0 flex items-center justify-center md:justify-end md:pr-[15%] pointer-events-none`}>
                 <div
-                    className="vertical-text font-serif font-black text-[15vh] md:text-[40vh] select-none leading-none transition-all duration-500 ease-in-out"
-                    style={{ color: textColor, opacity: kanjiOpacity * 0.2 }}>
+                    className="vertical-text font-serif font-black text-[15vh] md:text-[40vh] select-none leading-none transition-all ease-in-out"
+                    style={{ color: textColor, opacity: kanjiOpacity * 0.2, transitionDuration: `${duration / 2}ms` }}>
                     {displayedKanji}
                 </div>
             </div>

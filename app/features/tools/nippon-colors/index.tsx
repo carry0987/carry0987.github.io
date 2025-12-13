@@ -103,7 +103,7 @@ const App: React.FC = () => {
                 }}></div>
 
             <main className="relative z-20 w-full h-full max-w-7xl mx-auto">
-                <ColorDetails color={activeColor} textColor={textColor} />
+                <ColorDetails color={activeColor} textColor={textColor} duration={duration} />
 
                 <ColorList
                     colors={NIPPON_COLORS}
