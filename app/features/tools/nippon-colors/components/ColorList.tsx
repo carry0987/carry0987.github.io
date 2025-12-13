@@ -12,23 +12,23 @@ interface ColorListProps {
 }
 
 const CMYKDonut: React.FC<{ value: number; color: string }> = ({ value, color }) => {
-    const radius = 8;
+    const radius = 10;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (value / 100) * circumference;
 
     return (
-        <svg width="22" height="22" className="-rotate-90">
-            <circle cx="11" cy="11" r={radius} fill="transparent" stroke={color} strokeOpacity="0.2" strokeWidth="3" />
+        <svg width="28" height="28" className="-rotate-90">
+            <circle cx="14" cy="14" r={radius} fill="transparent" stroke={color} strokeOpacity="0.2" strokeWidth="6" />
             <circle
-                cx="11"
-                cy="11"
+                cx="14"
+                cy="14"
                 r={radius}
                 fill="transparent"
                 stroke={color}
-                strokeWidth="3"
+                strokeWidth="6"
                 strokeDasharray={circumference}
                 strokeDashoffset={offset}
-                strokeLinecap="round"
+                strokeLinecap="butt"
             />
         </svg>
     );
