@@ -260,10 +260,10 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
         <div className="relative z-10 flex flex-col h-full pl-6 md:pl-16 pt-10 md:pt-20 pb-10 justify-between pointer-events-none">
             {/* Top Left: Color Codes */}
             <div className="pointer-events-auto transition-colors duration-1000" style={{ color: textColor }}>
-                <div className="flex items-center gap-4 md:gap-5 mb-6">
+                <div className="flex items-center gap-3 md:gap-5 mb-6">
                     {/* Hinomaru (Japanese Sun Circle) */}
-                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-[#bc002d] shadow-sm shrink-0" />
-                    <h1 className="text-4xl md:text-6xl font-serif font-black tracking-tight leading-none">
+                    <div className="w-8 h-8 md:w-14 md:h-14 rounded-full bg-[#bc002d] shadow-sm shrink-0" />
+                    <h1 className="text-2xl md:text-6xl font-serif font-black tracking-tight leading-none">
                         NIPPON <br /> COLORS
                     </h1>
                 </div>
