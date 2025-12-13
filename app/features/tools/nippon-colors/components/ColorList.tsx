@@ -106,6 +106,11 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                         .split(',')
                         .map((v) => parseInt(v.trim()));
 
+                    // Parse RGB values for the bars
+                    const r = parseInt(color.hex.substring(1, 3), 16);
+                    const g = parseInt(color.hex.substring(3, 5), 16);
+                    const b = parseInt(color.hex.substring(5, 7), 16);
+
                     return (
                         <button
                             key={color.id}
@@ -145,18 +150,18 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                 </div>
 
                                 {/* Right Section: Romaji, RGB Lines, Hex */}
-                                <div className="flex flex-col items-end flex-1">
+                                <div className="flex flex-col items-start flex-1">
                                     <span
                                         className="font-roman text-lg md:text-xl tracking-widest mb-2"
                                         style={{ color: textColor }}>
                                         {color.en}
                                     </span>
                                     <div
-                                        className="flex flex-col items-end w-full opacity-40 mb-1 space-y-0.5"
+                                        className="flex flex-col w-full opacity-60 mb-1 space-y-0.5"
                                         style={{ color: textColor }}>
-                                        <div className="h-px bg-current w-full"></div>
-                                        <div className="h-px bg-current w-[70%]"></div>
-                                        <div className="h-px bg-current w-full"></div>
+                                        <div className="h-px bg-current" style={{ width: `${(r / 255) * 100}%` }}></div>
+                                        <div className="h-px bg-current" style={{ width: `${(g / 255) * 100}%` }}></div>
+                                        <div className="h-px bg-current" style={{ width: `${(b / 255) * 100}%` }}></div>
                                     </div>
                                     <span
                                         className="text-xs font-sans tracking-widest opacity-70 uppercase"
