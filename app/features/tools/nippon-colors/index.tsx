@@ -14,10 +14,14 @@ import './style.css';
 
 const DEFAULT_DURATION = 1500;
 
+// Helper function to get a random color
+const getRandomColor = () => NIPPON_COLORS[Math.floor(Math.random() * NIPPON_COLORS.length)];
+
 const App: React.FC = () => {
     const [activeColor, setActiveColor] = useState(() => {
-        // Check URL hash on initial load (client-side only)
-        return hashManager.getColor() || NIPPON_COLORS[0];
+        // Always start with a random color for initial render
+        // Hash color will be applied after mount with transition
+        return getRandomColor();
     });
     const [duration, setDuration] = useState(DEFAULT_DURATION);
     const [isReady, setIsReady] = useState(false);
@@ -27,9 +31,17 @@ const App: React.FC = () => {
         const saved = saveManager.getTransitionDuration();
         setDuration(saved);
 
-        // Handle initial hash on client-side
+        // Handle initial hash on client-side with a small delay for transition effect
         const colorFromHash = hashManager.getColor();
-        if (colorFromHash) setActiveColor(colorFromHash);
+        if (colorFromHash) {
+            // Use requestAnimationFrame to ensure the initial render is complete
+            // then apply the hash color with transition
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setActiveColor(colorFromHash);
+                });
+            });
+        }
 
         setIsReady(true);
 
@@ -39,7 +51,7 @@ const App: React.FC = () => {
             if (newColor) {
                 setActiveColor(newColor);
             } else {
-                setActiveColor(NIPPON_COLORS[0]);
+                setActiveColor(getRandomColor());
             }
         };
 

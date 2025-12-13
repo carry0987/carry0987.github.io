@@ -242,6 +242,23 @@ const CopyableVisual = ({
 };
 
 const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
+    const [displayedKanji, setDisplayedKanji] = useState(color.ja);
+    const [kanjiOpacity, setKanjiOpacity] = useState(1);
+
+    // Handle kanji transition with fade effect
+    useEffect(() => {
+        if (color.ja !== displayedKanji) {
+            // Fade out
+            setKanjiOpacity(0);
+            // After fade out, change text and fade in
+            const timeout = setTimeout(() => {
+                setDisplayedKanji(color.ja);
+                setKanjiOpacity(1);
+            }, 500); // Match the transition duration
+            return () => clearTimeout(timeout);
+        }
+    }, [color.ja, displayedKanji]);
+
     // Parse CMYK values
     const cmykValues = hexToCmyk(color.hex)
         .split(',')
@@ -301,11 +318,11 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
 
             {/* Center/Right: Giant Kanji Background Watermark-like */}
             <div
-                className={`absolute inset-0 flex items-center justify-center md:justify-end md:pr-[15%] pointer-events-none transition-all duration-1000 ease-in-out`}>
+                className={`absolute inset-0 flex items-center justify-center md:justify-end md:pr-[15%] pointer-events-none`}>
                 <div
-                    className="vertical-text font-serif font-black text-[15vh] md:text-[40vh] opacity-20 select-none leading-none"
-                    style={{ color: textColor }}>
-                    {color.ja}
+                    className="vertical-text font-serif font-black text-[15vh] md:text-[40vh] select-none leading-none transition-all duration-500 ease-in-out"
+                    style={{ color: textColor, opacity: kanjiOpacity * 0.2 }}>
+                    {displayedKanji}
                 </div>
             </div>
         </div>
