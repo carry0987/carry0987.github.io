@@ -86,7 +86,7 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
 
     return (
         <div
-            className="absolute right-0 top-0 bottom-0 w-80 md:w-[26rem] overflow-y-auto no-scrollbar z-20 py-10 outline-none"
+            className="absolute right-0 top-0 bottom-0 w-80 md:w-104 overflow-y-auto no-scrollbar z-20 py-10 outline-none"
             ref={listRef}
             onKeyDown={handleKeyDown}
             tabIndex={0}
