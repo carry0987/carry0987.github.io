@@ -94,9 +94,13 @@ const ColorDetails: React.FC<ColorDetailsProps> = ({ color, textColor }) => {
             <div
                 className={`pointer-events-auto transition-opacity duration-1000 ${animateIn ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-4'}`}
                 style={{ color: textColor }}>
-                <h1 className="text-4xl md:text-6xl font-serif font-black mb-6 tracking-tight">
-                    NIPPON <br /> COLORS
-                </h1>
+                <div className="flex items-center gap-4 md:gap-5 mb-6">
+                    {/* Hinomaru (Japanese Sun Circle) */}
+                    <div className="w-10 h-10 md:w-14 md:h-14 rounded-full bg-[#bc002d] shadow-sm shrink-0" />
+                    <h1 className="text-4xl md:text-6xl font-serif font-black tracking-tight leading-none">
+                        NIPPON <br /> COLORS
+                    </h1>
+                </div>
 
                 <div
                     className="space-y-4 font-roman text-sm md:text-base tracking-widest border-l-2 pl-4"
