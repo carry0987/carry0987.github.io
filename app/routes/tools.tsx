@@ -1,6 +1,6 @@
 import type { Route } from './+types/tools';
 import { Link } from 'react-router';
-import { Wrench, ArrowRight, Image, Timer, Upload, MessageCircle } from 'lucide-react';
+import { Wrench, ArrowRight, Image, Timer, Upload, MessageCircle, Palette } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: 'Tools | Carry' }, { name: 'description', content: 'A collection of useful tools' }];
@@ -39,6 +39,14 @@ export default function ToolsPage() {
             category: 'Creative',
             icon: MessageCircle,
             toolUrl: '/tools/fakechat'
+        },
+        {
+            title: 'Nippon Colors',
+            desc: 'Browse traditional Japanese colors (日本の伝統色), search by name, and copy HEX/RGB/CMYK.',
+            tech: ['React', 'Color Utils', 'Clipboard API'],
+            category: 'Design',
+            icon: Palette,
+            toolUrl: '/tools/nippon-colors'
         }
     ];
 

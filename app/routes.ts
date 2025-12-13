@@ -16,6 +16,7 @@ export default [
     route('/tools/focusflow-widget', './features/tools/focusflow-widget/index.tsx'),
     route('/tools/imgur-drop', './features/tools/imgur-drop/index.tsx'),
     route('/tools/fakechat', './features/tools/fakechat/index.tsx'),
+    route('/tools/nippon-colors', './features/tools/nippon-colors/index.tsx'),
     /* Other Routes */
     ...(await flatRoutes({
         ignoredRouteFiles: ['**/.*', '**/*.css', '**/*.scss']

@@ -17,7 +17,7 @@
     "url": "git+https://github.com/carry0987/carry0987.github.io"
   },
   "scripts": {
-    "lint": "prettier --write \"{src,app}/**/*.{ts,tsx,css,scss}\"",
+    "lint": "prettier --write \"{src,app}/**/*.{ts,tsx,css,scss,json}\"",
     "dev": "react-router dev",
     "build": "react-router build",
     "typecheck": "react-router typegen && tsc"
