@@ -132,7 +132,7 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                             {String(color.id).padStart(3, '0')}
                                         </span>
                                         <span
-                                            className="font-serif text-lg md:text-xl font-bold"
+                                            className="font-serif text-sm md:text-base font-bold"
                                             style={{ color: textColor }}>
                                             {color.ja}
                                         </span>
