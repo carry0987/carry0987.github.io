@@ -21,16 +21,16 @@ const getContrastColor = (hex: string) => {
 };
 
 const CMYKDonut: React.FC<{ value: number; color: string }> = ({ value, color }) => {
-    const radius = 6;
+    const radius = 8;
     const circumference = 2 * Math.PI * radius;
     const offset = circumference - (value / 100) * circumference;
 
     return (
-        <svg width="18" height="18" className="-rotate-90">
-            <circle cx="9" cy="9" r={radius} fill="transparent" stroke={color} strokeOpacity="0.2" strokeWidth="3" />
+        <svg width="22" height="22" className="-rotate-90">
+            <circle cx="11" cy="11" r={radius} fill="transparent" stroke={color} strokeOpacity="0.2" strokeWidth="3" />
             <circle
-                cx="9"
-                cy="9"
+                cx="11"
+                cy="11"
                 r={radius}
                 fill="transparent"
                 stroke={color}
@@ -117,9 +117,9 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                             data-id={color.id}
                             onClick={() => onSelect(color)}
                             className={`
-                group relative flex w-full text-left transition-all duration-300 outline-none
-                ${isActive ? 'opacity-100' : 'opacity-60 hover:opacity-90'}
-              `}
+                                group relative flex w-full text-left transition-all duration-300 outline-none
+                                ${isActive ? 'opacity-100' : 'opacity-60 hover:opacity-90'}
+                            `}
                             aria-label={`Select color ${color.ja}`}>
                             {/* Active/Selection Indicator Bar */}
                             <div
@@ -127,10 +127,10 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                 style={{ backgroundColor: accentColor }}
                             />
 
-                            <div className="flex w-full pr-4 md:pr-8 gap-4">
+                            <div className="flex w-full pr-4 md:pr-8 gap-2">
                                 {/* Left Section: ID, Kanji, CMYK */}
-                                <div className="flex flex-col items-start">
-                                    <div className="flex items-baseline gap-2 mb-2">
+                                <div className="flex flex-col items-start min-w-24 md:min-w-28">
+                                    <div className="flex items-baseline justify-between w-full mb-2">
                                         <span
                                             className="font-serif text-sm tracking-widest opacity-80"
                                             style={{ color: accentColor }}>
@@ -142,7 +142,7 @@ const ColorList: React.FC<ColorListProps> = ({ colors, activeColor, onSelect, te
                                             {color.ja}
                                         </span>
                                     </div>
-                                    <div className="flex gap-1 md:gap-1.5">
+                                    <div className="flex justify-between w-full">
                                         {cmykValues.map((val, i) => (
                                             <CMYKDonut key={i} value={val} color={textColor} />
                                         ))}
