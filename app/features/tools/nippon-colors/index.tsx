@@ -17,12 +17,15 @@ const DEFAULT_DURATION = 1500;
 // Helper function to get a random color
 const getRandomColor = () => NIPPON_COLORS[Math.floor(Math.random() * NIPPON_COLORS.length)];
 
-// Use the first color as default for SSR to avoid hydration mismatch
-const DEFAULT_COLOR = NIPPON_COLORS[0];
+// Get initial color from hash or random (client-only, no SSR)
+const getInitialColor = () => {
+    const colorFromHash = hashManager.getColor();
+    return colorFromHash || getRandomColor();
+};
 
 const App: React.FC = () => {
-    // Start with a fixed color for SSR, random color will be set in useEffect
-    const [activeColor, setActiveColor] = useState(DEFAULT_COLOR);
+    // Client-only rendering, so we can use random color directly
+    const [activeColor, setActiveColor] = useState(getInitialColor);
     const [duration, setDuration] = useState(DEFAULT_DURATION);
     const [isReady, setIsReady] = useState(false);
 
@@ -30,13 +33,6 @@ const App: React.FC = () => {
     useEffect(() => {
         const saved = saveManager.getTransitionDuration();
         setDuration(saved);
-
-        // Handle initial color on client-side
-        const colorFromHash = hashManager.getColor();
-
-        // Set the initial color: use hash color if available, otherwise random
-        const initialColor = colorFromHash || getRandomColor();
-        setActiveColor(initialColor);
 
         setIsReady(true);
 
@@ -143,6 +139,14 @@ const App: React.FC = () => {
 
 // Mark this route as fullscreen (no navbar, footer, background)
 export const handle = { fullscreen: true };
+
+// Disable SSR for this route to avoid hydration mismatch with random colors
+export const clientLoader = () => null;
+export const HydrateFallback = () => (
+    <div className="w-full h-screen bg-neutral-900 flex items-center justify-center">
+        <div className="text-neutral-400 text-sm tracking-widest uppercase animate-pulse">Loading...</div>
+    </div>
+);
 
 export function meta() {
     return [
