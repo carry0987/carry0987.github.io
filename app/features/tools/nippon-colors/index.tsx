@@ -17,12 +17,12 @@ const DEFAULT_DURATION = 1500;
 // Helper function to get a random color
 const getRandomColor = () => NIPPON_COLORS[Math.floor(Math.random() * NIPPON_COLORS.length)];
 
+// Use the first color as default for SSR to avoid hydration mismatch
+const DEFAULT_COLOR = NIPPON_COLORS[0];
+
 const App: React.FC = () => {
-    const [activeColor, setActiveColor] = useState(() => {
-        // Always start with a random color for initial render
-        // Hash color will be applied after mount with transition
-        return getRandomColor();
-    });
+    // Start with a fixed color for SSR, random color will be set in useEffect
+    const [activeColor, setActiveColor] = useState(DEFAULT_COLOR);
     const [duration, setDuration] = useState(DEFAULT_DURATION);
     const [isReady, setIsReady] = useState(false);
 
@@ -31,17 +31,12 @@ const App: React.FC = () => {
         const saved = saveManager.getTransitionDuration();
         setDuration(saved);
 
-        // Handle initial hash on client-side with a small delay for transition effect
+        // Handle initial color on client-side
         const colorFromHash = hashManager.getColor();
-        if (colorFromHash) {
-            // Use requestAnimationFrame to ensure the initial render is complete
-            // then apply the hash color with transition
-            requestAnimationFrame(() => {
-                requestAnimationFrame(() => {
-                    setActiveColor(colorFromHash);
-                });
-            });
-        }
+
+        // Set the initial color: use hash color if available, otherwise random
+        const initialColor = colorFromHash || getRandomColor();
+        setActiveColor(initialColor);
 
         setIsReady(true);
 
