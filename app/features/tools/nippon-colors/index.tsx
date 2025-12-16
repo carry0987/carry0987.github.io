@@ -17,15 +17,9 @@ const DEFAULT_DURATION = 1500;
 // Helper function to get a random color
 const getRandomColor = () => NIPPON_COLORS[Math.floor(Math.random() * NIPPON_COLORS.length)];
 
-// Get initial color from hash or random (client-only, no SSR)
-const getInitialColor = () => {
-    const colorFromHash = hashManager.getColor();
-    return colorFromHash || getRandomColor();
-};
-
 const App: React.FC = () => {
-    // Client-only rendering, so we can use random color directly
-    const [activeColor, setActiveColor] = useState(getInitialColor);
+    // Always start with a random color (client-only, no SSR)
+    const [activeColor, setActiveColor] = useState(getRandomColor);
     const [duration, setDuration] = useState(DEFAULT_DURATION);
     const [isReady, setIsReady] = useState(false);
 
@@ -35,6 +29,18 @@ const App: React.FC = () => {
         setDuration(saved);
 
         setIsReady(true);
+
+        // If there's a hash color, transition to it after initial render
+        const colorFromHash = hashManager.getColor();
+        if (colorFromHash) {
+            // Use requestAnimationFrame to ensure the initial render is complete
+            // then apply the hash color with transition
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    setActiveColor(colorFromHash);
+                });
+            });
+        }
 
         // Listen for hash changes (e.g., browser back/forward)
         const handleHashChange = () => {
