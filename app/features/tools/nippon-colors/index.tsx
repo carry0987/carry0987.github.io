@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useCallback, useEffect } from 'react';
 import { Link } from 'react-router';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Filter } from 'lucide-react';
 import { NIPPON_COLORS } from './constants';
-import { getContrastColor } from './utils/color';
+import { getContrastColor, getContrastRatio } from './utils/color';
 import { saveManager } from './utils/saveManager';
 import { hashManager } from './utils/hashManager';
 import ColorList from './components/ColorList';
@@ -22,6 +22,7 @@ const App: React.FC = () => {
     const [activeColor, setActiveColor] = useState(getRandomColor);
     const [duration, setDuration] = useState(DEFAULT_DURATION);
     const [isReady, setIsReady] = useState(false);
+    const [showHighContrastOnly, setShowHighContrastOnly] = useState(false);
 
     // Load saved duration on mount and handle hash changes
     useEffect(() => {
@@ -68,6 +69,18 @@ const App: React.FC = () => {
     }, []);
 
     const textColor = useMemo(() => getContrastColor(activeColor.hex), [activeColor.hex]);
+
+    // Filter colors based on contrast ratio with current background
+    const filteredColors = useMemo(() => {
+        if (!showHighContrastOnly) return NIPPON_COLORS;
+        return NIPPON_COLORS.filter((color) => {
+            // Always include the active color
+            if (color.id === activeColor.id) return true;
+            // Check contrast ratio >= 4.5 (WCAG AA)
+            return getContrastRatio(color.hex, activeColor.hex) >= 4.5;
+        });
+    }, [showHighContrastOnly, activeColor]);
+
     const borderColor = useMemo(() => {
         // A slightly more transparent version of text color for borders
         return textColor === '#1a1a1a' ? 'rgba(26, 26, 26, 0.3)' : 'rgba(245, 245, 245, 0.3)';
@@ -103,7 +116,7 @@ const App: React.FC = () => {
                 <ColorDetails color={activeColor} textColor={textColor} duration={duration} />
 
                 <ColorList
-                    colors={NIPPON_COLORS}
+                    colors={filteredColors}
                     activeColor={activeColor}
                     onSelect={handleColorSelect}
                     textColor={textColor}
@@ -130,6 +143,20 @@ const App: React.FC = () => {
                     style={{ color: textColor, accentColor: textColor }}
                 />
             </div>
+
+            {/* High Contrast Filter Toggle */}
+            <button
+                onClick={() => setShowHighContrastOnly(!showHighContrastOnly)}
+                className={`fixed bottom-6 right-6 z-40 flex items-center gap-2 px-3 py-2 rounded-lg backdrop-blur-md transition-all duration-300 ${isReady ? 'opacity-100' : 'opacity-0'} ${
+                    showHighContrastOnly ? 'bg-white/20' : 'bg-white/10 hover:bg-white/15'
+                }`}
+                style={{ color: textColor }}
+                title={showHighContrastOnly ? 'Show all colors' : 'Show high contrast colors only'}>
+                <Filter size={14} className={showHighContrastOnly ? 'fill-current' : ''} />
+                <span className="text-[10px] uppercase tracking-widest font-roman">
+                    {showHighContrastOnly ? `AA (${filteredColors.length})` : 'All'}
+                </span>
+            </button>
 
             {/* Floating Vertical Kanji of Current Color (Foreground element) */}
             <div
