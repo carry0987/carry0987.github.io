@@ -99,10 +99,10 @@ const App: React.FC = () => {
             {/* Back to Tools Button */}
             <Link
                 to="/tools"
-                className="fixed top-6 left-6 z-50 inline-flex items-center gap-2 px-4 py-2 rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 transition-all duration-300 group"
+                className="fixed top-4 left-4 md:top-6 md:left-6 z-50 inline-flex items-center gap-1.5 md:gap-2 px-2.5 py-1.5 md:px-4 md:py-2 rounded-lg backdrop-blur-md bg-white/10 hover:bg-white/20 transition-all duration-300 group"
                 style={{ color: textColor }}>
-                <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-                <span className="text-sm font-medium">Back to Tools</span>
+                <ArrowLeft size={14} className="md:w-4 md:h-4 group-hover:-translate-x-1 transition-transform" />
+                <span className="text-xs md:text-sm font-medium">Back</span>
             </Link>
 
             {/* Background Texture Overlay to give it a paper feel */}
