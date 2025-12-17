@@ -350,10 +350,6 @@ function createFruitSprite(color: FruitColor, type: FruitType, id: number): Frui
     visual.circle(-size / 4, -size / 4, size / 6);
     visual.fill({ color: 0xffffff, alpha: 0.3 });
 
-    // Bottom Shadow
-    visual.roundRect(-size / 2, size / 2 - 5, size, 5, 4);
-    visual.fill({ color: 0x000000, alpha: 0.2 });
-
     container.addChild(visual);
     container.visual = visual;
 
