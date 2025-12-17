@@ -40,11 +40,18 @@ const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos,
 
     // Use a ref to store the latest click handler to avoid stale closures in Pixi events
     const onCandyClickRef = useRef(onCandyClick);
+    // Use a ref to store the latest selectedPos to avoid stale closures in Pixi ticker
+    const selectedPosRef = useRef(selectedPos);
 
     // Keep the ref updated with the latest prop
     useEffect(() => {
         onCandyClickRef.current = onCandyClick;
     }, [onCandyClick]);
+
+    // Keep selectedPos ref updated
+    useEffect(() => {
+        selectedPosRef.current = selectedPos;
+    }, [selectedPos]);
 
     // Initialize Pixi Application
     useEffect(() => {
@@ -98,6 +105,7 @@ const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos,
             // Animation Loop
             app.ticker.add((ticker: Ticker) => {
                 const delta = ticker.deltaTime;
+                const currentSelectedPos = selectedPosRef.current;
                 // Lerp Sprites
                 spritesMap.current.forEach((sprite) => {
                     // Smooth movement (spring-like lerp) - 0.15 for smoother animation
@@ -105,10 +113,8 @@ const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos,
                     sprite.y += (sprite.targetY - sprite.y) * 0.15 * delta;
 
                     // Selection Logic
-                    const isSelected = selectedPos?.row === sprite.gridRow && selectedPos?.col === sprite.gridCol;
-                    const targetScale = isSelected ? 1.15 : 1.0;
-                    sprite.scale.x += (targetScale - sprite.scale.x) * 0.2 * delta;
-                    sprite.scale.y += (targetScale - sprite.scale.y) * 0.2 * delta;
+                    const isSelected =
+                        currentSelectedPos?.row === sprite.gridRow && currentSelectedPos?.col === sprite.gridCol;
                     sprite.selectionRing.alpha = isSelected ? 1 : 0;
 
                     // Dynamic Z-Index: Lift moving items
@@ -354,10 +360,10 @@ function createCandySprite(color: CandyColor, type: CandyType, id: number): Cand
     // Explicit Hit Area to ensure clicks register on the whole cell
     container.hitArea = new Rectangle(-size / 2, -size / 2, size, size);
 
-    // Selection Ring (Hidden by default)
+    // Selection Ring (Hidden by default) - Blue color for visibility
     const ring = new Graphics();
     ring.roundRect(-size / 2 - 4, -size / 2 - 4, size + 8, size + 8, 16);
-    ring.stroke({ width: 4, color: 0xffffff });
+    ring.stroke({ width: 4, color: 0x3b82f6 }); // Blue color (Tailwind blue-500)
     ring.alpha = 0;
     container.addChild(ring);
     container.selectionRing = ring;
