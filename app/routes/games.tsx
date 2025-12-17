@@ -66,7 +66,7 @@ export default function GamesPage() {
         },
         {
             title: 'Fruit Crush',
-            desc: 'A colorful match-3 puzzle game with special candy power-ups and multiple levels to conquer.',
+            desc: 'A colorful match-3 puzzle game with special fruit power-ups and multiple levels to conquer.',
             tech: ['PixiJS', 'WebGL', 'TypeScript'],
             genre: '2D',
             playUrl: '/games/fruit-crush'
