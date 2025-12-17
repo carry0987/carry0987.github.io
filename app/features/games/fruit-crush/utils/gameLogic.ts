@@ -7,19 +7,35 @@ const generateId = () => {
     return ++globalIdCounter;
 };
 
-export const generateBoard = (): Board => {
+export const generateBoard = (clusterChance: number = 0.4): Board => {
     const newBoard: Board = [];
     for (let i = 0; i < BOARD_SIZE; i++) {
         const row: FruitItem[] = [];
         for (let j = 0; j < BOARD_SIZE; j++) {
-            let randomColor;
-            // Prevent initial matches
-            do {
+            let randomColor: FruitColor;
+
+            // Try to cluster colors for easier testing (more adjacent same-color blocks)
+            const neighbors: FruitColor[] = [];
+            if (j > 0 && row[j - 1].color !== FruitColor.EMPTY) neighbors.push(row[j - 1].color);
+            if (i > 0 && newBoard[i - 1][j].color !== FruitColor.EMPTY) neighbors.push(newBoard[i - 1][j].color);
+            if (i > 0 && j > 0 && newBoard[i - 1][j - 1].color !== FruitColor.EMPTY)
+                neighbors.push(newBoard[i - 1][j - 1].color);
+
+            // With clusterChance probability, try to use a neighbor's color
+            if (neighbors.length > 0 && Math.random() < clusterChance) {
+                randomColor = neighbors[Math.floor(Math.random() * neighbors.length)];
+            } else {
                 randomColor = FRUIT_COLORS[Math.floor(Math.random() * FRUIT_COLORS.length)];
-            } while (
+            }
+
+            // Prevent initial matches (3 in a row)
+            while (
                 (j >= 2 && row[j - 1].color === randomColor && row[j - 2].color === randomColor) ||
                 (i >= 2 && newBoard[i - 1][j].color === randomColor && newBoard[i - 2][j].color === randomColor)
-            );
+            ) {
+                randomColor = FRUIT_COLORS[Math.floor(Math.random() * FRUIT_COLORS.length)];
+            }
+
             row.push({ color: randomColor, type: FruitType.NORMAL, id: generateId(), shift: 0 });
         }
         newBoard.push(row);
