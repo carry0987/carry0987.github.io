@@ -295,12 +295,12 @@ const App: React.FC = () => {
 
         if (isRainbow1 || isRainbow2) {
             let colorToClear: FruitColor = FruitColor.EMPTY;
-            let rainbowPos = isRainbow1 ? p1 : p2;
 
+            // Determine color to clear before any swap
             if (isRainbow1 && !isRainbow2) colorToClear = fruit2.color;
             else if (isRainbow2 && !isRainbow1) colorToClear = fruit1.color;
             else if (isRainbow1 && isRainbow2) {
-                // Rainbow + Rainbow
+                // Rainbow + Rainbow - clear entire board
                 setEffects([
                     { id: Math.random(), type: 'COLOR_CLEAR', color: FruitColor.RED },
                     { id: Math.random(), type: 'COLOR_CLEAR', color: FruitColor.BLUE },
@@ -310,11 +310,13 @@ const App: React.FC = () => {
                 newBoard.forEach((row) =>
                     row.forEach((c) => {
                         c.color = FruitColor.EMPTY;
+                        c.type = FruitType.NORMAL;
+                        c.id = Math.random();
                     })
                 );
                 setScore((s) => s + 1000);
                 setMoves((prev) => prev - 1);
-                setBoard(newBoard);
+                setBoard(copyBoard(newBoard));
                 await new Promise((r) => setTimeout(r, 600));
                 setEffects([]);
                 await processBoard(newBoard);
@@ -331,23 +333,37 @@ const App: React.FC = () => {
             await new Promise((r) => setTimeout(r, 600));
             setEffects([]);
 
+            // Clear all fruits of the target color AND any rainbow bombs
             let clearedCount = 0;
-            newBoard.forEach((row, r) =>
-                row.forEach((c, col) => {
-                    if (c.color === colorToClear || (r === rainbowPos.row && col === rainbowPos.col)) {
+            const collectedColors: Record<string, number> = {};
+
+            newBoard.forEach((row) =>
+                row.forEach((c) => {
+                    // Clear if: matches target color OR is a rainbow bomb
+                    const shouldClear = c.color === colorToClear || c.type === FruitType.RAINBOW_BOMB;
+
+                    if (shouldClear) {
                         if (c.color !== FruitColor.EMPTY && c.color !== FruitColor.RAINBOW) {
-                            setCollectedCounts((prev) => ({
-                                ...prev,
-                                [c.color]: (prev[c.color] || 0) + 1
-                            }));
+                            collectedColors[c.color] = (collectedColors[c.color] || 0) + 1;
                         }
                         c.color = FruitColor.EMPTY;
+                        c.type = FruitType.NORMAL;
+                        c.id = Math.random();
                         clearedCount++;
                     }
                 })
             );
-            setScore((prev) => prev + clearedCount * 10 + 50);
 
+            // Update collected counts
+            setCollectedCounts((prev) => {
+                const updated = { ...prev };
+                Object.keys(collectedColors).forEach((color) => {
+                    updated[color] = (updated[color] || 0) + collectedColors[color];
+                });
+                return updated;
+            });
+
+            setScore((prev) => prev + clearedCount * 10 + 50);
             setMoves((prev) => prev - 1);
             setBoard(copyBoard(newBoard));
             await new Promise((r) => setTimeout(r, 300));
