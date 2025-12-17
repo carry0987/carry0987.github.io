@@ -174,10 +174,71 @@ const App: React.FC = () => {
 export const handle = { fullscreen: true };
 
 // Disable SSR for this route to avoid hydration mismatch with random colors
-export const clientLoader = () => null;
+export const clientLoader = async () => {
+    // Deliberately delay 1 second for testing loading screen
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return null;
+};
 export const HydrateFallback = () => (
-    <div className="w-full h-screen bg-neutral-900 flex items-center justify-center">
-        <div className="text-neutral-400 text-sm tracking-widest uppercase animate-pulse">Loading...</div>
+    <div className="w-full h-screen bg-[#1a1a1a] flex flex-col items-center justify-center overflow-hidden relative">
+        {/* Japanese wave pattern background */}
+        <div className="absolute inset-0 opacity-5">
+            <svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <pattern id="seigaiha" x="0" y="0" width="80" height="40" patternUnits="userSpaceOnUse">
+                        <path d="M0 40 Q20 20 40 40 Q60 20 80 40" stroke="#fff" strokeWidth="0.5" fill="none" />
+                        <path d="M0 30 Q20 10 40 30 Q60 10 80 30" stroke="#fff" strokeWidth="0.5" fill="none" />
+                        <path d="M0 20 Q20 0 40 20 Q60 0 80 20" stroke="#fff" strokeWidth="0.5" fill="none" />
+                    </pattern>
+                </defs>
+                <rect width="100%" height="100%" fill="url(#seigaiha)" />
+            </svg>
+        </div>
+
+        {/* Vertical Japanese text */}
+        <div className="relative flex flex-col items-center gap-8">
+            {/* Main vertical kanji */}
+            <div className="vertical-text text-4xl md:text-6xl font-serif tracking-[0.5em] text-[#d4a574] opacity-90 animate-pulse">
+                日本の色
+            </div>
+
+            {/* Animated ink brush stroke */}
+            <div className="relative w-48 h-1 overflow-hidden mt-4">
+                <div className="absolute inset-0 bg-linear-to-r from-transparent via-[#d4a574] to-transparent animate-[shimmer_2s_ease-in-out_infinite]" />
+            </div>
+
+            {/* Loading dots with traditional feel */}
+            <div className="flex items-center gap-3 mt-6">
+                <span
+                    className="w-2 h-2 rounded-full bg-[#d4a574] animate-[bounce_1s_ease-in-out_infinite]"
+                    style={{ animationDelay: '0ms' }}
+                />
+                <span
+                    className="w-2 h-2 rounded-full bg-[#d4a574] animate-[bounce_1s_ease-in-out_infinite]"
+                    style={{ animationDelay: '200ms' }}
+                />
+                <span
+                    className="w-2 h-2 rounded-full bg-[#d4a574] animate-[bounce_1s_ease-in-out_infinite]"
+                    style={{ animationDelay: '400ms' }}
+                />
+            </div>
+
+            {/* Subtitle */}
+            <div className="text-[#8b8b8b] text-xs tracking-[0.3em] uppercase mt-2 font-light">伝統色を読み込み中</div>
+        </div>
+
+        {/* Decorative corner elements - top left */}
+        <div className="absolute top-8 left-8 w-16 h-16 border-l-2 border-t-2 border-[#d4a574]/30" />
+        {/* Bottom right */}
+        <div className="absolute bottom-8 right-8 w-16 h-16 border-r-2 border-b-2 border-[#d4a574]/30" />
+
+        {/* Floating kanji decorations */}
+        <div className="absolute top-1/4 left-12 text-[#d4a574]/10 text-8xl font-serif select-none animate-[float_6s_ease-in-out_infinite]">
+            色
+        </div>
+        <div className="absolute bottom-1/4 right-12 text-[#d4a574]/10 text-8xl font-serif select-none animate-[float_6s_ease-in-out_infinite_reverse]">
+            彩
+        </div>
     </div>
 );
 
