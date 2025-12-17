@@ -44,19 +44,19 @@ export const FRUIT_COLOR_HEX: Record<FruitColor, number> = {
 export const LEVELS: LevelConfig[] = [
     {
         id: 1,
-        moves: 15,
+        moves: 20,
         description: 'Score 1000 points',
         objectives: [{ type: ObjectiveType.TARGET_SCORE, target: 1000 }]
     },
     {
         id: 2,
-        moves: 20,
+        moves: 30,
         description: 'Collect 12 Red Fruits',
         objectives: [{ type: ObjectiveType.COLLECT, color: FruitColor.RED, count: 12 }]
     },
     {
         id: 3,
-        moves: 20,
+        moves: 40,
         description: 'Collect 10 Blue and 10 Green',
         objectives: [
             { type: ObjectiveType.COLLECT, color: FruitColor.BLUE, count: 10 },
@@ -65,7 +65,7 @@ export const LEVELS: LevelConfig[] = [
     },
     {
         id: 4,
-        moves: 25,
+        moves: 50,
         description: 'Score 3000 pts & Collect 10 Purple',
         objectives: [
             { type: ObjectiveType.TARGET_SCORE, target: 3000 },
@@ -74,7 +74,7 @@ export const LEVELS: LevelConfig[] = [
     },
     {
         id: 5,
-        moves: 30,
+        moves: 60,
         description: 'Master: Score 5000 pts',
         objectives: [{ type: ObjectiveType.TARGET_SCORE, target: 5000 }]
     }
