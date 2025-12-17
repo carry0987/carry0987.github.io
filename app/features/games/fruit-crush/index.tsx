@@ -76,8 +76,45 @@ const App: React.FC = () => {
                 const allPositionsToClear: Position[] = [];
                 const spawns: { r: number; c: number; type: CandyType; color: CandyColor }[] = [];
 
-                matchGroups.forEach((group) => {
+                // Find L-shaped or T-shaped matches (intersecting horizontal and vertical matches)
+                const intersectingGroups: Set<number> = new Set();
+                for (let i = 0; i < matchGroups.length; i++) {
+                    for (let j = i + 1; j < matchGroups.length; j++) {
+                        const groupA = matchGroups[i];
+                        const groupB = matchGroups[j];
+                        // Check if they share a common position and are of same color
+                        if (groupA.color === groupB.color && groupA.matchType !== groupB.matchType) {
+                            const intersection = groupA.indices.find((posA) =>
+                                groupB.indices.some((posB) => posA.row === posB.row && posA.col === posB.col)
+                            );
+                            if (intersection) {
+                                // Calculate total unique positions
+                                const uniquePositions = new Set<string>();
+                                groupA.indices.forEach((p) => uniquePositions.add(`${p.row},${p.col}`));
+                                groupB.indices.forEach((p) => uniquePositions.add(`${p.row},${p.col}`));
+                                const totalCount = uniquePositions.size;
+
+                                // If total >= 5, spawn rainbow bomb at intersection
+                                if (totalCount >= 5) {
+                                    spawns.push({
+                                        r: intersection.row,
+                                        c: intersection.col,
+                                        type: CandyType.RAINBOW_BOMB,
+                                        color: CandyColor.RAINBOW
+                                    });
+                                    intersectingGroups.add(i);
+                                    intersectingGroups.add(j);
+                                }
+                            }
+                        }
+                    }
+                }
+
+                matchGroups.forEach((group, index) => {
                     allPositionsToClear.push(...group.indices);
+
+                    // Skip groups that already spawned a rainbow bomb from L/T intersection
+                    if (intersectingGroups.has(index)) return;
 
                     if (group.length >= 4) {
                         const midIndex = Math.floor(group.indices.length / 2);
