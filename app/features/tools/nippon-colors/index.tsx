@@ -203,7 +203,7 @@ export const HydrateFallback = () => (
             </div>
 
             {/* Animated ink brush stroke */}
-            <div className="relative w-48 h-1 overflow-hidden mt-4">
+            <div className="relative w-48 h-1 overflow-hidden mt-4 rounded">
                 <div className="absolute inset-0 bg-linear-to-r from-transparent via-[#d4a574] to-transparent animate-[shimmer_2s_ease-in-out_infinite]" />
             </div>
 
