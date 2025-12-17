@@ -61,6 +61,56 @@ const App: React.FC = () => {
             let currentScore = score; // Use local var to track score during animation
             const currentCounts = { ...collectedCounts }; // Use local var for counts
 
+            // Helper function to apply gravity and refill
+            const applyGravity = () => {
+                for (let col = 0; col < BOARD_SIZE; col++) {
+                    let emptyRows: number[] = [];
+                    for (let row = BOARD_SIZE - 1; row >= 0; row--) {
+                        if (activeBoard[row][col].color === FruitColor.EMPTY) emptyRows.push(row);
+                    }
+
+                    // Shift existing down
+                    for (let row = BOARD_SIZE - 1; row >= 0; row--) {
+                        if (activeBoard[row][col].color !== FruitColor.EMPTY) {
+                            let destRow = row;
+                            const drops = emptyRows.filter((r) => r > row).length;
+                            if (drops > 0) {
+                                destRow = row + drops;
+                                activeBoard[destRow][col] = { ...activeBoard[row][col], shift: drops };
+                                activeBoard[row][col] = {
+                                    color: FruitColor.EMPTY,
+                                    type: FruitType.NORMAL,
+                                    id: -1,
+                                    shift: 0
+                                };
+                            } else {
+                                activeBoard[row][col].shift = 0;
+                            }
+                        }
+                    }
+
+                    // Refill top
+                    for (let row = 0; row < BOARD_SIZE; row++) {
+                        if (activeBoard[row][col].color === FruitColor.EMPTY) {
+                            activeBoard[row][col] = {
+                                color: FRUIT_COLORS[Math.floor(Math.random() * FRUIT_COLORS.length)],
+                                type: FruitType.NORMAL,
+                                id: Math.random(),
+                                shift: 8 // PixiBoard uses this to spawn it high up
+                            };
+                        }
+                    }
+                }
+            };
+
+            // Check if there are any empty cells that need gravity first
+            const hasEmptyCells = activeBoard.some((row) => row.some((cell) => cell.color === FruitColor.EMPTY));
+            if (hasEmptyCells) {
+                applyGravity();
+                setBoard(copyBoard(activeBoard));
+                await new Promise((r) => setTimeout(r, 400));
+            }
+
             let iterations = 0;
             let hasMatches = true;
 
@@ -189,45 +239,8 @@ const App: React.FC = () => {
                 setBoard(copyBoard(activeBoard));
                 await new Promise((r) => setTimeout(r, 200));
 
-                // Gravity Calculation
-                for (let col = 0; col < BOARD_SIZE; col++) {
-                    let emptyRows: number[] = [];
-                    for (let row = BOARD_SIZE - 1; row >= 0; row--) {
-                        if (activeBoard[row][col].color === FruitColor.EMPTY) emptyRows.push(row);
-                    }
-
-                    // Shift existing down
-                    for (let row = BOARD_SIZE - 1; row >= 0; row--) {
-                        if (activeBoard[row][col].color !== FruitColor.EMPTY) {
-                            let destRow = row;
-                            const drops = emptyRows.filter((r) => r > row).length;
-                            if (drops > 0) {
-                                destRow = row + drops;
-                                activeBoard[destRow][col] = { ...activeBoard[row][col], shift: drops }; // shift used in Pixi for target calc if needed, though mostly relying on new position
-                                activeBoard[row][col] = {
-                                    color: FruitColor.EMPTY,
-                                    type: FruitType.NORMAL,
-                                    id: -1,
-                                    shift: 0
-                                };
-                            } else {
-                                activeBoard[row][col].shift = 0;
-                            }
-                        }
-                    }
-
-                    // Refill top
-                    for (let row = 0; row < BOARD_SIZE; row++) {
-                        if (activeBoard[row][col].color === FruitColor.EMPTY) {
-                            activeBoard[row][col] = {
-                                color: FRUIT_COLORS[Math.floor(Math.random() * FRUIT_COLORS.length)],
-                                type: FruitType.NORMAL,
-                                id: Math.random(),
-                                shift: 8 // PixiBoard uses this to spawn it high up
-                            };
-                        }
-                    }
-                }
+                // Apply gravity and refill
+                applyGravity();
 
                 setBoard(copyBoard(activeBoard));
                 // Pixi handles the interpolation, we just wait a bit for it to settle visually
