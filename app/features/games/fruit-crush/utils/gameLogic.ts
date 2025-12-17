@@ -7,7 +7,7 @@ const generateId = () => {
     return ++globalIdCounter;
 };
 
-export const generateBoard = (clusterChance: number = 0.4): Board => {
+export const generateBoard = (clusterChance: number = 0.5): Board => {
     const newBoard: Board = [];
     for (let i = 0; i < BOARD_SIZE; i++) {
         const row: FruitItem[] = [];
