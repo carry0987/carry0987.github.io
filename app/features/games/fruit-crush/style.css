@@ -1,0 +1,13 @@
+body {
+    font-family: 'Fredoka', sans-serif;
+    background-color: #1a1a2e;
+    color: white;
+    margin: 0;
+    overflow: hidden; /* Prevent scrolling on mobile */
+}
+.candy-shadow {
+    box-shadow:
+        inset 0px 4px 6px rgba(255, 255, 255, 0.4),
+        inset 0px -4px 6px rgba(0, 0, 0, 0.2),
+        0px 4px 6px rgba(0, 0, 0, 0.3);
+}

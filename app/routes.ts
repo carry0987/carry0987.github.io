@@ -11,6 +11,7 @@ export default [
     route('/games/3d-motion-capture', './features/games/3d-motion-capture/index.tsx'),
     route('/games/perlin-noise', './features/games/perlin-noise/index.tsx'),
     route('/games/neon-gyro-maze', './features/games/neon-gyro-maze/index.tsx'),
+    route('/games/fruit-crush', './features/games/fruit-crush/index.tsx'),
     /* Tools */
     route('/tools/nippon-colors', './features/tools/nippon-colors/index.tsx'),
     route('/tools/svg-generator', './features/tools/svg-generator/index.tsx'),
