@@ -568,7 +568,7 @@ const App: React.FC = () => {
                     disabled={moves <= 0 || isThinking || gameState !== GameState.IDLE}
                     className="flex-1 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-2xl shadow-lg flex items-center justify-center gap-2 transition-transform hover:-translate-y-1 active:translate-y-0">
                     <Sparkles className="w-5 h-5" />
-                    {hint ? 'Hint Active' : 'AI Hint'}
+                    {hint ? 'Hint Active' : 'Hint'}
                 </button>
 
                 <button
