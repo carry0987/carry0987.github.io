@@ -3,7 +3,7 @@ body {
     background-color: #1a1a2e;
     color: white;
     margin: 0;
-    overflow: hidden; /* Prevent scrolling on mobile */
+    overflow-x: hidden; /* Prevent horizontal scrolling only */
 }
 .candy-shadow {
     box-shadow:

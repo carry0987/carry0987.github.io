@@ -471,9 +471,9 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-linear-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-linear-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-x-hidden">
             {/* Background Decor */}
-            <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
+            <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20 overflow-hidden">
                 <div className="absolute top-10 left-10 w-32 h-32 bg-purple-500 rounded-full blur-3xl"></div>
                 <div className="absolute bottom-10 right-10 w-40 h-40 bg-blue-500 rounded-full blur-3xl"></div>
             </div>
