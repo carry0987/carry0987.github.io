@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef } from 'react';
 import type { PoseResults, Landmark, AvatarConfig } from './types';
 import { AvatarColorScheme, AVATAR_COLORS } from './types';
-import Avatar3D from './components/Avatar3D';
+import Avatar3D, { type Avatar3DHandle } from './components/Avatar3D';
 import PoseSensor from './components/PoseSensor';
 import { useCameraAvailability } from '@/hooks';
 import {
@@ -90,11 +90,16 @@ const App: React.FC = () => {
     // Store the latest pose
     const currentPoseRef = useRef<Landmark[]>(generateNeutralPose());
 
-    // Reset pose to neutral
+    // Ref for Avatar3D to control camera
+    const avatar3DRef = useRef<Avatar3DHandle>(null);
+
+    // Reset pose to neutral and camera view
     const resetPose = useCallback(() => {
         const neutralLandmarks = generateNeutralPose();
         setPoseData({ poseLandmarks: neutralLandmarks });
         currentPoseRef.current = neutralLandmarks;
+        // Reset camera view
+        avatar3DRef.current?.resetCamera();
     }, []);
 
     // Camera availability hook
@@ -129,7 +134,7 @@ const App: React.FC = () => {
         <div className="w-full h-screen relative bg-black overflow-hidden text-white select-none font-sans">
             {/* 3D Background/Avatar Layer */}
             <div className="absolute inset-0 z-0">
-                <Avatar3D poseResults={poseData} config={config} />
+                <Avatar3D ref={avatar3DRef} poseResults={poseData} config={config} />
             </div>
 
             {/* Vision Sensor (Top Right) */}

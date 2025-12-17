@@ -1,10 +1,15 @@
-import React, { useRef, useMemo, useEffect, useCallback } from 'react';
+import React, { useRef, useMemo, useEffect, useCallback, useImperativeHandle, forwardRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
 import { OrbitControls, Environment, Grid } from '@react-three/drei';
+import type { OrbitControls as OrbitControlsType } from 'three-stdlib';
 import * as THREE from 'three';
 import type { PoseResults, Landmark, AvatarConfig } from '../types';
 import { AVATAR_COLORS, AvatarColorScheme } from '../types';
 import { usePageVisibility } from '@/hooks';
+
+export interface Avatar3DHandle {
+    resetCamera: () => void;
+}
 
 interface Avatar3DProps {
     poseResults: PoseResults | null;
@@ -380,10 +385,30 @@ const SceneController: React.FC<{ isPaused: boolean }> = ({ isPaused }) => {
     return null;
 };
 
-const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults, config }) => {
+// Default camera settings
+const DEFAULT_CAMERA_POSITION = new THREE.Vector3(0, 1.2, 5);
+const DEFAULT_TARGET = new THREE.Vector3(0, 1, 0);
+
+const Avatar3D = forwardRef<Avatar3DHandle, Avatar3DProps>(({ poseResults, config }, ref) => {
     const { isVisible } = usePageVisibility();
     const isPaused = !isVisible;
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const controlsRef = useRef<OrbitControlsType>(null);
+
+    // Expose resetCamera method via ref
+    useImperativeHandle(
+        ref,
+        () => ({
+            resetCamera: () => {
+                if (controlsRef.current) {
+                    controlsRef.current.object.position.copy(DEFAULT_CAMERA_POSITION);
+                    controlsRef.current.target.copy(DEFAULT_TARGET);
+                    controlsRef.current.update();
+                }
+            }
+        }),
+        []
+    );
 
     // Callback to dispose resources when component unmounts or visibility changes
     const onCreated = useCallback((state: { gl: THREE.WebGLRenderer }) => {
@@ -426,6 +451,7 @@ const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults, config }) => {
                 <Grid infiniteGrid fadeDistance={30} sectionColor="#4f46e5" cellColor="#0f172a" />
                 <Environment preset="city" />
                 <OrbitControls
+                    ref={controlsRef}
                     enablePan={false}
                     target={[0, 1, 0]}
                     maxPolarAngle={Math.PI / 1.5}
@@ -437,6 +463,8 @@ const Avatar3D: React.FC<Avatar3DProps> = ({ poseResults, config }) => {
             </Canvas>
         </div>
     );
-};
+});
+
+Avatar3D.displayName = 'Avatar3D';
 
 export default Avatar3D;
