@@ -4,7 +4,7 @@ import type { Board, Position, LevelObjective, MoveHint, VisualEffect } from './
 import { BOARD_SIZE, CANDY_COLORS, LEVELS, CANDY_VISUALS } from './constants';
 import { generateBoard, getMatchGroups, copyBoard, isAdjacent, getExplosionImpact } from './utils/gameLogic';
 import PixiBoard from './components/PixiBoard';
-import { RotateCcw, Trophy, ArrowRight, XCircle } from 'lucide-react';
+import { RotateCcw, Trophy, ArrowRight, XCircle, BrainCircuit, Sparkles, AlertCircle } from 'lucide-react';
 
 const App: React.FC = () => {
     const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
@@ -223,8 +223,7 @@ const App: React.FC = () => {
     }, [gameState, moves, score, collectedCounts, currentLevel]);
 
     const handleCandyClick = async (row: number, col: number) => {
-        if (gameState !== GameState.IDLE || gameState === GameState.GAME_OVER || gameState === GameState.LEVEL_COMPLETE)
-            return;
+        if (gameState !== GameState.IDLE) return;
         if (hint) setHint(null);
 
         const clickedPos = { row, col };
@@ -344,13 +343,73 @@ const App: React.FC = () => {
         }
     };
 
+    // Find a valid move by simulating all possible swaps
+    const findHint = (currentBoard: Board): MoveHint | null => {
+        const directions: Array<{ dr: number; dc: number; dir: 'UP' | 'DOWN' | 'LEFT' | 'RIGHT' }> = [
+            { dr: -1, dc: 0, dir: 'UP' },
+            { dr: 1, dc: 0, dir: 'DOWN' },
+            { dr: 0, dc: -1, dir: 'LEFT' },
+            { dr: 0, dc: 1, dir: 'RIGHT' }
+        ];
+
+        let bestHint: MoveHint | null = null;
+        let bestScore = 0;
+
+        for (let row = 0; row < BOARD_SIZE; row++) {
+            for (let col = 0; col < BOARD_SIZE; col++) {
+                for (const { dr, dc, dir } of directions) {
+                    const newRow = row + dr;
+                    const newCol = col + dc;
+
+                    // Check bounds
+                    if (newRow < 0 || newRow >= BOARD_SIZE || newCol < 0 || newCol >= BOARD_SIZE) continue;
+
+                    // Skip empty cells
+                    if (currentBoard[row][col].color === CandyColor.EMPTY) continue;
+                    if (currentBoard[newRow][newCol].color === CandyColor.EMPTY) continue;
+
+                    // Simulate swap
+                    const testBoard = copyBoard(currentBoard);
+                    const temp = testBoard[row][col];
+                    testBoard[row][col] = testBoard[newRow][newCol];
+                    testBoard[newRow][newCol] = temp;
+
+                    // Check for matches
+                    const matches = getMatchGroups(testBoard);
+                    if (matches.length > 0) {
+                        // Calculate score based on match quality
+                        let score = 0;
+                        for (const match of matches) {
+                            score += match.length * 10;
+                            if (match.length >= 4) score += 20; // Bonus for special candy
+                            if (match.length >= 5) score += 30; // Bonus for color bomb
+                        }
+
+                        if (score > bestScore) {
+                            bestScore = score;
+                            const matchLengths = matches.map((m) => m.length);
+                            const maxMatch = Math.max(...matchLengths);
+                            let reason = `Match ${maxMatch} candies`;
+                            if (maxMatch >= 5) reason += ' - Creates a Rainbow Bomb!';
+                            else if (maxMatch >= 4) reason += ' - Creates a Striped Candy!';
+
+                            bestHint = { row, col, direction: dir, reason };
+                        }
+                    }
+                }
+            }
+        }
+
+        return bestHint;
+    };
+
     const handleGetHint = async () => {
         if (gameState !== GameState.IDLE || isThinking || moves <= 0) return;
         setIsThinking(true);
         setHintError(null);
         setHint(null);
 
-        const hintResult = await getGeminiHint(board);
+        const hintResult = findHint(board);
 
         setIsThinking(false);
         if (hintResult) {
@@ -412,7 +471,7 @@ const App: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-gradient-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
+        <div className="min-h-screen flex flex-col items-center justify-center p-4 bg-linear-to-br from-indigo-900 via-purple-900 to-pink-900 relative overflow-hidden">
             {/* Background Decor */}
             <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-20">
                 <div className="absolute top-10 left-10 w-32 h-32 bg-purple-500 rounded-full blur-3xl"></div>
@@ -431,7 +490,7 @@ const App: React.FC = () => {
                     </div>
                 </div>
 
-                <div className="bg-black/30 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10 flex flex-col items-center min-w-[100px]">
+                <div className="bg-black/30 backdrop-blur-md px-4 py-2 rounded-2xl border border-white/10 flex flex-col items-center min-w-25">
                     <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider">Moves</span>
                     <span
                         className={`text-2xl font-black leading-none ${moves < 5 ? 'text-red-400 animate-pulse' : 'text-white'}`}>
@@ -476,7 +535,7 @@ const App: React.FC = () => {
                             <p className="text-green-200 mb-6 font-medium">Excellent work!</p>
                             <button
                                 onClick={nextLevel}
-                                className="w-full bg-gradient-to-r from-green-400 to-emerald-600 hover:from-green-500 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                                className="w-full bg-linear-to-r from-green-400 to-emerald-600 hover:from-green-500 hover:to-emerald-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
                                 Next Level <ArrowRight className="w-5 h-5" />
                             </button>
                         </div>
@@ -494,7 +553,7 @@ const App: React.FC = () => {
                             <p className="text-red-200 mb-6 font-medium">Out of moves!</p>
                             <button
                                 onClick={restartLevel}
-                                className="w-full bg-gradient-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
+                                className="w-full bg-linear-to-r from-red-500 to-pink-600 hover:from-red-600 hover:to-pink-700 text-white font-bold py-3 px-8 rounded-xl shadow-lg transform transition hover:scale-105 active:scale-95 flex items-center justify-center gap-2">
                                 Try Again <RotateCcw className="w-5 h-5" />
                             </button>
                         </div>
@@ -507,7 +566,7 @@ const App: React.FC = () => {
                 <button
                     onClick={handleGetHint}
                     disabled={moves <= 0 || isThinking || gameState !== GameState.IDLE}
-                    className="flex-1 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-2xl shadow-lg flex items-center justify-center gap-2 transition-transform hover:-translate-y-1 active:translate-y-0">
+                    className="flex-1 bg-linear-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-bold py-3 px-6 rounded-2xl shadow-lg flex items-center justify-center gap-2 transition-transform hover:-translate-y-1 active:translate-y-0">
                     <Sparkles className="w-5 h-5" />
                     {hint ? 'Hint Active' : 'AI Hint'}
                 </button>
@@ -523,7 +582,7 @@ const App: React.FC = () => {
             {/* Hint Text */}
             {hint && hint.reason && (
                 <div className="mt-4 max-w-md bg-purple-900/80 backdrop-blur-md border border-purple-500/30 p-3 rounded-xl text-purple-100 text-sm flex items-start gap-2 animate-fade-in z-10 shadow-lg">
-                    <BrainCircuit className="w-5 h-5 text-purple-300 mt-0.5 flex-shrink-0" />
+                    <BrainCircuit className="w-5 h-5 text-purple-300 mt-0.5 shrink-0" />
                     <p>{hint.reason}</p>
                 </div>
             )}
