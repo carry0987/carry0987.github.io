@@ -10,7 +10,7 @@ const App: React.FC = () => {
     const [currentLevelIndex, setCurrentLevelIndex] = useState(0);
     const [board, setBoard] = useState<Board>([]);
     const [score, setScore] = useState(0);
-    const [moves, setMoves] = useState(0);
+    const [moves, setMoves] = useState(LEVELS[0].moves); // Initialize with first level's moves
     const [collectedCounts, setCollectedCounts] = useState<Record<string, number>>({});
     const [effects, setEffects] = useState<VisualEffect[]>([]);
 
@@ -212,14 +212,15 @@ const App: React.FC = () => {
 
     // Secondary effect to handle game over state once animation loop finishes and state updates
     useEffect(() => {
-        if (gameState === GameState.IDLE) {
+        // Only check game over if board is initialized
+        if (gameState === GameState.IDLE && board.length > 0) {
             if (checkObjectives(score, collectedCounts)) {
                 setGameState(GameState.LEVEL_COMPLETE);
             } else if (moves <= 0) {
                 setGameState(GameState.GAME_OVER);
             }
         }
-    }, [gameState, moves, score, collectedCounts, currentLevel]);
+    }, [gameState, moves, score, collectedCounts, currentLevel, board.length]);
 
     const handleCandyClick = async (row: number, col: number) => {
         if (gameState !== GameState.IDLE) return;
