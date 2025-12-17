@@ -25,7 +25,6 @@ const App: React.FC = () => {
     // Initialize board on mount or level change
     useEffect(() => {
         startLevel(currentLevelIndex);
-        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [currentLevelIndex]);
 
     const startLevel = (index: number) => {
