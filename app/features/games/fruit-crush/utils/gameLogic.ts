@@ -1,6 +1,6 @@
-import { CandyColor, CandyType } from '../types';
-import type { Board, CandyItem, Position, MatchResult } from '../types';
-import { BOARD_SIZE, CANDY_COLORS } from '../constants';
+import { FruitColor, FruitType } from '../types';
+import type { Board, FruitItem, Position, MatchResult } from '../types';
+import { BOARD_SIZE, FRUIT_COLORS } from '../constants';
 
 let globalIdCounter = 0;
 const generateId = () => {
@@ -10,17 +10,17 @@ const generateId = () => {
 export const generateBoard = (): Board => {
     const newBoard: Board = [];
     for (let i = 0; i < BOARD_SIZE; i++) {
-        const row: CandyItem[] = [];
+        const row: FruitItem[] = [];
         for (let j = 0; j < BOARD_SIZE; j++) {
             let randomColor;
             // Prevent initial matches
             do {
-                randomColor = CANDY_COLORS[Math.floor(Math.random() * CANDY_COLORS.length)];
+                randomColor = FRUIT_COLORS[Math.floor(Math.random() * FRUIT_COLORS.length)];
             } while (
                 (j >= 2 && row[j - 1].color === randomColor && row[j - 2].color === randomColor) ||
                 (i >= 2 && newBoard[i - 1][j].color === randomColor && newBoard[i - 2][j].color === randomColor)
             );
-            row.push({ color: randomColor, type: CandyType.NORMAL, id: generateId(), shift: 0 });
+            row.push({ color: randomColor, type: FruitType.NORMAL, id: generateId(), shift: 0 });
         }
         newBoard.push(row);
     }
@@ -35,7 +35,7 @@ export const getMatchGroups = (board: Board): MatchResult[] => {
     // Horizontal Matches
     for (let r = 0; r < BOARD_SIZE; r++) {
         for (let c = 0; c < BOARD_SIZE; c++) {
-            if (board[r][c].color === CandyColor.EMPTY || board[r][c].color === CandyColor.RAINBOW) continue;
+            if (board[r][c].color === FruitColor.EMPTY || board[r][c].color === FruitColor.RAINBOW) continue;
 
             let k = c + 1;
             while (k < BOARD_SIZE && board[r][k].color === board[r][c].color) {
@@ -61,7 +61,7 @@ export const getMatchGroups = (board: Board): MatchResult[] => {
     // Vertical Matches
     for (let c = 0; c < BOARD_SIZE; c++) {
         for (let r = 0; r < BOARD_SIZE; r++) {
-            if (board[r][c].color === CandyColor.EMPTY || board[r][c].color === CandyColor.RAINBOW) continue;
+            if (board[r][c].color === FruitColor.EMPTY || board[r][c].color === FruitColor.RAINBOW) continue;
 
             let k = r + 1;
             while (k < BOARD_SIZE && board[k][c].color === board[r][c].color) {
@@ -86,7 +86,7 @@ export const getMatchGroups = (board: Board): MatchResult[] => {
     return groups;
 };
 
-// Recursively find all positions to clear including special candy effects
+// Recursively find all positions to clear including special fruit effects
 export const getExplosionImpact = (board: Board, initialPositions: Position[]): Position[] => {
     const impactSet = new Set<string>();
     const queue = [...initialPositions];
@@ -103,21 +103,21 @@ export const getExplosionImpact = (board: Board, initialPositions: Position[]): 
         // Validate bounds
         if (pos.row < 0 || pos.row >= BOARD_SIZE || pos.col < 0 || pos.col >= BOARD_SIZE) continue;
 
-        const candy = board[pos.row][pos.col];
-        if (candy.color === CandyColor.EMPTY) continue;
+        const fruit = board[pos.row][pos.col];
+        if (fruit.color === FruitColor.EMPTY) continue;
 
         // Trigger Special Effects
-        if (candy.type === CandyType.HORIZONTAL_STRIPED) {
+        if (fruit.type === FruitType.HORIZONTAL_STRIPED) {
             for (let c = 0; c < BOARD_SIZE; c++) {
                 if (!processed.has(`${pos.row},${c}`)) queue.push({ row: pos.row, col: c });
             }
-        } else if (candy.type === CandyType.VERTICAL_STRIPED) {
+        } else if (fruit.type === FruitType.VERTICAL_STRIPED) {
             for (let r = 0; r < BOARD_SIZE; r++) {
                 if (!processed.has(`${r},${pos.col}`)) queue.push({ row: r, col: pos.col });
             }
-        } else if (candy.type === CandyType.RAINBOW_BOMB) {
+        } else if (fruit.type === FruitType.RAINBOW_BOMB) {
             // Rainbow bombs usually trigger via swap, but if destroyed by another bomb,
-            // let's say they explode the board or random candies. For safety, just clear itself.
+            // let's say they explode the board or random fruits. For safety, just clear itself.
         }
     }
 
@@ -128,7 +128,7 @@ export const getExplosionImpact = (board: Board, initialPositions: Position[]): 
 };
 
 export const copyBoard = (board: Board): Board => {
-    return board.map((row) => row.map((candy) => ({ ...candy })));
+    return board.map((row) => row.map((fruit) => ({ ...fruit })));
 };
 
 export const isAdjacent = (p1: Position, p2: Position): boolean => {

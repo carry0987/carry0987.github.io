@@ -1,20 +1,20 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { Application, Container, Graphics, Text, Rectangle, Ticker } from 'pixi.js';
-import { CandyColor, CandyType } from '../types';
+import { FruitColor, FruitType } from '../types';
 import type { Board, MoveHint, Position, VisualEffect } from '../types';
-import { BOARD_SIZE, CANDY_COLOR_HEX, CANDY_VISUALS } from '../constants';
+import { BOARD_SIZE, FRUIT_COLOR_HEX, FRUIT_VISUALS } from '../constants';
 
 interface PixiBoardProps {
     board: Board;
-    onCandyClick: (row: number, col: number) => void;
+    onFruitClick: (row: number, col: number) => void;
     selectedPos: Position | null;
     hint: MoveHint | null;
     effects: VisualEffect[];
 }
 
 // Interfaces for our custom Pixi objects
-type CandySprite = Container & {
-    candyId: number;
+type FruitSprite = Container & {
+    fruitId: number;
     gridRow: number;
     gridCol: number;
     visual: Graphics; // The colored rounded rect
@@ -28,7 +28,7 @@ const CELL_SIZE = 50; // Base logical size, we will scale entire container
 const GAP = 6;
 const GRID_WIDTH = BOARD_SIZE * (CELL_SIZE + GAP) + GAP;
 
-const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos, hint, effects }) => {
+const PixiBoard: React.FC<PixiBoardProps> = ({ board, onFruitClick, selectedPos, hint, effects }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const appRef = useRef<Application | null>(null);
     const boardContainerRef = useRef<Container | null>(null);
@@ -36,17 +36,17 @@ const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos,
     const [isReady, setIsReady] = useState(false);
 
     // Map to track existing sprites by ID to avoid recreating them
-    const spritesMap = useRef<Map<number, CandySprite>>(new Map());
+    const spritesMap = useRef<Map<number, FruitSprite>>(new Map());
 
     // Use a ref to store the latest click handler to avoid stale closures in Pixi events
-    const onCandyClickRef = useRef(onCandyClick);
+    const onFruitClickRef = useRef(onFruitClick);
     // Use a ref to store the latest selectedPos to avoid stale closures in Pixi ticker
     const selectedPosRef = useRef(selectedPos);
 
     // Keep the ref updated with the latest prop
     useEffect(() => {
-        onCandyClickRef.current = onCandyClick;
-    }, [onCandyClick]);
+        onFruitClickRef.current = onFruitClick;
+    }, [onFruitClick]);
 
     // Keep selectedPos ref updated
     useEffect(() => {
@@ -155,35 +155,35 @@ const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos,
         const currentIds = new Set<number>();
 
         board.forEach((row, rowIndex) => {
-            row.forEach((candy, colIndex) => {
-                if (candy.color === CandyColor.EMPTY) return;
+            row.forEach((fruit, colIndex) => {
+                if (fruit.color === FruitColor.EMPTY) return;
 
-                currentIds.add(candy.id);
+                currentIds.add(fruit.id);
                 const x = GAP + colIndex * (CELL_SIZE + GAP) + CELL_SIZE / 2;
                 const y = GAP + rowIndex * (CELL_SIZE + GAP) + CELL_SIZE / 2;
 
-                let sprite = spritesMap.current.get(candy.id);
+                let sprite = spritesMap.current.get(fruit.id);
 
                 // Create new Sprite if it doesn't exist
                 if (!sprite) {
-                    sprite = createCandySprite(candy.color, candy.type, candy.id);
+                    sprite = createFruitSprite(fruit.color, fruit.type, fruit.id);
 
                     // Interaction
                     sprite.eventMode = 'static';
                     sprite.cursor = 'pointer';
 
                     // IMPORTANT: Use the Ref to call the function.
-                    // This ensures we always call the latest version of onCandyClick from App.tsx
+                    // This ensures we always call the latest version of onFruitClick from App.tsx
                     sprite.on('pointerdown', () => {
-                        if (onCandyClickRef.current) {
-                            onCandyClickRef.current(sprite!.gridRow, sprite!.gridCol);
+                        if (onFruitClickRef.current) {
+                            onFruitClickRef.current(sprite!.gridRow, sprite!.gridCol);
                         }
                     });
 
                     // Spawn logic
-                    if (candy.shift && candy.shift > 0) {
+                    if (fruit.shift && fruit.shift > 0) {
                         sprite.x = x;
-                        sprite.y = y - candy.shift * (CELL_SIZE + GAP);
+                        sprite.y = y - fruit.shift * (CELL_SIZE + GAP);
                     } else {
                         // Fade in spawn
                         sprite.x = x;
@@ -199,7 +199,7 @@ const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos,
                     }
 
                     container.addChild(sprite);
-                    spritesMap.current.set(candy.id, sprite);
+                    spritesMap.current.set(fruit.id, sprite);
                 }
 
                 // Update Target Data
@@ -247,7 +247,7 @@ const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos,
                 spritesMap.current.delete(id);
             }
         });
-    }, [board, selectedPos, hint, isReady]); // removed onCandyClick from deps to prevent re-running loop unnecessarily
+    }, [board, selectedPos, hint, isReady]); // removed onFruitClick from deps to prevent re-running loop unnecessarily
 
     // Handle Visual Effects (Beams/Zaps)
     useEffect(() => {
@@ -304,7 +304,7 @@ const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos,
                 spritesMap.current.forEach(() => {
                     const flash = new Graphics();
                     flash.rect(0, 0, GRID_WIDTH, GRID_WIDTH);
-                    flash.fill(CANDY_COLOR_HEX[effect.color!]);
+                    flash.fill(FRUIT_COLOR_HEX[effect.color!]);
                     flash.alpha = 0.3;
                     container.addChild(flash);
                     let t = 0;
@@ -327,17 +327,17 @@ const PixiBoard: React.FC<PixiBoardProps> = ({ board, onCandyClick, selectedPos,
 };
 
 // Helper to build sprite
-function createCandySprite(color: CandyColor, type: CandyType, id: number): CandySprite {
-    const container = new Container() as CandySprite;
-    container.candyId = id;
+function createFruitSprite(color: FruitColor, type: FruitType, id: number): FruitSprite {
+    const container = new Container() as FruitSprite;
+    container.fruitId = id;
 
     const size = CELL_SIZE;
-    const hex = CANDY_COLOR_HEX[color];
+    const hex = FRUIT_COLOR_HEX[color];
 
     // Main Body
     const visual = new Graphics();
 
-    if (color === CandyColor.RAINBOW) {
+    if (color === FruitColor.RAINBOW) {
         visual.roundRect(-size / 2, -size / 2, size, size, 12);
         visual.stroke({ width: 2, color: 0xcccccc });
         visual.fill(0xffffff);
@@ -370,12 +370,12 @@ function createCandySprite(color: CandyColor, type: CandyType, id: number): Cand
 
     // Special Markings
     const specialContainer = new Container();
-    if (type === CandyType.HORIZONTAL_STRIPED) {
+    if (type === FruitType.HORIZONTAL_STRIPED) {
         const stripe = new Graphics();
         stripe.rect(-size / 2, -4, size, 8);
         stripe.fill({ color: 0xffffff, alpha: 0.7 });
         specialContainer.addChild(stripe);
-    } else if (type === CandyType.VERTICAL_STRIPED) {
+    } else if (type === FruitType.VERTICAL_STRIPED) {
         const stripe = new Graphics();
         stripe.rect(-4, -size / 2, 8, size);
         stripe.fill({ color: 0xffffff, alpha: 0.7 });
@@ -384,7 +384,7 @@ function createCandySprite(color: CandyColor, type: CandyType, id: number): Cand
     container.addChild(specialContainer);
 
     // Emoji Icon
-    const emoji = CANDY_VISUALS[color]?.icon || '';
+    const emoji = FRUIT_VISUALS[color]?.icon || '';
     const text = new Text({
         text: emoji,
         style: {

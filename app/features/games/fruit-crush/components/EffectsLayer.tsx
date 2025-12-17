@@ -38,14 +38,14 @@ const EffectsLayer: React.FC<EffectsLayerProps> = ({ effects, board }) => {
 
                 // Rainbow Bomb Color Clear
                 if (effect.type === 'COLOR_CLEAR' && effect.color) {
-                    // Render a zap on every candy of this color
+                    // Render a zap on every fruit of this color
                     return (
                         <React.Fragment key={effect.id}>
                             <div className="absolute inset-0 bg-white/10 animate-pulse"></div>
                             {board.map((row, r) =>
-                                row.map((candy, c) => {
+                                row.map((fruit, c) => {
                                     // Match color or match Rainbow bomb itself (if we want to explode the source too)
-                                    if (candy.color === effect.color) {
+                                    if (fruit.color === effect.color) {
                                         return (
                                             <div
                                                 key={`zap-${r}-${c}`}

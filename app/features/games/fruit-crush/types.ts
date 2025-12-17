@@ -1,4 +1,4 @@
-export enum CandyColor {
+export enum FruitColor {
     RED = 'RED',
     ORANGE = 'ORANGE',
     YELLOW = 'YELLOW',
@@ -9,16 +9,16 @@ export enum CandyColor {
     RAINBOW = 'RAINBOW' // Special color for Color Bombs
 }
 
-export enum CandyType {
+export enum FruitType {
     NORMAL = 'NORMAL',
     HORIZONTAL_STRIPED = 'HORIZONTAL_STRIPED', // Clears a row
     VERTICAL_STRIPED = 'VERTICAL_STRIPED', // Clears a column
     RAINBOW_BOMB = 'RAINBOW_BOMB' // Clears all of one color
 }
 
-export interface CandyItem {
-    color: CandyColor;
-    type: CandyType;
+export interface FruitItem {
+    color: FruitColor;
+    type: FruitType;
     id: number; // Unique ID for React keys and tracking
     shift?: number; // Number of rows to shift visually (for gravity animation)
 }
@@ -35,13 +35,13 @@ export interface MoveHint {
     reason?: string;
 }
 
-export type Board = CandyItem[][];
+export type Board = FruitItem[][];
 
 export interface MatchResult {
     indices: Position[];
     matchType: 'horizontal' | 'vertical';
     length: number;
-    color: CandyColor;
+    color: FruitColor;
 }
 
 export enum GameState {
@@ -60,7 +60,7 @@ export enum ObjectiveType {
 export interface LevelObjective {
     type: ObjectiveType;
     target?: number; // For score
-    color?: CandyColor; // For collect
+    color?: FruitColor; // For collect
     count?: number; // For collect
 }
 
@@ -76,5 +76,5 @@ export interface VisualEffect {
     type: 'ROW_CLEAR' | 'COL_CLEAR' | 'COLOR_CLEAR';
     row?: number;
     col?: number;
-    color?: CandyColor;
+    color?: FruitColor;
 }

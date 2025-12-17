@@ -1,11 +1,11 @@
 import React from 'react';
-import { CandyColor, CandyType } from '../types';
-import { CANDY_VISUALS } from '../constants';
+import { FruitColor, FruitType } from '../types';
+import { FRUIT_VISUALS } from '../constants';
 import { Sparkles, MoveHorizontal, MoveVertical } from 'lucide-react';
 
-interface CandyProps {
-    color: CandyColor;
-    type: CandyType;
+interface FruitProps {
+    color: FruitColor;
+    type: FruitType;
     isSelected: boolean;
     isHinted: boolean;
     shift?: number;
@@ -13,12 +13,12 @@ interface CandyProps {
     onClick: () => void;
 }
 
-const Candy: React.FC<CandyProps> = ({ color, type, isSelected, isHinted, shift = 0, style, onClick }) => {
-    if (color === CandyColor.EMPTY) {
+const Fruit: React.FC<FruitProps> = ({ color, type, isSelected, isHinted, shift = 0, style, onClick }) => {
+    if (color === FruitColor.EMPTY) {
         return <div className="w-full h-full" />;
     }
 
-    const visual = CANDY_VISUALS[color];
+    const visual = FRUIT_VISUALS[color];
 
     // Merge external style (hint) with gravity shift
     // Hints usually use translate, which conflicts with shift translate.
@@ -48,31 +48,31 @@ const Candy: React.FC<CandyProps> = ({ color, type, isSelected, isHinted, shift 
             <div
                 className={`
         w-[85%] h-[85%] rounded-2xl 
-        ${visual.bg} candy-shadow
+        ${visual.bg} fruit-shadow
         flex items-center justify-center
         text-2xl select-none
         border-b-4 border-black/20
         relative overflow-hidden
         ${isSelected ? `ring-4 ${visual.ring}` : ''}
         ${isHinted ? 'ring-4 ring-yellow-400 z-20 brightness-110' : ''}
-        ${type === CandyType.RAINBOW_BOMB ? 'animate-pulse' : ''}
+        ${type === FruitType.RAINBOW_BOMB ? 'animate-pulse' : ''}
       `}>
                 {/* Special Markings */}
-                {type === CandyType.HORIZONTAL_STRIPED && (
+                {type === FruitType.HORIZONTAL_STRIPED && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-60">
                         <div className="w-full h-1 bg-white shadow-sm"></div>
                         <MoveHorizontal className="absolute text-white w-6 h-6 drop-shadow-md" />
                     </div>
                 )}
 
-                {type === CandyType.VERTICAL_STRIPED && (
+                {type === FruitType.VERTICAL_STRIPED && (
                     <div className="absolute inset-0 flex items-center justify-center pointer-events-none opacity-60">
                         <div className="h-full w-1 bg-white shadow-sm"></div>
                         <MoveVertical className="absolute text-white w-6 h-6 drop-shadow-md" />
                     </div>
                 )}
 
-                {type === CandyType.RAINBOW_BOMB && (
+                {type === FruitType.RAINBOW_BOMB && (
                     <Sparkles className="absolute text-white w-8 h-8 animate-spin-slow drop-shadow-md" />
                 )}
 
@@ -91,4 +91,4 @@ const Candy: React.FC<CandyProps> = ({ color, type, isSelected, isHinted, shift 
     );
 };
 
-export default Candy;
+export default Fruit;

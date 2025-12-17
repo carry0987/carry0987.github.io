@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { CandyColor, CandyType, GameState, ObjectiveType } from './types';
+import { FruitColor, FruitType, GameState, ObjectiveType } from './types';
 import type { Board, Position, LevelObjective, MoveHint, VisualEffect } from './types';
-import { BOARD_SIZE, CANDY_COLORS, LEVELS, CANDY_VISUALS } from './constants';
+import { BOARD_SIZE, FRUIT_COLORS, LEVELS, FRUIT_VISUALS } from './constants';
 import { generateBoard, getMatchGroups, copyBoard, isAdjacent, getExplosionImpact } from './utils/gameLogic';
 import PixiBoard from './components/PixiBoard';
 import { RotateCcw, Trophy, ArrowRight, XCircle, BrainCircuit, Sparkles, AlertCircle } from 'lucide-react';
@@ -74,7 +74,7 @@ const App: React.FC = () => {
                 }
 
                 const allPositionsToClear: Position[] = [];
-                const spawns: { r: number; c: number; type: CandyType; color: CandyColor }[] = [];
+                const spawns: { r: number; c: number; type: FruitType; color: FruitColor }[] = [];
 
                 // Find L-shaped or T-shaped matches (intersecting horizontal and vertical matches)
                 const intersectingGroups: Set<number> = new Set();
@@ -99,8 +99,8 @@ const App: React.FC = () => {
                                     spawns.push({
                                         r: intersection.row,
                                         c: intersection.col,
-                                        type: CandyType.RAINBOW_BOMB,
-                                        color: CandyColor.RAINBOW
+                                        type: FruitType.RAINBOW_BOMB,
+                                        color: FruitColor.RAINBOW
                                     });
                                     intersectingGroups.add(i);
                                     intersectingGroups.add(j);
@@ -124,14 +124,14 @@ const App: React.FC = () => {
                             spawns.push({
                                 r: spawnPos.row,
                                 c: spawnPos.col,
-                                type: CandyType.RAINBOW_BOMB,
-                                color: CandyColor.RAINBOW
+                                type: FruitType.RAINBOW_BOMB,
+                                color: FruitColor.RAINBOW
                             });
                         } else if (group.length === 4) {
                             const type =
                                 group.matchType === 'horizontal'
-                                    ? CandyType.VERTICAL_STRIPED
-                                    : CandyType.HORIZONTAL_STRIPED;
+                                    ? FruitType.VERTICAL_STRIPED
+                                    : FruitType.HORIZONTAL_STRIPED;
                             spawns.push({ r: spawnPos.row, c: spawnPos.col, type, color: group.color });
                         }
                     }
@@ -142,10 +142,10 @@ const App: React.FC = () => {
                 // --- VISUAL EFFECTS TRIGGER ---
                 const newEffects: VisualEffect[] = [];
                 impactedPositions.forEach(({ row, col }) => {
-                    const candy = activeBoard[row][col];
-                    if (candy.type === CandyType.HORIZONTAL_STRIPED) {
+                    const fruit = activeBoard[row][col];
+                    if (fruit.type === FruitType.HORIZONTAL_STRIPED) {
                         newEffects.push({ id: Math.random(), type: 'ROW_CLEAR', row });
-                    } else if (candy.type === CandyType.VERTICAL_STRIPED) {
+                    } else if (fruit.type === FruitType.VERTICAL_STRIPED) {
                         newEffects.push({ id: Math.random(), type: 'COL_CLEAR', col });
                     }
                 });
@@ -160,16 +160,16 @@ const App: React.FC = () => {
 
                 // Execute Clears & Update Counts
                 impactedPositions.forEach(({ row, col }) => {
-                    const candy = activeBoard[row][col];
-                    if (candy.color !== CandyColor.EMPTY && candy.color !== CandyColor.RAINBOW) {
-                        currentCounts[candy.color] = (currentCounts[candy.color] || 0) + 1;
+                    const fruit = activeBoard[row][col];
+                    if (fruit.color !== FruitColor.EMPTY && fruit.color !== FruitColor.RAINBOW) {
+                        currentCounts[fruit.color] = (currentCounts[fruit.color] || 0) + 1;
                         currentScore += 10;
-                    } else if (candy.type === CandyType.RAINBOW_BOMB) {
+                    } else if (fruit.type === FruitType.RAINBOW_BOMB) {
                         currentScore += 50;
                     }
 
-                    activeBoard[row][col].color = CandyColor.EMPTY;
-                    activeBoard[row][col].type = CandyType.NORMAL;
+                    activeBoard[row][col].color = FruitColor.EMPTY;
+                    activeBoard[row][col].type = FruitType.NORMAL;
                 });
 
                 setScore(currentScore);
@@ -193,20 +193,20 @@ const App: React.FC = () => {
                 for (let col = 0; col < BOARD_SIZE; col++) {
                     let emptyRows: number[] = [];
                     for (let row = BOARD_SIZE - 1; row >= 0; row--) {
-                        if (activeBoard[row][col].color === CandyColor.EMPTY) emptyRows.push(row);
+                        if (activeBoard[row][col].color === FruitColor.EMPTY) emptyRows.push(row);
                     }
 
                     // Shift existing down
                     for (let row = BOARD_SIZE - 1; row >= 0; row--) {
-                        if (activeBoard[row][col].color !== CandyColor.EMPTY) {
+                        if (activeBoard[row][col].color !== FruitColor.EMPTY) {
                             let destRow = row;
                             const drops = emptyRows.filter((r) => r > row).length;
                             if (drops > 0) {
                                 destRow = row + drops;
                                 activeBoard[destRow][col] = { ...activeBoard[row][col], shift: drops }; // shift used in Pixi for target calc if needed, though mostly relying on new position
                                 activeBoard[row][col] = {
-                                    color: CandyColor.EMPTY,
-                                    type: CandyType.NORMAL,
+                                    color: FruitColor.EMPTY,
+                                    type: FruitType.NORMAL,
                                     id: -1,
                                     shift: 0
                                 };
@@ -218,10 +218,10 @@ const App: React.FC = () => {
 
                     // Refill top
                     for (let row = 0; row < BOARD_SIZE; row++) {
-                        if (activeBoard[row][col].color === CandyColor.EMPTY) {
+                        if (activeBoard[row][col].color === FruitColor.EMPTY) {
                             activeBoard[row][col] = {
-                                color: CANDY_COLORS[Math.floor(Math.random() * CANDY_COLORS.length)],
-                                type: CandyType.NORMAL,
+                                color: FRUIT_COLORS[Math.floor(Math.random() * FRUIT_COLORS.length)],
+                                type: FruitType.NORMAL,
                                 id: Math.random(),
                                 shift: 8 // PixiBoard uses this to spawn it high up
                             };
@@ -259,7 +259,7 @@ const App: React.FC = () => {
         }
     }, [gameState, moves, score, collectedCounts, currentLevel, board.length]);
 
-    const handleCandyClick = async (row: number, col: number) => {
+    const handleFruitClick = async (row: number, col: number) => {
         if (gameState !== GameState.IDLE) return;
         if (hint) setHint(null);
 
@@ -286,30 +286,30 @@ const App: React.FC = () => {
         setGameState(GameState.ANIMATING);
 
         const newBoard = copyBoard(board);
-        const candy1 = newBoard[p1.row][p1.col];
-        const candy2 = newBoard[p2.row][p2.col];
+        const fruit1 = newBoard[p1.row][p1.col];
+        const fruit2 = newBoard[p2.row][p2.col];
 
         // Rainbow Bomb Logic
-        const isRainbow1 = candy1.type === CandyType.RAINBOW_BOMB;
-        const isRainbow2 = candy2.type === CandyType.RAINBOW_BOMB;
+        const isRainbow1 = fruit1.type === FruitType.RAINBOW_BOMB;
+        const isRainbow2 = fruit2.type === FruitType.RAINBOW_BOMB;
 
         if (isRainbow1 || isRainbow2) {
-            let colorToClear: CandyColor = CandyColor.EMPTY;
+            let colorToClear: FruitColor = FruitColor.EMPTY;
             let rainbowPos = isRainbow1 ? p1 : p2;
 
-            if (isRainbow1 && !isRainbow2) colorToClear = candy2.color;
-            else if (isRainbow2 && !isRainbow1) colorToClear = candy1.color;
+            if (isRainbow1 && !isRainbow2) colorToClear = fruit2.color;
+            else if (isRainbow2 && !isRainbow1) colorToClear = fruit1.color;
             else if (isRainbow1 && isRainbow2) {
                 // Rainbow + Rainbow
                 setEffects([
-                    { id: Math.random(), type: 'COLOR_CLEAR', color: CandyColor.RED },
-                    { id: Math.random(), type: 'COLOR_CLEAR', color: CandyColor.BLUE },
-                    { id: Math.random(), type: 'COLOR_CLEAR', color: CandyColor.GREEN }
+                    { id: Math.random(), type: 'COLOR_CLEAR', color: FruitColor.RED },
+                    { id: Math.random(), type: 'COLOR_CLEAR', color: FruitColor.BLUE },
+                    { id: Math.random(), type: 'COLOR_CLEAR', color: FruitColor.GREEN }
                 ]);
 
                 newBoard.forEach((row) =>
                     row.forEach((c) => {
-                        c.color = CandyColor.EMPTY;
+                        c.color = FruitColor.EMPTY;
                     })
                 );
                 setScore((s) => s + 1000);
@@ -322,8 +322,8 @@ const App: React.FC = () => {
             }
 
             // Swap visual
-            newBoard[p1.row][p1.col] = candy2;
-            newBoard[p2.row][p2.col] = candy1;
+            newBoard[p1.row][p1.col] = fruit2;
+            newBoard[p2.row][p2.col] = fruit1;
             setBoard(copyBoard(newBoard));
             await new Promise((r) => setTimeout(r, 400));
 
@@ -335,13 +335,13 @@ const App: React.FC = () => {
             newBoard.forEach((row, r) =>
                 row.forEach((c, col) => {
                     if (c.color === colorToClear || (r === rainbowPos.row && col === rainbowPos.col)) {
-                        if (c.color !== CandyColor.EMPTY && c.color !== CandyColor.RAINBOW) {
+                        if (c.color !== FruitColor.EMPTY && c.color !== FruitColor.RAINBOW) {
                             setCollectedCounts((prev) => ({
                                 ...prev,
                                 [c.color]: (prev[c.color] || 0) + 1
                             }));
                         }
-                        c.color = CandyColor.EMPTY;
+                        c.color = FruitColor.EMPTY;
                         clearedCount++;
                     }
                 })
@@ -356,8 +356,8 @@ const App: React.FC = () => {
         }
 
         // Standard Swap
-        newBoard[p1.row][p1.col] = candy2;
-        newBoard[p2.row][p2.col] = candy1;
+        newBoard[p1.row][p1.col] = fruit2;
+        newBoard[p2.row][p2.col] = fruit1;
 
         setBoard(newBoard);
         // Allow visual animation to complete before checking logic
@@ -371,8 +371,8 @@ const App: React.FC = () => {
         } else {
             // Revert
             const revertBoard = copyBoard(newBoard);
-            revertBoard[p1.row][p1.col] = candy1;
-            revertBoard[p2.row][p2.col] = candy2;
+            revertBoard[p1.row][p1.col] = fruit1;
+            revertBoard[p2.row][p2.col] = fruit2;
             setBoard(revertBoard);
             // Allow revert animation to complete
             await new Promise((r) => setTimeout(r, 400));
@@ -402,8 +402,8 @@ const App: React.FC = () => {
                     if (newRow < 0 || newRow >= BOARD_SIZE || newCol < 0 || newCol >= BOARD_SIZE) continue;
 
                     // Skip empty cells
-                    if (currentBoard[row][col].color === CandyColor.EMPTY) continue;
-                    if (currentBoard[newRow][newCol].color === CandyColor.EMPTY) continue;
+                    if (currentBoard[row][col].color === FruitColor.EMPTY) continue;
+                    if (currentBoard[newRow][newCol].color === FruitColor.EMPTY) continue;
 
                     // Simulate swap
                     const testBoard = copyBoard(currentBoard);
@@ -418,7 +418,7 @@ const App: React.FC = () => {
                         let score = 0;
                         for (const match of matches) {
                             score += match.length * 10;
-                            if (match.length >= 4) score += 20; // Bonus for special candy
+                            if (match.length >= 4) score += 20; // Bonus for special fruit
                             if (match.length >= 5) score += 30; // Bonus for color bomb
                         }
 
@@ -426,9 +426,9 @@ const App: React.FC = () => {
                             bestScore = score;
                             const matchLengths = matches.map((m) => m.length);
                             const maxMatch = Math.max(...matchLengths);
-                            let reason = `Match ${maxMatch} candies`;
+                            let reason = `Match ${maxMatch} fruits`;
                             if (maxMatch >= 5) reason += ' - Creates a Rainbow Bomb!';
-                            else if (maxMatch >= 4) reason += ' - Creates a Striped Candy!';
+                            else if (maxMatch >= 4) reason += ' - Creates a Striped Fruit!';
 
                             bestHint = { row, col, direction: dir, reason };
                         }
@@ -488,7 +488,7 @@ const App: React.FC = () => {
         if (obj.type === ObjectiveType.COLLECT && obj.color) {
             const current = collectedCounts[obj.color] || 0;
             const target = obj.count || 0;
-            const visual = CANDY_VISUALS[obj.color];
+            const visual = FRUIT_VISUALS[obj.color];
             const isDone = current >= target;
 
             return (
@@ -545,7 +545,7 @@ const App: React.FC = () => {
             <div className="relative p-3 bg-[#2d2d44] rounded-2xl shadow-2xl border-4 border-[#3e3e5e] board-bg z-10 flex justify-center items-center">
                 <PixiBoard
                     board={board}
-                    onCandyClick={handleCandyClick}
+                    onFruitClick={handleFruitClick}
                     selectedPos={selectedPos}
                     hint={hint}
                     effects={effects}
@@ -644,7 +644,7 @@ export function meta() {
         },
         {
             name: 'description',
-            content: 'A colorful match-3 puzzle game with special candy power-ups and multiple levels'
+            content: 'A colorful match-3 puzzle game with special fruit power-ups and multiple levels'
         }
     ];
 }
