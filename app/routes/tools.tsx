@@ -43,7 +43,7 @@ export default function ToolsPage() {
         {
             title: 'Fake Chat',
             desc: 'Create realistic fake chat screenshots for Instagram, LINE, and Messenger. Perfect for mockups and creative projects.',
-            tech: ['React', 'Gemini API', 'html-to-image'],
+            tech: ['React', 'OpenAI API', 'Gemini API', 'html-to-image'],
             category: 'Creative',
             icon: MessageCircle,
             toolUrl: '/tools/fakechat'
