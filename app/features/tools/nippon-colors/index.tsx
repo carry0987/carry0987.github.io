@@ -174,7 +174,11 @@ const App: React.FC = () => {
 export const handle = { fullscreen: true };
 
 // Disable SSR for this route to avoid hydration mismatch with random colors
-export const clientLoader = null
+export const clientLoader = async () => {
+    // Deliberately delay 1 second for testing loading screen
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+    return null;
+};
 export const HydrateFallback = () => (
     <div className="w-full h-screen bg-[#1a1a1a] flex flex-col items-center justify-center overflow-hidden relative">
         {/* Japanese wave pattern background */}
