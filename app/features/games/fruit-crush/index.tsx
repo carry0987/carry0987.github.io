@@ -635,6 +635,9 @@ const App: React.FC = () => {
     );
 };
 
+// Mark this route as fullscreen (no navbar, footer, background)
+export const handle = { fullscreen: true };
+
 export function meta() {
     return [
         { title: 'Fruit Crush | Carry' },
@@ -648,8 +651,5 @@ export function meta() {
         }
     ];
 }
-
-// Mark this route as fullscreen (no navbar, footer, background)
-export const handle = { fullscreen: true };
 
 export default App;
