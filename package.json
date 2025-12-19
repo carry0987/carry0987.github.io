@@ -28,18 +28,18 @@
     "@heroicons/react": "^2.2.0",
     "@mediapipe/pose": "^0.5.1675469404",
     "@mediapipe/tasks-vision": "0.10.22-rc.20250304",
-    "@react-router/dev": "^7.10.1",
-    "@react-router/fs-routes": "^7.10.1",
-    "@react-router/node": "^7.10.1",
+    "@react-router/dev": "^7.11.0",
+    "@react-router/fs-routes": "^7.11.0",
+    "@react-router/node": "^7.11.0",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.4.2",
     "html-to-image": "^1.11.13",
     "isbot": "^5.1.32",
-    "lucide-react": "^0.561.0",
+    "lucide-react": "^0.562.0",
     "pixi.js": "^8.14.3",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
-    "react-router": "^7.10.1",
+    "react-router": "^7.11.0",
     "three": "^0.182.0"
   },
   "devDependencies": {
@@ -57,7 +57,7 @@
     "tailwindcss": "^4.1.18",
     "typescript": "^5.9.3",
     "vite": "^7.3.0",
-    "vite-tsconfig-paths": "^6.0.2"
+    "vite-tsconfig-paths": "^6.0.3"
   },
   "pnpm": {
     "onlyBuiltDependencies": [
