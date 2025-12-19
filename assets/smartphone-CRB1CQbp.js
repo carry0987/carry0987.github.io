@@ -1,0 +1,1 @@
+import{c as o}from"./createLucideIcon-DJfiQI6J.js";const t=[["path",{d:"M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z",key:"10ikf1"}]],c=o("play",t);const e=[["rect",{width:"14",height:"20",x:"5",y:"2",rx:"2",ry:"2",key:"1yt0o3"}],["path",{d:"M12 18h.01",key:"mhygvu"}]],h=o("smartphone",e);export{c as P,h as S};
