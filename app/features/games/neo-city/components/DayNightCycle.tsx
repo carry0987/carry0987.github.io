@@ -1,5 +1,4 @@
 import React, { useMemo } from 'react';
-import { Sky } from '@react-three/drei';
 import * as THREE from 'three';
 
 interface DayNightCycleProps {
@@ -29,20 +28,25 @@ const DayNightCycle: React.FC<DayNightCycleProps> = ({ gameTime }) => {
         return 1.2;
     }, [isNight, isGoldenHour]);
 
+    const bgColor = useMemo(() => {
+        if (isNight) return '#0f172a'; // Deep dark blue for night
+        if (isGoldenHour) return '#fb923c'; // Orange for sunset/sunrise
+        return '#BAE6FD'; // Light blue for day
+    }, [isNight, isGoldenHour]);
+
     return (
         <group>
-            <Sky sunPosition={sunPosition} turbidity={isNight ? 0.1 : 0.5} rayleigh={isNight ? 0.1 : 2} />
-
+            <color attach="background" args={[bgColor]} />
             <directionalLight
                 position={sunPosition}
                 intensity={intensity}
                 color={lightColor}
                 castShadow
-                shadow-bias={-0.0005} // Resolve flickering caused by Shadow Acne
+                shadow-bias={-0.0005}
                 shadow-mapSize={[2048, 2048]}
             />
 
-            <ambientLight intensity={isNight ? 0.1 : 0.4} color={isNight ? '#1e3a8a' : '#ffffff'} />
+            <ambientLight intensity={isNight ? 0.3 : 0.6} color={isNight ? '#3b82f6' : '#ffffff'} />
         </group>
     );
 };

@@ -1,7 +1,19 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ZoneType, type CityStats, type TileData, type SaveSettings } from '../types';
 import { BUILDINGS } from '../constants';
-import { Pencil, Wallet, Users, Smile, TrendingUp, Save, RefreshCw, X, ChevronUp, ChevronDown } from 'lucide-react';
+import {
+    Pencil,
+    Wallet,
+    Users,
+    Calendar,
+    TrendingUp,
+    Save,
+    RefreshCw,
+    X,
+    ChevronUp,
+    ChevronDown,
+    Clock
+} from 'lucide-react';
 
 interface UIOverlayProps {
     stats: CityStats;
@@ -16,6 +28,7 @@ interface UIOverlayProps {
     saveSettings: SaveSettings;
     onSave: () => void;
     onToggleAutoSave: () => void;
+    gameTime: number;
 }
 
 const UIOverlay: React.FC<UIOverlayProps> = ({
@@ -30,7 +43,8 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
     onToggleFeed,
     saveSettings,
     onSave,
-    onToggleAutoSave
+    onToggleAutoSave,
+    gameTime
 }) => {
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState(cityName);
@@ -38,6 +52,15 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
 
     const activeType = selectedBuildingInfo ? selectedBuildingInfo.type : selectedType;
     const buildingMeta = activeType !== ZoneType.EMPTY ? BUILDINGS[activeType] : null;
+
+    // Format game time (0-24) to HH:MM
+    const formatGameTime = (time: number) => {
+        const hours = Math.floor(time);
+        const minutes = Math.floor((time % 1) * 60);
+        const ampm = hours >= 12 ? 'PM' : 'AM';
+        const displayHours = hours % 12 || 12;
+        return `${displayHours}:${minutes.toString().padStart(2, '0')} ${ampm}`;
+    };
 
     useEffect(() => {
         if (isEditingName && inputRef.current) {
@@ -101,11 +124,12 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                                 value={stats.population.toLocaleString()}
                                 color="text-green-400"
                             />
+                            <StatItem icon={Calendar} label="Day" value={stats.day.toString()} color="text-blue-400" />
                             <StatItem
-                                icon={Smile}
-                                label="Happiness"
-                                value={`${stats.happiness}%`}
-                                color="text-blue-400"
+                                icon={Clock}
+                                label="Time"
+                                value={formatGameTime(gameTime)}
+                                color="text-indigo-400"
                             />
                             <StatItem
                                 icon={TrendingUp}

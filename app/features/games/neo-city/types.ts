@@ -18,7 +18,7 @@ export interface TileData {
 export interface CityStats {
     money: number;
     population: number;
-    happiness: number;
+    day: number;
     income: number;
     expense: number;
 }

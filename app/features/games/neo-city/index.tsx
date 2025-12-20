@@ -10,6 +10,7 @@ import CityGrid from './components/CityGrid';
 import UIOverlay from './components/UIOverlay';
 import CityLife from './components/CityLife';
 import DayNightCycle from './components/DayNightCycle';
+import EnvironmentEffects from './components/Environment';
 import CityFeed from './components/CityFeed';
 import StartScreen from './components/StartScreen';
 
@@ -119,6 +120,10 @@ const App: React.FC = () => {
         if (continueGame) {
             await handleLoad();
         } else {
+            // Reset stats and time for new game
+            setStats(INITIAL_STATS);
+            setGameTime(10); // Start at 10 AM
+
             // Initialize new game
             const initialData: TileData[] = [];
             for (let x = 0; x < GRID_SIZE; x++) {
@@ -133,7 +138,7 @@ const App: React.FC = () => {
                 id: 'welcome',
                 user: 'SYSTEM',
                 content: `Welcome to ${cityName}. Terrain generation complete. Ready for development.`,
-                timestamp: '11:30 PM',
+                timestamp: '10:00 AM',
                 type: 'neutral'
             };
             setFeedMessages([welcomeMsg]);
@@ -173,23 +178,44 @@ const App: React.FC = () => {
                 const pop = (counts[ZoneType.RESIDENTIAL] || 0) * 10;
                 const inc = (counts[ZoneType.COMMERCIAL] || 0) * 15 + (counts[ZoneType.INDUSTRIAL] || 0) * 25;
                 const exp = (counts[ZoneType.ROAD] || 0) * 2 + (counts[ZoneType.PARK] || 0) * 10;
-                const hap = Math.min(100, Math.max(0, 70 + (counts[ZoneType.PARK] || 0) * 2));
 
                 setStats((prev) => ({
                     ...prev,
                     population: pop,
                     money: prev.money + (inc - exp),
                     income: inc,
-                    expense: exp,
-                    happiness: Math.round(hap)
+                    expense: exp
                 }));
                 return prevData;
             });
-
-            setGameTime((prev) => (prev + 0.1) % 24);
         }, 5000);
         return () => clearInterval(interval);
     }, [gameStarted]);
+
+    // Smooth Day/Night Cycle (30 seconds per day)
+    const prevTimeRef = useRef(gameTime);
+    useEffect(() => {
+        if (!gameStarted) return;
+
+        const interval = setInterval(() => {
+            setGameTime((prev) => {
+                const next = prev + 0.08; // 24 / (30s / 0.1s) = 0.08
+                return next >= 24 ? 0 : next;
+            });
+        }, 100);
+
+        return () => clearInterval(interval);
+    }, [gameStarted]);
+
+    // Handle Day Increment
+    useEffect(() => {
+        if (!gameStarted) return;
+        // Detect transition from late night to early morning
+        if (prevTimeRef.current > 22 && gameTime < 2) {
+            setStats((s) => ({ ...s, day: s.day + 1 }));
+        }
+        prevTimeRef.current = gameTime;
+    }, [gameTime, gameStarted]);
 
     // Listen for important events and add system logs
     useEffect(() => {
@@ -285,6 +311,7 @@ const App: React.FC = () => {
     return (
         <div className="relative w-full h-screen">
             <Canvas shadows camera={{ position: [15, 15, 15], fov: 40 }}>
+                <EnvironmentEffects />
                 <DayNightCycle gameTime={gameTime} />
 
                 <CityGrid
@@ -328,6 +355,7 @@ const App: React.FC = () => {
                         saveSettings={saveSettings}
                         onSave={() => handleSave(false)}
                         onToggleAutoSave={toggleAutoSave}
+                        gameTime={gameTime}
                     />
                 </>
             )}

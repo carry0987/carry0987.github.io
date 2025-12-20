@@ -39,7 +39,7 @@ export const BUILDINGS: Record<ZoneType, BuildingMetadata> = {
         color: '#4299e1',
         label: 'Commercial',
         icon: ShoppingCart,
-        description: 'Stores and offices. Boosts city income and happiness.'
+        description: 'Stores and offices. Boosts city income and development.'
     },
     [ZoneType.INDUSTRIAL]: {
         type: ZoneType.INDUSTRIAL,
@@ -47,7 +47,7 @@ export const BUILDINGS: Record<ZoneType, BuildingMetadata> = {
         color: '#ecc94b',
         label: 'Industrial',
         icon: Factory,
-        description: 'Factories and production. High income but low happiness.'
+        description: 'Factories and production. High income generation.'
     },
     [ZoneType.PARK]: {
         type: ZoneType.PARK,
@@ -55,7 +55,7 @@ export const BUILDINGS: Record<ZoneType, BuildingMetadata> = {
         color: '#38b2ac',
         label: 'Park',
         icon: Trees,
-        description: 'Green spaces for relaxation. Greatly improves happiness.'
+        description: 'Green spaces for relaxation and city aesthetics.'
     },
     [ZoneType.BUS_STOP]: {
         type: ZoneType.BUS_STOP,
@@ -70,7 +70,7 @@ export const BUILDINGS: Record<ZoneType, BuildingMetadata> = {
 export const INITIAL_STATS = {
     money: 5000,
     population: 0,
-    happiness: 80,
+    day: 1,
     income: 0,
     expense: 0
 };
