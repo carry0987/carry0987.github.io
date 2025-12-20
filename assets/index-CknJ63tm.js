@@ -1,4 +1,4 @@
-import{r as w,j as h,w as e1}from"./chunk-JMJ3UQ3L-DTa-kQyz.js";import{a as to,u as t1,C as r1}from"./OrbitControls-C9DRcCBV.js";import{j as ro,A as no,V as At,E as n1,S as s1}from"./three.module-KINEyg-m.js";import{u as i1,a as sn,b as Gs,F as Vs,c as o1,d as a1}from"./XMarkIcon-lRIPZ1Jp.js";import{v as c1}from"./constants-CZel3VWn.js";import{O as h1}from"./OrbitControls-Ctiar8gD.js";class l1 extends s1{constructor(){super({uniforms:{time:{value:0},fade:{value:1}},vertexShader:`
+import{r as w,j as h,w as e1}from"./chunk-JMJ3UQ3L-DTa-kQyz.js";import{u as to,a as t1,C as r1}from"./OrbitControls-DRK-Wmte.js";import{C as ro,A as no,V as At,E as n1,S as s1}from"./three.module-DNtCYGiW.js";import{u as i1,a as sn,b as Gs,F as Vs,c as o1,d as a1}from"./XMarkIcon-lRIPZ1Jp.js";import{v as c1}from"./constants-BCyxaF58.js";import{O as h1}from"./OrbitControls-ClhYfUAP.js";class l1 extends s1{constructor(){super({uniforms:{time:{value:0},fade:{value:1}},vertexShader:`
       uniform float time;
       attribute float size;
       varying vec3 vColor;
