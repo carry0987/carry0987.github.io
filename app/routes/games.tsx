@@ -30,13 +30,6 @@ export default function GamesPage() {
             playUrl: '/games/zenvoid'
         },
         {
-            title: 'Sky Metropolis',
-            desc: 'Build your dream city in the clouds with this isometric city builder featuring goals and dynamic news events.',
-            tech: ['Three.js', 'WebGL'],
-            genre: '3D',
-            playUrl: '/games/sky-metropolis'
-        },
-        {
             title: 'Neo City',
             desc: 'An isometric city builder with dynamic news events and a detailed city management system.',
             tech: ['Three.js', 'WebGL', 'City Simulation'],
