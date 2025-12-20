@@ -28,7 +28,8 @@ export interface BuildingConfig {
     cost: number;
     color: string;
     label: string;
-    icon: string;
+    icon: any;
+    description?: string;
 }
 
 export interface FeedMessage {

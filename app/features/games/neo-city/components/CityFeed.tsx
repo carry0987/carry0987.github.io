@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import type { FeedMessage } from '../types';
+import { Trash2, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface CityFeedProps {
     messages: FeedMessage[];
@@ -28,12 +29,12 @@ const CityFeed: React.FC<CityFeedProps> = ({ messages, isVisible, onClear }) => 
                             onClick={onClear}
                             className="text-slate-500 hover:text-red-400 transition-colors"
                             title="Clear all logs">
-                            <i className="fas fa-trash-can text-xs"></i>
+                            <Trash2 className="w-3 h-3" />
                         </button>
                         <button
                             onClick={() => setIsMinimized(!isMinimized)}
                             className="text-slate-500 hover:text-white transition-colors">
-                            <i className={`fas ${isMinimized ? 'fa-chevron-up' : 'fa-chevron-down'} text-xs`}></i>
+                            {isMinimized ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
                         </button>
                         <div className="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse"></div>
                     </div>

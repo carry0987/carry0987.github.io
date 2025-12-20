@@ -5,6 +5,7 @@ import type { TileData, CityStats, FeedMessage, SaveSettings } from './types';
 import { ZoneType } from './types';
 import { GRID_SIZE, INITIAL_STATS, BUILDINGS } from './constants';
 import { saveManager } from './utils/saveManager';
+import { AlertTriangle } from 'lucide-react';
 import CityGrid from './components/CityGrid';
 import UIOverlay from './components/UIOverlay';
 import CityLife from './components/CityLife';
@@ -308,8 +309,8 @@ const App: React.FC = () => {
                     <CityFeed messages={feedMessages} isVisible={isFeedVisible} onClear={() => setFeedMessages([])} />
 
                     {errorMsg && (
-                        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-red-600/90 text-white px-6 py-2 rounded-full shadow-lg border border-red-400 animate-bounce pointer-events-none">
-                            <i className="fas fa-exclamation-triangle mr-2"></i>
+                        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-red-600/90 text-white px-6 py-2 rounded-full shadow-lg border border-red-400 animate-bounce pointer-events-none flex items-center">
+                            <AlertTriangle className="w-5 h-5 mr-2" />
                             {errorMsg}
                         </div>
                     )}

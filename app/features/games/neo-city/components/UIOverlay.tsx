@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { ZoneType, type CityStats, type TileData, type SaveSettings } from '../types';
 import { BUILDINGS } from '../constants';
+import { Pencil, Wallet, Users, Smile, TrendingUp, Save, RefreshCw, X, ChevronUp, ChevronDown } from 'lucide-react';
 
 interface UIOverlayProps {
     stats: CityStats;
@@ -78,7 +79,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                             <h1 className="text-3xl font-black italic tracking-tighter drop-shadow-[0_2px_4px_rgba(0,0,0,0.8)] text-white bg-linear-to-br from-white to-gray-400 bg-clip-text">
                                 {cityName}
                             </h1>
-                            <i className="fas fa-pen text-xs text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity"></i>
+                            <Pencil className="w-3 h-3 text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity" />
                         </div>
                     )}
                 </div>
@@ -87,25 +88,20 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                 <div className="flex justify-start items-start pointer-events-auto w-full">
                     <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 p-4 rounded-xl shadow-2xl flex space-x-8">
                         <StatItem
-                            icon="fa-wallet"
+                            icon={Wallet}
                             label="Budget"
                             value={`$${stats.money.toLocaleString()}`}
                             color="text-yellow-400"
                         />
                         <StatItem
-                            icon="fa-users"
+                            icon={Users}
                             label="Population"
                             value={stats.population.toLocaleString()}
                             color="text-green-400"
                         />
+                        <StatItem icon={Smile} label="Happiness" value={`${stats.happiness}%`} color="text-blue-400" />
                         <StatItem
-                            icon="fa-smile"
-                            label="Happiness"
-                            value={`${stats.happiness}%`}
-                            color="text-blue-400"
-                        />
-                        <StatItem
-                            icon="fa-chart-line"
+                            icon={TrendingUp}
                             label="Cashflow"
                             value={`$${stats.income - stats.expense}/m`}
                             color={stats.income - stats.expense >= 0 ? 'text-green-400' : 'text-red-400'}
@@ -118,7 +114,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                     <button
                         onClick={onSave}
                         className="bg-blue-600/80 hover:bg-blue-500 backdrop-blur-md text-white px-4 py-2 rounded-lg border border-blue-400/50 transition-all flex items-center space-x-2 text-sm font-bold shadow-lg shadow-blue-900/20">
-                        <i className="fas fa-save"></i>
+                        <Save className="w-4 h-4" />
                         <span>Save City</span>
                     </button>
                     <button
@@ -128,7 +124,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                                 ? 'bg-green-600/80 border-green-400/50 text-white shadow-green-900/20'
                                 : 'bg-gray-700/80 border-gray-500/50 text-gray-300 shadow-black/20'
                         }`}>
-                        <i className={`fas ${saveSettings.autoSaveEnabled ? 'fa-sync fa-spin' : 'fa-sync'}`}></i>
+                        <RefreshCw className={`w-4 h-4 ${saveSettings.autoSaveEnabled ? 'animate-spin' : ''}`} />
                         <span>Auto-save: {saveSettings.autoSaveEnabled ? 'ON' : 'OFF'}</span>
                     </button>
                     {saveSettings.lastSavedAt && (
@@ -144,13 +140,11 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                 <div className="absolute top-1/2 left-6 -translate-y-1/2 w-72 bg-gray-900/95 backdrop-blur-xl border border-blue-500/30 rounded-2xl shadow-2xl p-6 pointer-events-auto animate-in slide-in-from-left duration-300">
                     <div className="flex justify-between items-start mb-4">
                         <div className={`p-3 rounded-lg bg-gray-800`}>
-                            <i
-                                className={`fas ${buildingMeta.icon} text-2xl`}
-                                style={{ color: buildingMeta.color }}></i>
+                            <buildingMeta.icon className="w-6 h-6" style={{ color: buildingMeta.color }} />
                         </div>
                         {selectedBuildingInfo && (
                             <button onClick={onDeselect} className="text-gray-500 hover:text-white transition-colors">
-                                <i className="fas fa-times"></i>
+                                <X className="w-5 h-5" />
                             </button>
                         )}
                     </div>
@@ -202,7 +196,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                                     ? 'bg-blue-600 ring-2 ring-white scale-105'
                                     : 'bg-gray-800 hover:bg-gray-700'
                             }`}>
-                            <i className={`fas ${b.icon} text-2xl mb-1`}></i>
+                            <b.icon className="w-6 h-6 mb-1" />
                             <span className="text-[10px] font-bold uppercase tracking-tighter">{b.label}</span>
                             <span className="text-[10px] opacity-70">${b.cost}</span>
                         </button>
@@ -213,11 +207,11 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
     );
 };
 
-const StatItem = ({ icon, label, value, color }: { icon: string; label: string; value: string; color: string }) => (
+const StatItem = ({ icon: Icon, label, value, color }: { icon: any; label: string; value: string; color: string }) => (
     <div className="flex flex-col">
         <span className="text-[10px] uppercase font-bold text-gray-400 tracking-widest">{label}</span>
         <div className="flex items-center space-x-2">
-            <i className={`fas ${icon} ${color}`}></i>
+            <Icon className={`w-4 h-4 ${color}`} />
             <span className={`text-xl font-bold tabular-nums`}>{value}</span>
         </div>
     </div>
