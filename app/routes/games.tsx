@@ -37,6 +37,13 @@ export default function GamesPage() {
             playUrl: '/games/sky-metropolis'
         },
         {
+            title: 'Neo City',
+            desc: 'An isometric city builder with dynamic news events and a detailed city management system.',
+            tech: ['Three.js', 'WebGL', 'City Simulation'],
+            genre: '3D',
+            playUrl: '/games/neo-city'
+        },
+        {
             title: 'Gesture Flow',
             desc: 'An interactive 3D particle system controlled by your hand gestures through webcam tracking.',
             tech: ['Three.js', 'MediaPipe', 'Hand Tracking'],

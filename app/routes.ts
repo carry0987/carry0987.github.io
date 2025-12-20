@@ -7,6 +7,7 @@ export default [
     route('/games/shotball', './features/games/shotball/index.tsx'),
     route('/games/zenvoid', './features/games/zenvoid/index.tsx'),
     route('/games/sky-metropolis', './features/games/sky-metropolis/index.tsx'),
+    route('/games/neo-city', './features/games/neo-city/index.tsx'),
     route('/games/gesture-flow', './features/games/gesture-flow/index.tsx'),
     route('/games/3d-motion-capture', './features/games/3d-motion-capture/index.tsx'),
     route('/games/perlin-noise', './features/games/perlin-noise/index.tsx'),
