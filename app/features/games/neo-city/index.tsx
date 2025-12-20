@@ -1,19 +1,22 @@
 import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
-import type { TileData, CityStats, FeedMessage } from './types';
+import type { TileData, CityStats, FeedMessage, SaveSettings } from './types';
 import { ZoneType } from './types';
 import { GRID_SIZE, INITIAL_STATS, BUILDINGS } from './constants';
+import { saveManager } from './utils/saveManager';
 import CityGrid from './components/CityGrid';
 import UIOverlay from './components/UIOverlay';
 import CityLife from './components/CityLife';
 import DayNightCycle from './components/DayNightCycle';
 import CityFeed from './components/CityFeed';
+import StartScreen from './components/StartScreen';
 
 const App: React.FC = () => {
+    const [gameStarted, setGameStarted] = useState(false);
     const [cityData, setCityData] = useState<TileData[]>([]);
     const [stats, setStats] = useState<CityStats>(INITIAL_STATS);
-    const [cityName, setCityName] = useState<string>(() => localStorage.getItem('neo-city-name') || 'Neo City');
+    const [cityName, setCityName] = useState<string>('Neo City');
     const [selectedType, setSelectedType] = useState<ZoneType>(ZoneType.ROAD);
     const [selectedBuilding, setSelectedBuilding] = useState<{ x: number; z: number } | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -21,40 +24,141 @@ const App: React.FC = () => {
     const [feedMessages, setFeedMessages] = useState<FeedMessage[]>([]);
     const [isFeedVisible, setIsFeedVisible] = useState(true);
 
+    // Save Settings State
+    const [saveSettings, setSaveSettings] = useState<SaveSettings>({
+        autoSaveEnabled: true,
+        lastSavedAt: null
+    });
+    const [hasSavedGame, setHasSavedGame] = useState(false);
+
     // 正確地在頂層定義 Refs
+    const cityDataRef = useRef(cityData);
     const statsRef = useRef(stats);
+    const cityNameRef = useRef(cityName);
+    const gameTimeRef = useRef(gameTime);
+    const feedMessagesRef = useRef(feedMessages);
     const prevMoneyRef = useRef(stats.money);
+
+    useEffect(() => {
+        cityDataRef.current = cityData;
+    }, [cityData]);
 
     useEffect(() => {
         statsRef.current = stats;
     }, [stats]);
 
     useEffect(() => {
-        localStorage.setItem('neo-city-name', cityName);
+        cityNameRef.current = cityName;
     }, [cityName]);
 
     useEffect(() => {
-        const initialData: TileData[] = [];
-        for (let x = 0; x < GRID_SIZE; x++) {
-            for (let z = 0; z < GRID_SIZE; z++) {
-                initialData.push({ x, z, type: ZoneType.EMPTY, level: 0 });
-            }
-        }
-        setCityData(initialData);
+        gameTimeRef.current = gameTime;
+    }, [gameTime]);
 
-        // 初始歡迎系統訊息
-        const welcomeMsg: FeedMessage = {
-            id: 'welcome',
-            user: 'SYSTEM',
-            content: `Welcome to ${cityName}. Terrain generation complete. Ready for development.`,
-            timestamp: '11:30 PM',
-            type: 'neutral'
+    useEffect(() => {
+        feedMessagesRef.current = feedMessages;
+    }, [feedMessages]);
+
+    // Check for saved game on mount
+    useEffect(() => {
+        const checkSave = async () => {
+            const hasSave = await saveManager.hasSave();
+            setHasSavedGame(hasSave);
         };
-        setFeedMessages([welcomeMsg]);
+        checkSave();
     }, []);
+
+    // Save/Load Functions
+    const handleSave = useCallback(
+        async (silent = false) => {
+            const success = await saveManager.save(
+                cityDataRef.current,
+                statsRef.current,
+                cityNameRef.current,
+                gameTimeRef.current,
+                feedMessagesRef.current
+            );
+            if (success) {
+                setSaveSettings((prev) => ({ ...prev, lastSavedAt: Date.now() }));
+                if (!silent) {
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    setFeedMessages((prev) => [
+                        {
+                            id: Math.random().toString(36).substr(2, 9),
+                            user: 'SYSTEM',
+                            content: 'City data synchronized to neural network.',
+                            timestamp: timeStr,
+                            type: 'positive'
+                        } as FeedMessage,
+                        ...prev
+                    ]);
+                }
+            }
+            return success;
+        },
+        [setFeedMessages]
+    );
+
+    const handleLoad = useCallback(async () => {
+        const saveData = await saveManager.load();
+        if (saveData) {
+            setCityData(saveData.cityData);
+            setStats(saveData.stats);
+            setCityName(saveData.cityName);
+            setGameTime(saveData.gameTime);
+            setFeedMessages(saveData.feedMessages);
+            setSaveSettings((prev) => ({ ...prev, lastSavedAt: saveData.savedAt }));
+            return true;
+        }
+        return false;
+    }, []);
+
+    const handleStart = async (continueGame = false) => {
+        if (continueGame) {
+            await handleLoad();
+        } else {
+            // Initialize new game
+            const initialData: TileData[] = [];
+            for (let x = 0; x < GRID_SIZE; x++) {
+                for (let z = 0; z < GRID_SIZE; z++) {
+                    initialData.push({ x, z, type: ZoneType.EMPTY, level: 0 });
+                }
+            }
+            setCityData(initialData);
+
+            // 初始歡迎系統訊息
+            const welcomeMsg: FeedMessage = {
+                id: 'welcome',
+                user: 'SYSTEM',
+                content: `Welcome to ${cityName}. Terrain generation complete. Ready for development.`,
+                timestamp: '11:30 PM',
+                type: 'neutral'
+            };
+            setFeedMessages([welcomeMsg]);
+        }
+        setGameStarted(true);
+    };
+
+    const toggleAutoSave = () => {
+        setSaveSettings((prev) => ({ ...prev, autoSaveEnabled: !prev.autoSaveEnabled }));
+    };
+
+    // Auto-save effect
+    useEffect(() => {
+        if (!gameStarted || !saveSettings.autoSaveEnabled) return;
+
+        const interval = setInterval(() => {
+            handleSave(true);
+        }, 60000); // Auto-save every minute
+
+        return () => clearInterval(interval);
+    }, [gameStarted, saveSettings.autoSaveEnabled, handleSave]);
 
     // 定期更新經濟數據與遊戲時間
     useEffect(() => {
+        if (!gameStarted) return;
+
         const interval = setInterval(() => {
             setCityData((prevData) => {
                 const counts = prevData.reduce(
@@ -84,10 +188,11 @@ const App: React.FC = () => {
             setGameTime((prev) => (prev + 0.1) % 24);
         }, 5000);
         return () => clearInterval(interval);
-    }, []);
+    }, [gameStarted]);
 
     // 監聽重要事件並添加系統日誌
     useEffect(() => {
+        if (!gameStarted) return;
         // 使用頂層定義的 prevMoneyRef
         if (stats.money < 0 && prevMoneyRef.current >= 0) {
             const now = new Date();
@@ -111,6 +216,7 @@ const App: React.FC = () => {
 
     const handleTileClick = useCallback(
         (x: number, z: number) => {
+            if (!gameStarted) return;
             setErrorMsg(null);
             setCityData((prev) => {
                 const idx = prev.findIndex((t) => t.x === x && t.z === z);
@@ -163,7 +269,7 @@ const App: React.FC = () => {
                 return newData;
             });
         },
-        [selectedType]
+        [selectedType, gameStarted]
     );
 
     const handleSelectType = (type: ZoneType) => {
@@ -195,26 +301,35 @@ const App: React.FC = () => {
                 <OrbitControls makeDefault maxPolarAngle={Math.PI / 2.1} minDistance={5} maxDistance={40} />
             </Canvas>
 
-            <CityFeed messages={feedMessages} isVisible={isFeedVisible} onClear={() => setFeedMessages([])} />
+            {!gameStarted && <StartScreen onStart={handleStart} hasSavedGame={hasSavedGame} />}
 
-            {errorMsg && (
-                <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-red-600/90 text-white px-6 py-2 rounded-full shadow-lg border border-red-400 animate-bounce pointer-events-none">
-                    <i className="fas fa-exclamation-triangle mr-2"></i>
-                    {errorMsg}
-                </div>
+            {gameStarted && (
+                <>
+                    <CityFeed messages={feedMessages} isVisible={isFeedVisible} onClear={() => setFeedMessages([])} />
+
+                    {errorMsg && (
+                        <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-red-600/90 text-white px-6 py-2 rounded-full shadow-lg border border-red-400 animate-bounce pointer-events-none">
+                            <i className="fas fa-exclamation-triangle mr-2"></i>
+                            {errorMsg}
+                        </div>
+                    )}
+
+                    <UIOverlay
+                        stats={stats}
+                        cityName={cityName}
+                        onRenameCity={setCityName}
+                        selectedType={selectedType}
+                        onSelectType={handleSelectType}
+                        selectedBuildingInfo={selectedBuildingInfo}
+                        onDeselect={() => setSelectedBuilding(null)}
+                        isFeedVisible={isFeedVisible}
+                        onToggleFeed={() => setIsFeedVisible(!isFeedVisible)}
+                        saveSettings={saveSettings}
+                        onSave={() => handleSave(false)}
+                        onToggleAutoSave={toggleAutoSave}
+                    />
+                </>
             )}
-
-            <UIOverlay
-                stats={stats}
-                cityName={cityName}
-                onRenameCity={setCityName}
-                selectedType={selectedType}
-                onSelectType={handleSelectType}
-                selectedBuildingInfo={selectedBuildingInfo}
-                onDeselect={() => setSelectedBuilding(null)}
-                isFeedVisible={isFeedVisible}
-                onToggleFeed={() => setIsFeedVisible(!isFeedVisible)}
-            />
         </div>
     );
 };

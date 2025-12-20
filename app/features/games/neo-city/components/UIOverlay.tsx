@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ZoneType, type CityStats, type TileData } from '../types';
+import { ZoneType, type CityStats, type TileData, type SaveSettings } from '../types';
 import { BUILDINGS } from '../constants';
 
 interface UIOverlayProps {
@@ -12,6 +12,9 @@ interface UIOverlayProps {
     onDeselect: () => void;
     isFeedVisible: boolean;
     onToggleFeed: () => void;
+    saveSettings: SaveSettings;
+    onSave: () => void;
+    onToggleAutoSave: () => void;
 }
 
 const UIOverlay: React.FC<UIOverlayProps> = ({
@@ -23,7 +26,10 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
     selectedBuildingInfo,
     onDeselect,
     isFeedVisible,
-    onToggleFeed
+    onToggleFeed,
+    saveSettings,
+    onSave,
+    onToggleAutoSave
 }) => {
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState(cityName);
@@ -105,6 +111,31 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                             color={stats.income - stats.expense >= 0 ? 'text-green-400' : 'text-red-400'}
                         />
                     </div>
+                </div>
+
+                {/* Save Controls */}
+                <div className="flex items-center space-x-3 pointer-events-auto">
+                    <button
+                        onClick={onSave}
+                        className="bg-blue-600/80 hover:bg-blue-500 backdrop-blur-md text-white px-4 py-2 rounded-lg border border-blue-400/50 transition-all flex items-center space-x-2 text-sm font-bold shadow-lg shadow-blue-900/20">
+                        <i className="fas fa-save"></i>
+                        <span>Save City</span>
+                    </button>
+                    <button
+                        onClick={onToggleAutoSave}
+                        className={`backdrop-blur-md px-4 py-2 rounded-lg border transition-all flex items-center space-x-2 text-sm font-bold shadow-lg ${
+                            saveSettings.autoSaveEnabled
+                                ? 'bg-green-600/80 border-green-400/50 text-white shadow-green-900/20'
+                                : 'bg-gray-700/80 border-gray-500/50 text-gray-300 shadow-black/20'
+                        }`}>
+                        <i className={`fas ${saveSettings.autoSaveEnabled ? 'fa-sync fa-spin' : 'fa-sync'}`}></i>
+                        <span>Auto-save: {saveSettings.autoSaveEnabled ? 'ON' : 'OFF'}</span>
+                    </button>
+                    {saveSettings.lastSavedAt && (
+                        <span className="text-[10px] text-gray-400 font-mono uppercase tracking-tighter">
+                            Last Sync: {new Date(saveSettings.lastSavedAt).toLocaleTimeString()}
+                        </span>
+                    )}
                 </div>
             </div>
 

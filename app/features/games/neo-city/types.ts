@@ -38,3 +38,18 @@ export interface FeedMessage {
     timestamp: string;
     type: 'positive' | 'negative' | 'neutral';
 }
+
+export interface SaveData {
+    cityData: TileData[];
+    stats: CityStats;
+    cityName: string;
+    gameTime: number;
+    feedMessages: FeedMessage[];
+    savedAt: number;
+    version: number;
+}
+
+export interface SaveSettings {
+    autoSaveEnabled: boolean;
+    lastSavedAt: number | null;
+}
