@@ -5,7 +5,7 @@ import { type TileData, ZoneType } from '../types';
 import { GRID_SIZE } from '../constants';
 
 const LANE_OFFSETS = [0.14, 0.32];
-const SIDEWALK_OFFSET = 0.42; // 微調人行道偏移量以完美對齊新斑馬線
+const SIDEWALK_OFFSET = 0.42; // Fine-tune sidewalk offset to perfectly align with new crosswalks
 const SAFE_FOLLOW_DISTANCE = 0.85;
 const DETECTION_RADIUS = 1.6;
 const MAX_CARS = 24;

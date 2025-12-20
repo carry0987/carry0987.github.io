@@ -38,7 +38,7 @@ const DayNightCycle: React.FC<DayNightCycleProps> = ({ gameTime }) => {
                 intensity={intensity}
                 color={lightColor}
                 castShadow
-                shadow-bias={-0.0005} // 解決 Shadow Acne 造成的閃爍
+                shadow-bias={-0.0005} // Resolve flickering caused by Shadow Acne
                 shadow-mapSize={[2048, 2048]}
             />
 

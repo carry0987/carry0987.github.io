@@ -15,9 +15,9 @@ const CityFeed: React.FC<CityFeedProps> = ({ messages, isVisible, onClear }) => 
 
     return (
         <div className="fixed bottom-6 right-6 w-70 z-50 flex flex-col pointer-events-auto">
-            {/* 控制台外殼 */}
+            {/* Console Shell */}
             <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
-                {/* 標題列 Header */}
+                {/* Header Bar */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/50 bg-slate-800/30">
                     <div className="flex items-center space-x-2">
                         <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
@@ -40,7 +40,7 @@ const CityFeed: React.FC<CityFeedProps> = ({ messages, isVisible, onClear }) => 
                     </div>
                 </div>
 
-                {/* 內容區域 Body */}
+                {/* Body Content Area */}
                 {!isMinimized && (
                     <div className="h-64 overflow-y-auto p-4 space-y-3 custom-scrollbar">
                         {messages.length === 0 ? (

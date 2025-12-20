@@ -93,7 +93,7 @@ const CityGrid: React.FC<CityGridProps> = ({ cityData, onTileClick, selectedType
                     <Building
                         key={`${tile.x}-${tile.z}`}
                         type={tile.type}
-                        variant={tile.level} // 使用 level 作為變體索引
+                        variant={tile.level} // Use level as variant index
                         isSelected={selectedBuilding?.x === tile.x && selectedBuilding?.z === tile.z}
                         position={[tile.x - GRID_SIZE / 2 + 0.5, 0, tile.z - GRID_SIZE / 2 + 0.5]}
                         connections={connections}

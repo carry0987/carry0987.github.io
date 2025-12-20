@@ -32,7 +32,7 @@ const App: React.FC = () => {
     });
     const [hasSavedGame, setHasSavedGame] = useState(false);
 
-    // 正確地在頂層定義 Refs
+    // Correctly define Refs at the top level
     const cityDataRef = useRef(cityData);
     const statsRef = useRef(stats);
     const cityNameRef = useRef(cityName);
@@ -128,7 +128,7 @@ const App: React.FC = () => {
             }
             setCityData(initialData);
 
-            // 初始歡迎系統訊息
+            // Initial welcome system message
             const welcomeMsg: FeedMessage = {
                 id: 'welcome',
                 user: 'SYSTEM',
@@ -156,7 +156,7 @@ const App: React.FC = () => {
         return () => clearInterval(interval);
     }, [gameStarted, saveSettings.autoSaveEnabled, handleSave]);
 
-    // 定期更新經濟數據與遊戲時間
+    // Periodically update economic data and game time
     useEffect(() => {
         if (!gameStarted) return;
 
@@ -191,10 +191,10 @@ const App: React.FC = () => {
         return () => clearInterval(interval);
     }, [gameStarted]);
 
-    // 監聽重要事件並添加系統日誌
+    // Listen for important events and add system logs
     useEffect(() => {
         if (!gameStarted) return;
-        // 使用頂層定義的 prevMoneyRef
+        // Use prevMoneyRef defined at the top level
         if (stats.money < 0 && prevMoneyRef.current >= 0) {
             const now = new Date();
             const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -240,7 +240,7 @@ const App: React.FC = () => {
 
                 const config = BUILDINGS[selectedType];
                 if (statsRef.current.money < config.cost) {
-                    setErrorMsg('預算不足！');
+                    setErrorMsg('Insufficient budget!');
                     return prev;
                 }
 
@@ -248,7 +248,7 @@ const App: React.FC = () => {
                 const randomVariant = Math.floor(Math.random() * 3);
                 newData[idx] = { ...currentTile, type: selectedType, level: randomVariant };
 
-                // 建築完成時添加系統日誌
+                // Add system log when construction is complete
                 const now = new Date();
                 const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 // Fix: Cast the message object to FeedMessage to ensure 'type' field matches the union type expected.

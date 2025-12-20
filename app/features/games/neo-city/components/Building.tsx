@@ -172,7 +172,7 @@ const Building: React.FC<BuildingProps> = ({ type, variant = 0, position, isSele
             case ZoneType.RESIDENTIAL: {
                 const resColor = '#48bb78';
                 if (variant === 1) {
-                    // 現代雙層公寓
+                    // Modern two-story apartment
                     return (
                         <group>
                             <Box args={[0.4, 0.7, 0.6]} position={[-0.15, 0.35, 0]} castShadow>
@@ -192,7 +192,7 @@ const Building: React.FC<BuildingProps> = ({ type, variant = 0, position, isSele
                     );
                 }
                 if (variant === 2) {
-                    // 長型平房
+                    // Long bungalow
                     return (
                         <group>
                             <Box args={[0.8, 0.35, 0.4]} position={[0, 0.175, 0]} castShadow>
@@ -208,7 +208,7 @@ const Building: React.FC<BuildingProps> = ({ type, variant = 0, position, isSele
                         </group>
                     );
                 }
-                // 原版
+                // Original version
                 return (
                     <group>
                         <Box args={[0.6, 0.5, 0.6]} position={[0, 0.25, 0]} castShadow>
@@ -227,7 +227,7 @@ const Building: React.FC<BuildingProps> = ({ type, variant = 0, position, isSele
             case ZoneType.COMMERCIAL: {
                 const commColor = '#4299e1';
                 if (variant === 1) {
-                    // 玻璃帷幕大樓樣式
+                    // Glass curtain wall building style
                     return (
                         <group>
                             <Box args={[0.6, 1.2, 0.6]} position={[0, 0.6, 0]} castShadow>
@@ -248,7 +248,7 @@ const Building: React.FC<BuildingProps> = ({ type, variant = 0, position, isSele
                     );
                 }
                 if (variant === 2) {
-                    // 帶招牌的零售商場
+                    // Retail mall with signage
                     return (
                         <group>
                             <Box args={[0.8, 0.4, 0.8]} position={[0, 0.2, 0]} castShadow>
@@ -285,7 +285,7 @@ const Building: React.FC<BuildingProps> = ({ type, variant = 0, position, isSele
             case ZoneType.INDUSTRIAL: {
                 const indColor = '#ecc94b';
                 if (variant === 1) {
-                    // 儲油罐群
+                    // Oil tank cluster
                     return (
                         <group>
                             <Cylinder args={[0.2, 0.2, 0.5, 12]} position={[-0.2, 0.25, -0.2]} castShadow>
@@ -305,7 +305,7 @@ const Building: React.FC<BuildingProps> = ({ type, variant = 0, position, isSele
                     );
                 }
                 if (variant === 2) {
-                    // 複雜化加工廠 (多煙囪)
+                    // Complex processing plant (multiple chimneys)
                     return (
                         <group>
                             <Box args={[0.7, 0.4, 0.7]} position={[0, 0.2, 0]} castShadow>
@@ -345,7 +345,7 @@ const Building: React.FC<BuildingProps> = ({ type, variant = 0, position, isSele
             case ZoneType.PARK: {
                 const parkColor = '#38b2ac';
                 if (variant === 1) {
-                    // 噴泉水池
+                    // Fountain pool
                     return (
                         <group>
                             <Box args={[0.9, 0.1, 0.9]} position={[0, 0.05, 0]} receiveShadow>
@@ -365,7 +365,7 @@ const Building: React.FC<BuildingProps> = ({ type, variant = 0, position, isSele
                     );
                 }
                 if (variant === 2) {
-                    // 彩色遊樂場
+                    // Colorful playground
                     return (
                         <group>
                             <Box args={[0.9, 0.1, 0.9]} position={[0, 0.05, 0]} receiveShadow>
