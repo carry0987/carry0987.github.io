@@ -254,6 +254,25 @@ const App: React.FC = () => {
                 if (selectedType === ZoneType.EMPTY) {
                     if (currentTile.type === ZoneType.EMPTY) return prev;
                     const newData = [...prev];
+                    const refund = Math.floor(BUILDINGS[currentTile.type].cost * 0.8);
+
+                    // Add system log for demolition and refund
+                    const now = new Date();
+                    const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                    setFeedMessages((prevMsg) =>
+                        [
+                            {
+                                id: Math.random().toString(36).substr(2, 9),
+                                user: 'SYSTEM',
+                                content: `Demolition complete: ${BUILDINGS[currentTile.type].label} removed. $${refund} refunded to treasury.`,
+                                timestamp: timeStr,
+                                type: 'positive'
+                            } as FeedMessage,
+                            ...prevMsg
+                        ].slice(0, 50)
+                    );
+
+                    setStats((s) => ({ ...s, money: s.money + refund }));
                     newData[idx] = { ...currentTile, type: ZoneType.EMPTY, level: 0 };
                     setSelectedBuilding(null);
                     return newData;
