@@ -468,36 +468,40 @@ const CityLife: React.FC<{ cityData: TileData[] }> = ({ cityData }) => {
                 TEMP_OBJ.updateMatrix();
                 carBodyRef.current?.setMatrixAt(carIdx, TEMP_OBJ.matrix);
 
+                // Cabin
                 SUB_OBJ.copy(TEMP_OBJ);
                 SUB_OBJ.position.y += 0.07;
-                SUB_OBJ.position.add(agent.lastDirection.clone().multiplyScalar(-0.04));
+                SUB_OBJ.translateZ(-0.04);
                 SUB_OBJ.scale.set(0.8, 0.7, 0.5);
                 SUB_OBJ.updateMatrix();
                 carCabinRef.current?.setMatrixAt(carIdx, SUB_OBJ.matrix);
 
+                // Window
                 SUB_OBJ.scale.set(0.85, 0.75, 0.55);
                 SUB_OBJ.updateMatrix();
                 carWindowRef.current?.setMatrixAt(carIdx, SUB_OBJ.matrix);
 
-                const sideVec = new THREE.Vector3(-agent.lastDirection.z, 0, agent.lastDirection.x).normalize();
+                // Headlights
                 SUB_OBJ.copy(TEMP_OBJ);
-                SUB_OBJ.position
-                    .add(agent.lastDirection.clone().multiplyScalar(0.201))
-                    .add(sideVec.clone().multiplyScalar(0.06));
                 SUB_OBJ.scale.set(1, 1, 1);
+                SUB_OBJ.translateZ(0.201);
+                SUB_OBJ.translateX(0.06);
                 SUB_OBJ.updateMatrix();
                 carHeadlightRef.current?.setMatrixAt(carIdx * 2, SUB_OBJ.matrix);
-                SUB_OBJ.position.add(sideVec.clone().multiplyScalar(-0.12));
+
+                SUB_OBJ.translateX(-0.12);
                 SUB_OBJ.updateMatrix();
                 carHeadlightRef.current?.setMatrixAt(carIdx * 2 + 1, SUB_OBJ.matrix);
 
+                // Taillights
                 SUB_OBJ.copy(TEMP_OBJ);
-                SUB_OBJ.position
-                    .add(agent.lastDirection.clone().multiplyScalar(-0.201))
-                    .add(sideVec.clone().multiplyScalar(0.06));
+                SUB_OBJ.scale.set(1, 1, 1);
+                SUB_OBJ.translateZ(-0.201);
+                SUB_OBJ.translateX(0.06);
                 SUB_OBJ.updateMatrix();
                 carTaillightRef.current?.setMatrixAt(carIdx * 2, SUB_OBJ.matrix);
-                SUB_OBJ.position.add(sideVec.clone().multiplyScalar(-0.12));
+
+                SUB_OBJ.translateX(-0.12);
                 SUB_OBJ.updateMatrix();
                 carTaillightRef.current?.setMatrixAt(carIdx * 2 + 1, SUB_OBJ.matrix);
                 carIdx++;
