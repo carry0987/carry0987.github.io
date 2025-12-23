@@ -6,6 +6,7 @@ import { ZoneType, PERFORMANCE_PRESETS } from './types';
 import { GRID_SIZE, INITIAL_STATS, BUILDINGS } from './constants';
 import { saveManager } from './utils/saveManager';
 import { AlertTriangle } from 'lucide-react';
+import { usePageVisibility } from '@/hooks';
 import CityGrid from './components/CityGrid';
 import UIOverlay from './components/UIOverlay';
 import CityLife from './components/CityLife';
@@ -25,6 +26,8 @@ const App: React.FC = () => {
     const [gameTime, setGameTime] = useState(10);
     const [feedMessages, setFeedMessages] = useState<FeedMessage[]>([]);
     const [isFeedVisible, setIsFeedVisible] = useState(true);
+
+    const { isVisible } = usePageVisibility({ considerFocus: true });
 
     // Performance Settings State
     const [performanceSettings, setPerformanceSettings] = useState<PerformanceSettings>(PERFORMANCE_PRESETS.medium);
@@ -156,18 +159,18 @@ const App: React.FC = () => {
 
     // Auto-save effect
     useEffect(() => {
-        if (!gameStarted || !saveSettings.autoSaveEnabled) return;
+        if (!gameStarted || !saveSettings.autoSaveEnabled || !isVisible) return;
 
         const interval = setInterval(() => {
             handleSave(true);
         }, 60000); // Auto-save every minute
 
         return () => clearInterval(interval);
-    }, [gameStarted, saveSettings.autoSaveEnabled, handleSave]);
+    }, [gameStarted, saveSettings.autoSaveEnabled, handleSave, isVisible]);
 
     // Periodically update economic data and game time
     useEffect(() => {
-        if (!gameStarted) return;
+        if (!gameStarted || !isVisible) return;
 
         const interval = setInterval(() => {
             setCityData((prevData) => {
@@ -199,7 +202,7 @@ const App: React.FC = () => {
     // Smooth Day/Night Cycle (30 seconds per day)
     const prevTimeRef = useRef(gameTime);
     useEffect(() => {
-        if (!gameStarted) return;
+        if (!gameStarted || !isVisible) return;
 
         const interval = setInterval(() => {
             setGameTime((prev) => {
@@ -209,7 +212,7 @@ const App: React.FC = () => {
         }, 100);
 
         return () => clearInterval(interval);
-    }, [gameStarted]);
+    }, [gameStarted, isVisible]);
 
     // Handle Day Increment
     useEffect(() => {
@@ -367,6 +370,7 @@ const App: React.FC = () => {
                 camera={{ position: [15, 15, 15], fov: 40 }}
                 dpr={dpr}
                 gl={glConfig}
+                frameloop={isVisible ? 'always' : 'never'}
                 performance={{ min: 0.5 }}
                 onPointerMissed={() => {
                     setSelectedType(null);
