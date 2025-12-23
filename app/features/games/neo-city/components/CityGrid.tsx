@@ -8,7 +8,7 @@ import { GRID_SIZE, TILE_SIZE } from '../constants';
 interface CityGridProps {
     cityData: TileData[];
     onTileClick: (x: number, z: number) => void;
-    selectedType: ZoneType;
+    selectedType: ZoneType | null;
     selectedBuilding: { x: number; z: number } | null;
 }
 
@@ -48,11 +48,11 @@ GridOverlay.displayName = 'GridOverlay';
 
 // Hover indicator component
 const HoverIndicator = memo(
-    ({ hovered, selectedType }: { hovered: { x: number; z: number } | null; selectedType: ZoneType }) => {
+    ({ hovered, selectedType }: { hovered: { x: number; z: number } | null; selectedType: ZoneType | null }) => {
         const material = useMemo(
             () =>
                 new THREE.MeshStandardMaterial({
-                    color: selectedType === ZoneType.EMPTY ? '#f56565' : '#ffffff',
+                    color: selectedType === ZoneType.EMPTY ? '#f56565' : selectedType === null ? '#3b82f6' : '#ffffff',
                     transparent: true,
                     opacity: 0.3
                 }),

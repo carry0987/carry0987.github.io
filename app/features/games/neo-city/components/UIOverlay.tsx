@@ -15,7 +15,8 @@ import {
     ChevronDown,
     Clock,
     Gauge,
-    Check
+    Check,
+    MousePointer2
 } from 'lucide-react';
 
 const PERFORMANCE_OPTIONS: { value: PerformanceLevel; label: string; icon: string; description: string }[] = [
@@ -28,8 +29,8 @@ interface UIOverlayProps {
     stats: CityStats;
     cityName: string;
     onRenameCity: (name: string) => void;
-    selectedType: ZoneType;
-    onSelectType: (type: ZoneType) => void;
+    selectedType: ZoneType | null;
+    onSelectType: (type: ZoneType | null) => void;
     selectedBuildingInfo: TileData | null;
     onDeselect: () => void;
     isFeedVisible: boolean;
@@ -64,7 +65,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
     const inputRef = useRef<HTMLInputElement>(null);
 
     const activeType = selectedBuildingInfo ? selectedBuildingInfo.type : selectedType;
-    const buildingMeta = activeType !== ZoneType.EMPTY ? BUILDINGS[activeType] : null;
+    const buildingMeta = activeType ? BUILDINGS[activeType] : null;
 
     // Format game time (0-24) to HH:MM
     const formatGameTime = (time: number) => {
@@ -124,7 +125,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
 
                     {/* Stats Row - Left Aligned */}
                     <div className="flex justify-start items-start pointer-events-auto w-full">
-                        <div className="bg-gray-900/80 backdrop-blur-md border border-gray-700 p-4 rounded-xl shadow-2xl flex space-x-8">
+                        <div className="bg-black/40 backdrop-blur-2xl border border-white/10 p-4 rounded-xl shadow-2xl flex space-x-8">
                             <StatItem
                                 icon={Wallet}
                                 label="Budget"
@@ -155,7 +156,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                 </div>
 
                 {/* Right Side: Save Controls & Performance (Sky Metropolis Style) */}
-                <div className="bg-gray-900/90 text-white p-2 md:p-3 rounded-xl border border-gray-700 shadow-2xl backdrop-blur-md flex gap-2 md:gap-3 items-center pointer-events-auto">
+                <div className="bg-black/40 text-white p-2 md:p-3 rounded-xl border border-white/10 shadow-2xl backdrop-blur-2xl flex gap-2 md:gap-3 items-center pointer-events-auto">
                     {/* Performance Toggle */}
                     {onPerformanceChange && (
                         <div className="relative flex items-center gap-1.5 border-r border-gray-700 pr-3">
@@ -170,7 +171,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                             />
                             <Listbox value={performanceLevel} onChange={onPerformanceChange}>
                                 <ListboxButton
-                                    className={`relative flex items-center gap-1.5 bg-gray-800 border rounded-lg px-2.5 py-1.5 text-xs font-bold uppercase tracking-wide cursor-pointer transition-all hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${
+                                    className={`relative flex items-center gap-1.5 bg-white/10 border rounded-lg px-2.5 py-1.5 text-xs font-bold uppercase tracking-wide cursor-pointer transition-all hover:bg-white/20 focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${
                                         performanceLevel === 'low'
                                             ? 'border-green-500/50 text-green-400'
                                             : performanceLevel === 'medium'
@@ -184,7 +185,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                                 <ListboxOptions
                                     anchor="bottom end"
                                     transition
-                                    className="z-50 mt-1 w-44 origin-top-right rounded-xl bg-gray-800/95 backdrop-blur-xl border border-gray-600 p-1 shadow-xl focus:outline-none transition duration-150 ease-out data-closed:scale-95 data-closed:opacity-0">
+                                    className="z-50 mt-1 w-44 origin-top-right rounded-xl bg-black/80 backdrop-blur-2xl border border-white/20 p-1 shadow-xl focus:outline-none transition duration-150 ease-out data-closed:scale-95 data-closed:opacity-0">
                                     {PERFORMANCE_OPTIONS.map((option) => (
                                         <ListboxOption
                                             key={option.value}
@@ -254,12 +255,12 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
 
             {/* Building Info Panel - Now on the LEFT */}
             {buildingMeta && (
-                <div className="absolute top-1/2 left-6 -translate-y-1/2 w-72 bg-gray-900/95 backdrop-blur-xl border border-blue-500/30 rounded-2xl shadow-2xl p-6 pointer-events-auto animate-in slide-in-from-left duration-300">
+                <div className="absolute top-1/2 left-6 -translate-y-1/2 w-72 bg-black/60 backdrop-blur-2xl border border-blue-500/40 rounded-2xl shadow-2xl p-6 pointer-events-auto animate-in slide-in-from-left duration-300">
                     <div className="flex justify-between items-start mb-4">
                         <div className={`p-3 rounded-lg bg-gray-800`}>
                             <buildingMeta.icon className="w-6 h-6" style={{ color: buildingMeta.color }} />
                         </div>
-                        {selectedBuildingInfo && (
+                        {(selectedBuildingInfo || selectedType) && (
                             <button onClick={onDeselect} className="text-gray-500 hover:text-white transition-colors">
                                 <X className="w-5 h-5" />
                             </button>
@@ -301,21 +302,35 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                 </div>
             )}
 
-            {/* Bottom Toolbelt - Left Aligned */}
-            <div className="flex justify-start pointer-events-auto">
-                <div className="bg-gray-900/90 backdrop-blur-md border border-gray-700 p-2 rounded-2xl shadow-2xl flex space-x-2">
+            {/* Bottom Toolbelt - Centered & Beautified */}
+            <div className="flex justify-center pointer-events-auto">
+                <div className="bg-black/40 backdrop-blur-2xl border border-white/20 p-1.5 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.7)] flex items-center space-x-1">
+                    {/* Select Tool */}
+                    <button
+                        onClick={() => onSelectType(null)}
+                        className={`flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all duration-300 ${
+                            selectedType === null
+                                ? 'bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.6)] scale-105'
+                                : 'text-gray-300 hover:bg-white/10 hover:text-white'
+                        }`}>
+                        <MousePointer2 className="w-5 h-5 mb-1" />
+                        <span className="text-[9px] font-bold uppercase tracking-tighter">Select</span>
+                    </button>
+
+                    <div className="w-px h-8 bg-white/10 mx-1" />
+
                     {Object.values(BUILDINGS).map((b) => (
                         <button
                             key={b.type}
                             onClick={() => onSelectType(b.type)}
-                            className={`flex flex-col items-center justify-center w-20 h-20 rounded-xl transition-all ${
+                            className={`flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all duration-300 ${
                                 selectedType === b.type
-                                    ? 'bg-blue-600 ring-2 ring-white scale-105'
-                                    : 'bg-gray-800 hover:bg-gray-700'
+                                    ? 'bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.6)] scale-105'
+                                    : 'text-gray-300 hover:bg-white/10 hover:text-white'
                             }`}>
-                            <b.icon className="w-6 h-6 mb-1" />
-                            <span className="text-[10px] font-bold uppercase tracking-tighter">{b.label}</span>
-                            <span className="text-[10px] opacity-70">${b.cost}</span>
+                            <b.icon className="w-5 h-5 mb-1" />
+                            <span className="text-[9px] font-bold uppercase tracking-tighter">{b.label}</span>
+                            <span className="text-[8px] font-medium opacity-80">${b.cost}</span>
                         </button>
                     ))}
                 </div>

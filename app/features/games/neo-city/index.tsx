@@ -19,7 +19,7 @@ const App: React.FC = () => {
     const [cityData, setCityData] = useState<TileData[]>([]);
     const [stats, setStats] = useState<CityStats>(INITIAL_STATS);
     const [cityName, setCityName] = useState<string>('Neo City');
-    const [selectedType, setSelectedType] = useState<ZoneType>(ZoneType.ROAD);
+    const [selectedType, setSelectedType] = useState<ZoneType | null>(null);
     const [selectedBuilding, setSelectedBuilding] = useState<{ x: number; z: number } | null>(null);
     const [errorMsg, setErrorMsg] = useState<string | null>(null);
     const [gameTime, setGameTime] = useState(10);
@@ -255,6 +255,15 @@ const App: React.FC = () => {
 
                 const currentTile = prev[idx];
 
+                if (selectedType === null) {
+                    if (currentTile.type !== ZoneType.EMPTY) {
+                        setSelectedBuilding({ x, z });
+                    } else {
+                        setSelectedBuilding(null);
+                    }
+                    return prev;
+                }
+
                 if (selectedType === ZoneType.EMPTY) {
                     if (currentTile.type === ZoneType.EMPTY) return prev;
                     const newData = [...prev];
@@ -322,7 +331,7 @@ const App: React.FC = () => {
         [selectedType, gameStarted]
     );
 
-    const handleSelectType = (type: ZoneType) => {
+    const handleSelectType = (type: ZoneType | null) => {
         setSelectedType(type);
         setSelectedBuilding(null);
         setErrorMsg(null);
@@ -358,7 +367,11 @@ const App: React.FC = () => {
                 camera={{ position: [15, 15, 15], fov: 40 }}
                 dpr={dpr}
                 gl={glConfig}
-                performance={{ min: 0.5 }}>
+                performance={{ min: 0.5 }}
+                onPointerMissed={() => {
+                    setSelectedType(null);
+                    setSelectedBuilding(null);
+                }}>
                 {/* Adaptive DPR based on performance */}
                 <AdaptiveDpr pixelated />
 
@@ -435,7 +448,10 @@ const App: React.FC = () => {
                         selectedType={selectedType}
                         onSelectType={handleSelectType}
                         selectedBuildingInfo={selectedBuildingInfo}
-                        onDeselect={() => setSelectedBuilding(null)}
+                        onDeselect={() => {
+                            setSelectedBuilding(null);
+                            setSelectedType(null);
+                        }}
                         isFeedVisible={isFeedVisible}
                         onToggleFeed={() => setIsFeedVisible(!isFeedVisible)}
                         saveSettings={saveSettings}

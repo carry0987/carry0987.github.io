@@ -16,11 +16,11 @@ const CityFeed: React.FC<CityFeedProps> = ({ messages, isVisible, onClear }) => 
     return (
         <div className="fixed bottom-6 right-6 w-70 z-50 flex flex-col pointer-events-auto">
             {/* Console Shell */}
-            <div className="bg-slate-900/95 backdrop-blur-xl border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
+            <div className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
                 {/* Header Bar */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-700/50 bg-slate-800/30">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-white/10 bg-white/5">
                     <div className="flex items-center space-x-2">
-                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-400">
+                        <span className="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">
                             City Feed
                         </span>
                     </div>
@@ -52,16 +52,16 @@ const CityFeed: React.FC<CityFeedProps> = ({ messages, isVisible, onClear }) => 
                                 <div
                                     key={msg.id}
                                     className="relative group animate-in fade-in slide-in-from-bottom-2 duration-300">
-                                    <div className="bg-slate-800/40 border-l-2 border-green-500/80 p-3 pl-4 rounded-r-lg hover:bg-slate-800/60 transition-all">
+                                    <div className="bg-white/5 border-l-2 border-green-500/80 p-3 pl-4 rounded-r-lg hover:bg-white/10 transition-all">
                                         <div className="flex justify-between items-start mb-1">
-                                            <span className="text-[10px] font-bold text-slate-500 font-mono tracking-tight">
+                                            <span className="text-[10px] font-bold text-gray-500 font-mono tracking-tight">
                                                 @{msg.user}
                                             </span>
-                                            <span className="text-[9px] text-slate-600 font-mono uppercase">
+                                            <span className="text-[9px] text-gray-600 font-mono uppercase">
                                                 {msg.timestamp}
                                             </span>
                                         </div>
-                                        <p className="text-xs text-slate-200 font-mono leading-relaxed pr-8">
+                                        <p className="text-xs text-gray-200 font-mono leading-relaxed pr-8">
                                             {msg.content}
                                         </p>
                                     </div>
