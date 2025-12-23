@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { ZoneType, type CityStats, type TileData, type SaveSettings, type PerformanceLevel } from '../types';
 import { BUILDINGS } from '../constants';
 import {
@@ -13,8 +14,15 @@ import {
     ChevronUp,
     ChevronDown,
     Clock,
-    Gauge
+    Gauge,
+    Check
 } from 'lucide-react';
+
+const PERFORMANCE_OPTIONS: { value: PerformanceLevel; label: string; icon: string; description: string }[] = [
+    { value: 'low', label: 'Low', icon: '🔋', description: 'Best FPS' },
+    { value: 'medium', label: 'Medium', icon: '⚡', description: 'Balanced' },
+    { value: 'high', label: 'High', icon: '🎨', description: 'Best visuals' }
+];
 
 interface UIOverlayProps {
     stats: CityStats;
@@ -150,7 +158,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                 <div className="bg-gray-900/90 text-white p-2 md:p-3 rounded-xl border border-gray-700 shadow-2xl backdrop-blur-md flex gap-2 md:gap-3 items-center pointer-events-auto">
                     {/* Performance Toggle */}
                     {onPerformanceChange && (
-                        <div className="flex items-center gap-1.5 border-r border-gray-700 pr-3">
+                        <div className="relative flex items-center gap-1.5 border-r border-gray-700 pr-3">
                             <Gauge
                                 className={`w-4 h-4 ${
                                     performanceLevel === 'low'
@@ -160,21 +168,48 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                                           : 'text-red-400'
                                 }`}
                             />
-                            <select
-                                value={performanceLevel}
-                                onChange={(e) => onPerformanceChange(e.target.value as PerformanceLevel)}
-                                className={`bg-gray-800 border rounded-lg px-2 py-1 text-xs font-bold uppercase tracking-wide focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
-                                    performanceLevel === 'low'
-                                        ? 'border-green-500/50 text-green-400'
-                                        : performanceLevel === 'medium'
-                                          ? 'border-yellow-500/50 text-yellow-400'
-                                          : 'border-red-500/50 text-red-400'
-                                }`}
-                                title="Graphics Quality - Low: Best FPS, Medium: Balanced, High: Best visuals">
-                                <option value="low">🔋 Low</option>
-                                <option value="medium">⚡ Medium</option>
-                                <option value="high">🎨 High</option>
-                            </select>
+                            <Listbox value={performanceLevel} onChange={onPerformanceChange}>
+                                <ListboxButton
+                                    className={`relative flex items-center gap-1.5 bg-gray-800 border rounded-lg px-2.5 py-1.5 text-xs font-bold uppercase tracking-wide cursor-pointer transition-all hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500/50 ${
+                                        performanceLevel === 'low'
+                                            ? 'border-green-500/50 text-green-400'
+                                            : performanceLevel === 'medium'
+                                              ? 'border-yellow-500/50 text-yellow-400'
+                                              : 'border-red-500/50 text-red-400'
+                                    }`}>
+                                    <span>{PERFORMANCE_OPTIONS.find((o) => o.value === performanceLevel)?.icon}</span>
+                                    <span>{performanceLevel}</span>
+                                    <ChevronDown className="w-3 h-3 ml-1 opacity-60" />
+                                </ListboxButton>
+                                <ListboxOptions
+                                    anchor="bottom end"
+                                    transition
+                                    className="z-50 mt-1 w-44 origin-top-right rounded-xl bg-gray-800/95 backdrop-blur-xl border border-gray-600 p-1 shadow-xl focus:outline-none transition duration-150 ease-out data-closed:scale-95 data-closed:opacity-0">
+                                    {PERFORMANCE_OPTIONS.map((option) => (
+                                        <ListboxOption
+                                            key={option.value}
+                                            value={option.value}
+                                            className={`group flex items-center justify-between gap-2 rounded-lg px-3 py-2 cursor-pointer transition-colors data-focus:bg-gray-700 ${
+                                                option.value === 'low'
+                                                    ? 'data-selected:text-green-400'
+                                                    : option.value === 'medium'
+                                                      ? 'data-selected:text-yellow-400'
+                                                      : 'data-selected:text-red-400'
+                                            }`}>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-base">{option.icon}</span>
+                                                <div>
+                                                    <div className="text-xs font-bold uppercase">{option.label}</div>
+                                                    <div className="text-[10px] text-gray-400">
+                                                        {option.description}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <Check className="w-4 h-4 opacity-0 group-data-selected:opacity-100" />
+                                        </ListboxOption>
+                                    ))}
+                                </ListboxOptions>
+                            </Listbox>
                         </div>
                     )}
 
