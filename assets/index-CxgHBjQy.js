@@ -1,4 +1,4 @@
-import{r as s,j as e,w as P}from"./chunk-JMJ3UQ3L-DTa-kQyz.js";import{e as j,a as z,C as A,O as k}from"./OrbitControls-Cu28hcz1.js";import{s as b}from"./shaderMaterial-GGJzNv2p.js";import{j as p,D as L,A as S}from"./three.module-sEz3UYRk.js";var i=(t=>(t.FIREBALL="FIREBALL",t.TERRAIN="TERRAIN",t.SPHERE_BLOB="SPHERE_BLOB",t.PARTICLES="PARTICLES",t))(i||{});const E=`
+import{r as s,j as e,w as P}from"./chunk-JMJ3UQ3L-DTa-kQyz.js";import{e as j,a as z,C as A,O as k}from"./OrbitControls-Dc9Mpcp3.js";import{s as b}from"./shaderMaterial-B3TDCXl_.js";import{j as p,D as L,A as S}from"./three.module-CkFzBGVQ.js";var i=(t=>(t.FIREBALL="FIREBALL",t.TERRAIN="TERRAIN",t.SPHERE_BLOB="SPHERE_BLOB",t.PARTICLES="PARTICLES",t))(i||{});const E=`
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }
