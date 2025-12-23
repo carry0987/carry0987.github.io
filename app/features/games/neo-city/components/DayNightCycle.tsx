@@ -1,11 +1,12 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, memo } from 'react';
 import * as THREE from 'three';
 
 interface DayNightCycleProps {
     gameTime: number; // 0 to 24
+    lowQuality?: boolean; // Performance mode flag
 }
 
-const DayNightCycle: React.FC<DayNightCycleProps> = ({ gameTime }) => {
+const DayNightCycle: React.FC<DayNightCycleProps> = memo(({ gameTime, lowQuality = false }) => {
     const angle = ((gameTime - 6) / 24) * Math.PI * 2;
     const radius = 25;
 
@@ -34,6 +35,10 @@ const DayNightCycle: React.FC<DayNightCycleProps> = ({ gameTime }) => {
         return '#BAE6FD'; // Light blue for day
     }, [isNight, isGoldenHour]);
 
+    // Shadow map size based on quality setting
+    // Lower resolution = better performance
+    const shadowMapSize = lowQuality ? 512 : 1024;
+
     return (
         <group>
             <color attach="background" args={[bgColor]} />
@@ -41,14 +46,22 @@ const DayNightCycle: React.FC<DayNightCycleProps> = ({ gameTime }) => {
                 position={sunPosition}
                 intensity={intensity}
                 color={lightColor}
-                castShadow
-                shadow-bias={-0.0005}
-                shadow-mapSize={[2048, 2048]}
+                castShadow={!lowQuality} // Disable shadows in low quality mode
+                shadow-bias={-0.001}
+                shadow-mapSize={[shadowMapSize, shadowMapSize]}
+                shadow-camera-left={-15}
+                shadow-camera-right={15}
+                shadow-camera-top={15}
+                shadow-camera-bottom={-15}
+                shadow-camera-near={1}
+                shadow-camera-far={50}
             />
 
-            <ambientLight intensity={isNight ? 0.3 : 0.6} color={isNight ? '#3b82f6' : '#ffffff'} />
+            <ambientLight intensity={isNight ? 0.4 : 0.7} color={isNight ? '#3b82f6' : '#ffffff'} />
         </group>
     );
-};
+});
+
+DayNightCycle.displayName = 'DayNightCycle';
 
 export default DayNightCycle;

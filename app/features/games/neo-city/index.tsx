@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { OrbitControls, Environment, ContactShadows } from '@react-three/drei';
-import type { TileData, CityStats, FeedMessage, SaveSettings } from './types';
-import { ZoneType } from './types';
+import { OrbitControls, Environment, ContactShadows, PerformanceMonitor, AdaptiveDpr } from '@react-three/drei';
+import type { TileData, CityStats, FeedMessage, SaveSettings, PerformanceSettings } from './types';
+import { ZoneType, PERFORMANCE_PRESETS } from './types';
 import { GRID_SIZE, INITIAL_STATS, BUILDINGS } from './constants';
 import { saveManager } from './utils/saveManager';
 import { AlertTriangle } from 'lucide-react';
@@ -25,6 +25,10 @@ const App: React.FC = () => {
     const [gameTime, setGameTime] = useState(10);
     const [feedMessages, setFeedMessages] = useState<FeedMessage[]>([]);
     const [isFeedVisible, setIsFeedVisible] = useState(true);
+
+    // Performance Settings State
+    const [performanceSettings, setPerformanceSettings] = useState<PerformanceSettings>(PERFORMANCE_PRESETS.medium);
+    const [dpr, setDpr] = useState(performanceSettings.pixelRatio);
 
     // Save Settings State
     const [saveSettings, setSaveSettings] = useState<SaveSettings>({
@@ -327,11 +331,53 @@ const App: React.FC = () => {
     const selectedBuildingInfo =
         cityData.find((t) => t.x === selectedBuilding?.x && t.z === selectedBuilding?.z) || null;
 
+    // Memoized GL config for better performance
+    const glConfig = useMemo(
+        () => ({
+            antialias: performanceSettings.antialias,
+            powerPreference: 'high-performance' as const,
+            stencil: false,
+            depth: true,
+            // Reduce WebGL state changes
+            alpha: false
+        }),
+        [performanceSettings.antialias]
+    );
+
+    // Handle performance level change
+    const handlePerformanceChange = useCallback((level: 'low' | 'medium' | 'high') => {
+        const newSettings = PERFORMANCE_PRESETS[level];
+        setPerformanceSettings(newSettings);
+        setDpr(newSettings.pixelRatio);
+    }, []);
+
     return (
         <div className="relative w-full h-screen">
-            <Canvas shadows camera={{ position: [15, 15, 15], fov: 40 }}>
-                <EnvironmentEffects />
-                <DayNightCycle gameTime={gameTime} />
+            <Canvas
+                shadows={performanceSettings.shadows}
+                camera={{ position: [15, 15, 15], fov: 40 }}
+                dpr={dpr}
+                gl={glConfig}
+                performance={{ min: 0.5 }}>
+                {/* Adaptive DPR based on performance */}
+                <AdaptiveDpr pixelated />
+
+                {/* Performance monitor to auto-adjust quality */}
+                <PerformanceMonitor
+                    onDecline={() => {
+                        setDpr(Math.max(0.5, dpr - 0.25));
+                    }}
+                    onIncline={() => {
+                        setDpr(Math.min(performanceSettings.pixelRatio, dpr + 0.25));
+                    }}
+                    flipflops={3}
+                    onFallback={() => handlePerformanceChange('low')}
+                />
+
+                {/* Environment effects - conditionally rendered */}
+                {performanceSettings.environmentEffects && <EnvironmentEffects />}
+
+                <DayNightCycle gameTime={gameTime} lowQuality={performanceSettings.level === 'low'} />
 
                 <CityGrid
                     cityData={cityData}
@@ -342,10 +388,27 @@ const App: React.FC = () => {
 
                 <CityLife cityData={cityData} />
 
-                <ContactShadows position={[0, -0.01, 0]} opacity={0.3} scale={30} blur={2.5} far={5} />
+                {/* Contact shadows - conditionally rendered */}
+                {performanceSettings.shadows && (
+                    <ContactShadows
+                        position={[0, -0.01, 0]}
+                        opacity={0.25}
+                        scale={25}
+                        blur={2}
+                        far={4}
+                        resolution={performanceSettings.level === 'high' ? 512 : 256}
+                    />
+                )}
 
                 <Environment preset="city" />
-                <OrbitControls makeDefault maxPolarAngle={Math.PI / 2.1} minDistance={5} maxDistance={40} />
+                <OrbitControls
+                    makeDefault
+                    maxPolarAngle={Math.PI / 2.1}
+                    minDistance={5}
+                    maxDistance={40}
+                    enableDamping={true}
+                    dampingFactor={0.05}
+                />
             </Canvas>
 
             {!gameStarted && <StartScreen onStart={handleStart} hasSavedGame={hasSavedGame} />}
@@ -375,6 +438,8 @@ const App: React.FC = () => {
                         onSave={() => handleSave(false)}
                         onToggleAutoSave={toggleAutoSave}
                         gameTime={gameTime}
+                        performanceLevel={performanceSettings.level}
+                        onPerformanceChange={handlePerformanceChange}
                     />
                 </>
             )}

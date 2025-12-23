@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ZoneType, type CityStats, type TileData, type SaveSettings } from '../types';
+import { ZoneType, type CityStats, type TileData, type SaveSettings, type PerformanceLevel } from '../types';
 import { BUILDINGS } from '../constants';
 import {
     Pencil,
@@ -12,7 +12,8 @@ import {
     X,
     ChevronUp,
     ChevronDown,
-    Clock
+    Clock,
+    Gauge
 } from 'lucide-react';
 
 interface UIOverlayProps {
@@ -29,6 +30,8 @@ interface UIOverlayProps {
     onSave: () => void;
     onToggleAutoSave: () => void;
     gameTime: number;
+    performanceLevel?: PerformanceLevel;
+    onPerformanceChange?: (level: PerformanceLevel) => void;
 }
 
 const UIOverlay: React.FC<UIOverlayProps> = ({
@@ -44,7 +47,9 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
     saveSettings,
     onSave,
     onToggleAutoSave,
-    gameTime
+    gameTime,
+    performanceLevel = 'medium',
+    onPerformanceChange
 }) => {
     const [isEditingName, setIsEditingName] = useState(false);
     const [tempName, setTempName] = useState(cityName);
@@ -141,8 +146,24 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                     </div>
                 </div>
 
-                {/* Right Side: Save Controls (Sky Metropolis Style) */}
+                {/* Right Side: Save Controls & Performance (Sky Metropolis Style) */}
                 <div className="bg-gray-900/90 text-white p-2 md:p-3 rounded-xl border border-gray-700 shadow-2xl backdrop-blur-md flex gap-2 md:gap-3 items-center pointer-events-auto">
+                    {/* Performance Toggle */}
+                    {onPerformanceChange && (
+                        <div className="flex items-center gap-1 border-r border-gray-700 pr-3">
+                            <Gauge className="w-4 h-4 text-gray-400" />
+                            <select
+                                value={performanceLevel}
+                                onChange={(e) => onPerformanceChange(e.target.value as PerformanceLevel)}
+                                className="bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 text-xs font-bold uppercase tracking-wide focus:outline-none focus:ring-1 focus:ring-blue-500"
+                                title="Performance Quality">
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                            </select>
+                        </div>
+                    )}
+
                     {/* Save Button */}
                     <button
                         onClick={onSave}

@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
-import { Plane, Grid, Box } from '@react-three/drei';
-import Building from './Building';
+import React, { useState, useMemo, memo, useCallback } from 'react';
+import { Plane, Grid } from '@react-three/drei';
+import * as THREE from 'three';
+import BuildingsInstanced from './BuildingsInstanced';
 import { type TileData, ZoneType } from '../types';
 import { GRID_SIZE, TILE_SIZE } from '../constants';
 
@@ -11,10 +12,71 @@ interface CityGridProps {
     selectedBuilding: { x: number; z: number } | null;
 }
 
+// Shared geometries and materials - created once
+const terrainGrassGeo = new THREE.BoxGeometry(GRID_SIZE, 0.5, GRID_SIZE);
+const terrainDirtGeo = new THREE.BoxGeometry(GRID_SIZE, 1.5, GRID_SIZE);
+const hoverPlaneGeo = new THREE.PlaneGeometry(0.95, 0.95);
+const grassMaterial = new THREE.MeshStandardMaterial({ color: '#38a169' });
+const dirtMaterial = new THREE.MeshStandardMaterial({ color: '#4a3728' });
+const interactionPlaneMaterial = new THREE.MeshStandardMaterial({ transparent: true, opacity: 0 });
+
+// Memoized terrain component
+const Terrain = memo(() => (
+    <group position={[0, -0.25, 0]}>
+        <mesh geometry={terrainGrassGeo} material={grassMaterial} />
+        <mesh geometry={terrainDirtGeo} material={dirtMaterial} position={[0, -1, 0]} />
+    </group>
+));
+Terrain.displayName = 'Terrain';
+
+// Memoized grid overlay
+const GridOverlay = memo(() => (
+    <Grid
+        infiniteGrid={false}
+        args={[GRID_SIZE, GRID_SIZE]}
+        fadeDistance={30}
+        sectionSize={TILE_SIZE}
+        sectionThickness={1.5}
+        sectionColor="#2d3748"
+        cellSize={TILE_SIZE}
+        cellThickness={0.5}
+        cellColor="#2d3748"
+        position={[0, 0.01, 0]}
+    />
+));
+GridOverlay.displayName = 'GridOverlay';
+
+// Hover indicator component
+const HoverIndicator = memo(
+    ({ hovered, selectedType }: { hovered: { x: number; z: number } | null; selectedType: ZoneType }) => {
+        const material = useMemo(
+            () =>
+                new THREE.MeshStandardMaterial({
+                    color: selectedType === ZoneType.EMPTY ? '#f56565' : '#ffffff',
+                    transparent: true,
+                    opacity: 0.3
+                }),
+            [selectedType]
+        );
+
+        if (!hovered) return null;
+
+        return (
+            <mesh
+                position={[hovered.x - GRID_SIZE / 2 + 0.5, 0.03, hovered.z - GRID_SIZE / 2 + 0.5]}
+                rotation={[-Math.PI / 2, 0, 0]}
+                geometry={hoverPlaneGeo}
+                material={material}
+            />
+        );
+    }
+);
+HoverIndicator.displayName = 'HoverIndicator';
+
 const CityGrid: React.FC<CityGridProps> = ({ cityData, onTileClick, selectedType, selectedBuilding }) => {
     const [hovered, setHovered] = useState<{ x: number; z: number } | null>(null);
 
-    const handlePointerMove = (e: any) => {
+    const handlePointerMove = useCallback((e: any) => {
         e.stopPropagation();
         const x = Math.floor(e.point.x + GRID_SIZE / 2);
         const z = Math.floor(e.point.z + GRID_SIZE / 2);
@@ -23,98 +85,49 @@ const CityGrid: React.FC<CityGridProps> = ({ cityData, onTileClick, selectedType
         } else {
             setHovered(null);
         }
-    };
+    }, []);
 
-    const handleClick = (e: any) => {
-        e.stopPropagation();
-        if (hovered) {
-            onTileClick(hovered.x, hovered.z);
-        }
-    };
+    const handlePointerOut = useCallback(() => {
+        setHovered(null);
+    }, []);
 
-    // Helper to check if a neighbor is a road
-    const isRoad = (x: number, z: number) => {
-        return cityData.some((t) => t.x === x && t.z === z && t.type === ZoneType.ROAD);
-    };
+    const handleClick = useCallback(
+        (e: any) => {
+            e.stopPropagation();
+            if (hovered) {
+                onTileClick(hovered.x, hovered.z);
+            }
+        },
+        [hovered, onTileClick]
+    );
 
     return (
         <group>
-            {/* 3D Terrain Base */}
-            <group position={[0, -0.25, 0]}>
-                {/* Grass Top */}
-                <Box args={[GRID_SIZE, 0.5, GRID_SIZE]}>
-                    <meshStandardMaterial color="#38a169" />
-                </Box>
-                {/* Dirt Base */}
-                <Box args={[GRID_SIZE, 1.5, GRID_SIZE]} position={[0, -1, 0]}>
-                    <meshStandardMaterial color="#4a3728" />
-                </Box>
-            </group>
+            {/* 3D Terrain Base - memoized */}
+            <Terrain />
 
-            <Grid
-                infiniteGrid={false}
-                args={[GRID_SIZE, GRID_SIZE]}
-                fadeDistance={30}
-                sectionSize={TILE_SIZE}
-                sectionThickness={1.5}
-                sectionColor="#2d3748"
-                cellSize={TILE_SIZE}
-                cellThickness={0.5}
-                cellColor="#2d3748"
-                position={[0, 0.01, 0]}
-            />
+            {/* Grid overlay - memoized */}
+            <GridOverlay />
 
+            {/* Interaction plane */}
             <Plane
                 args={[GRID_SIZE, GRID_SIZE]}
                 rotation={[-Math.PI / 2, 0, 0]}
                 position={[0, 0.02, 0]}
                 onPointerMove={handlePointerMove}
-                onPointerOut={() => setHovered(null)}
+                onPointerOut={handlePointerOut}
                 onClick={handleClick}
-                receiveShadow>
-                <meshStandardMaterial transparent opacity={0} />
-            </Plane>
+                material={interactionPlaneMaterial}
+                receiveShadow
+            />
 
-            {cityData.map((tile) => {
-                if (tile.type === ZoneType.EMPTY) return null;
+            {/* Instanced buildings - major performance improvement */}
+            <BuildingsInstanced cityData={cityData} selectedBuilding={selectedBuilding} />
 
-                // Calculate connections for roads
-                const connections =
-                    tile.type === ZoneType.ROAD
-                        ? {
-                              n: isRoad(tile.x, tile.z - 1),
-                              s: isRoad(tile.x, tile.z + 1),
-                              e: isRoad(tile.x + 1, tile.z),
-                              w: isRoad(tile.x - 1, tile.z)
-                          }
-                        : undefined;
-
-                return (
-                    <Building
-                        key={`${tile.x}-${tile.z}`}
-                        type={tile.type}
-                        variant={tile.level} // Use level as variant index
-                        isSelected={selectedBuilding?.x === tile.x && selectedBuilding?.z === tile.z}
-                        position={[tile.x - GRID_SIZE / 2 + 0.5, 0, tile.z - GRID_SIZE / 2 + 0.5]}
-                        connections={connections}
-                    />
-                );
-            })}
-
-            {hovered && (
-                <mesh
-                    position={[hovered.x - GRID_SIZE / 2 + 0.5, 0.03, hovered.z - GRID_SIZE / 2 + 0.5]}
-                    rotation={[-Math.PI / 2, 0, 0]}>
-                    <planeGeometry args={[0.95, 0.95]} />
-                    <meshStandardMaterial
-                        color={selectedType === ZoneType.EMPTY ? '#f56565' : '#ffffff'}
-                        transparent
-                        opacity={0.3}
-                    />
-                </mesh>
-            )}
+            {/* Hover indicator */}
+            <HoverIndicator hovered={hovered} selectedType={selectedType} />
         </group>
     );
 };
 
-export default CityGrid;
+export default memo(CityGrid);

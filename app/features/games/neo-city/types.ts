@@ -54,3 +54,37 @@ export interface SaveSettings {
     autoSaveEnabled: boolean;
     lastSavedAt: number | null;
 }
+
+export type PerformanceLevel = 'low' | 'medium' | 'high';
+
+export interface PerformanceSettings {
+    level: PerformanceLevel;
+    shadows: boolean;
+    environmentEffects: boolean;
+    pixelRatio: number;
+    antialias: boolean;
+}
+
+export const PERFORMANCE_PRESETS: Record<PerformanceLevel, PerformanceSettings> = {
+    low: {
+        level: 'low',
+        shadows: false,
+        environmentEffects: false,
+        pixelRatio: 1,
+        antialias: false
+    },
+    medium: {
+        level: 'medium',
+        shadows: true,
+        environmentEffects: true,
+        pixelRatio: 1.5,
+        antialias: false
+    },
+    high: {
+        level: 'high',
+        shadows: true,
+        environmentEffects: true,
+        pixelRatio: 2,
+        antialias: true
+    }
+};
