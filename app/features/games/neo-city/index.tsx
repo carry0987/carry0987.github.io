@@ -6,7 +6,7 @@ import { ZoneType, PERFORMANCE_PRESETS } from './types';
 import { GRID_SIZE, INITIAL_STATS, BUILDINGS } from './constants';
 import { saveManager } from './utils/saveManager';
 import { AlertTriangle } from 'lucide-react';
-import { usePageVisibility } from '@/hooks';
+import { usePageVisibility, useIsMobile } from '@/hooks';
 import CityGrid from './components/CityGrid';
 import UIOverlay from './components/UIOverlay';
 import CityLife from './components/CityLife';
@@ -28,6 +28,7 @@ const App: React.FC = () => {
     const [isFeedVisible, setIsFeedVisible] = useState(true);
 
     const { isVisible } = usePageVisibility({ considerFocus: true });
+    const isMobile = useIsMobile();
 
     // Performance Settings State
     const [performanceSettings, setPerformanceSettings] = useState<PerformanceSettings>(PERFORMANCE_PRESETS.medium);
@@ -367,7 +368,7 @@ const App: React.FC = () => {
         <div className="relative w-full h-screen">
             <Canvas
                 shadows={performanceSettings.shadows}
-                camera={{ position: [15, 15, 15], fov: 40 }}
+                camera={{ position: [15, 15, 15], fov: isMobile ? 50 : 40 }}
                 dpr={dpr}
                 gl={glConfig}
                 frameloop={isVisible ? 'always' : 'never'}

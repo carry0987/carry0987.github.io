@@ -14,7 +14,7 @@ const CityFeed: React.FC<CityFeedProps> = ({ messages, isVisible, onClear }) => 
     if (!isVisible) return null;
 
     return (
-        <div className="fixed bottom-6 right-6 w-70 z-50 flex flex-col pointer-events-auto">
+        <div className="fixed bottom-24 md:bottom-6 right-4 md:right-6 w-[calc(100%-2rem)] md:w-70 z-50 flex flex-col pointer-events-auto">
             {/* Console Shell */}
             <div className="bg-black/40 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl overflow-hidden flex flex-col">
                 {/* Header Bar */}
@@ -42,7 +42,7 @@ const CityFeed: React.FC<CityFeedProps> = ({ messages, isVisible, onClear }) => 
 
                 {/* Body Content Area */}
                 {!isMinimized && (
-                    <div className="h-64 overflow-y-auto p-4 space-y-3 custom-scrollbar">
+                    <div className="h-40 md:h-64 overflow-y-auto p-4 space-y-3 custom-scrollbar">
                         {messages.length === 0 ? (
                             <div className="h-full flex items-center justify-center text-slate-600 italic text-xs font-mono">
                                 Waiting for citizen feedback...
