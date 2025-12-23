@@ -20,47 +20,21 @@ const tempObject = new THREE.Object3D();
 const tempColor = new THREE.Color();
 const hiddenMatrix = new THREE.Matrix4().makeScale(0, 0, 0);
 
-// Material cache to avoid re-creation
-const materials = {
-    // Road
+// Pre-created materials for road parts (fixed colors)
+const roadMaterials = {
     asphalt: new THREE.MeshStandardMaterial({ color: '#1a1a1a', roughness: 0.9 }),
     sidewalk: new THREE.MeshStandardMaterial({ color: '#a0aec0' }),
     curb: new THREE.MeshStandardMaterial({ color: '#2d3748', roughness: 0.7 }),
     yellowLine: new THREE.MeshStandardMaterial({ color: '#fbbf24' }),
-    zebraWhite: new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.4 }),
+    zebra: new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.4 })
+};
 
-    // Buildings
-    residential: new THREE.MeshStandardMaterial({ color: '#48bb78' }),
-    residentialRoof: new THREE.MeshStandardMaterial({ color: '#276749' }),
-    residentialAlt: new THREE.MeshStandardMaterial({ color: '#c6f6d5' }),
-
-    commercial: new THREE.MeshStandardMaterial({ color: '#4299e1' }),
-    commercialGlass: new THREE.MeshStandardMaterial({
-        color: '#4299e1',
-        transparent: true,
-        opacity: 0.9,
-        metalness: 1,
-        roughness: 0
-    }),
-    commercialAccent: new THREE.MeshStandardMaterial({ color: '#2b6cb0' }),
-
-    industrial: new THREE.MeshStandardMaterial({ color: '#ecc94b' }),
-    industrialMetal: new THREE.MeshStandardMaterial({ color: '#cbd5e0' }),
-    industrialChimney: new THREE.MeshStandardMaterial({ color: '#744210' }),
-    industrialBase: new THREE.MeshStandardMaterial({ color: '#4a5568' }),
-
-    park: new THREE.MeshStandardMaterial({ color: '#38b2ac' }),
-    parkTree: new THREE.MeshStandardMaterial({ color: '#234e52' }),
-    parkTreeAlt: new THREE.MeshStandardMaterial({ color: '#2d6a4f' }),
-    parkWater: new THREE.MeshStandardMaterial({ color: '#63b3ed', metalness: 1, roughness: 0 }),
-    parkFoam: new THREE.MeshStandardMaterial({ color: '#ebf8ff', transparent: true, opacity: 0.6 }),
-
-    busStop: new THREE.MeshStandardMaterial({ color: '#718096' }),
-    busStopGlass: new THREE.MeshStandardMaterial({ color: '#4a5568', transparent: true, opacity: 0.8 }),
-    busStopRoof: new THREE.MeshStandardMaterial({ color: '#2d3748' }),
-    busStopBench: new THREE.MeshStandardMaterial({ color: '#744210' }),
-    busStopPole: new THREE.MeshStandardMaterial({ color: '#a0aec0' }),
-    busStopSign: new THREE.MeshStandardMaterial({ color: '#f6ad55' })
+// Pre-created materials for buildings (white base for instance colors)
+const buildingMaterials = {
+    box: new THREE.MeshStandardMaterial({ color: '#ffffff' }),
+    cone: new THREE.MeshStandardMaterial({ color: '#ffffff' }),
+    cylinder: new THREE.MeshStandardMaterial({ color: '#ffffff' }),
+    sphere: new THREE.MeshStandardMaterial({ color: '#ffffff', transparent: true, opacity: 0.6 })
 };
 
 // Max instances per type
@@ -623,36 +597,31 @@ const BuildingsInstanced: React.FC<BuildingsInstancedProps> = ({ cityData, selec
 
     return (
         <group>
-            {/* Road parts */}
-            <instancedMesh ref={roadBaseRef} args={[boxGeo, undefined, MAX_ROAD_PARTS]} receiveShadow>
-                <meshStandardMaterial color="#1a1a1a" roughness={0.9} />
-            </instancedMesh>
-            <instancedMesh ref={sidewalkRef} args={[boxGeo, undefined, MAX_ROAD_PARTS * 4]} receiveShadow>
-                <meshStandardMaterial color="#a0aec0" />
-            </instancedMesh>
-            <instancedMesh ref={roadLinesRef} args={[boxGeo, undefined, MAX_ROAD_PARTS * 4]}>
-                <meshStandardMaterial color="#fbbf24" />
-            </instancedMesh>
-            <instancedMesh ref={zebraRef} args={[boxGeo, undefined, MAX_ROAD_PARTS * 20]}>
-                <meshStandardMaterial color="#ffffff" roughness={0.4} />
-            </instancedMesh>
-            <instancedMesh ref={curbRef} args={[boxGeo, undefined, MAX_ROAD_PARTS * 4]}>
-                <meshStandardMaterial color="#2d3748" roughness={0.7} />
-            </instancedMesh>
+            {/* Road parts - using pre-created materials */}
+            <instancedMesh ref={roadBaseRef} args={[boxGeo, roadMaterials.asphalt, MAX_ROAD_PARTS]} receiveShadow />
+            <instancedMesh
+                ref={sidewalkRef}
+                args={[boxGeo, roadMaterials.sidewalk, MAX_ROAD_PARTS * 4]}
+                receiveShadow
+            />
+            <instancedMesh ref={roadLinesRef} args={[boxGeo, roadMaterials.yellowLine, MAX_ROAD_PARTS * 4]} />
+            <instancedMesh ref={zebraRef} args={[boxGeo, roadMaterials.zebra, MAX_ROAD_PARTS * 20]} />
+            <instancedMesh ref={curbRef} args={[boxGeo, roadMaterials.curb, MAX_ROAD_PARTS * 4]} />
 
-            {/* Building parts - using instance colors */}
-            <instancedMesh ref={buildingBoxRef} args={[boxGeo, undefined, MAX_BUILDINGS * 6]} castShadow receiveShadow>
-                <meshStandardMaterial color="#ffffff" />
-            </instancedMesh>
-            <instancedMesh ref={buildingConeRef} args={[coneGeo, undefined, MAX_DECORATIONS]} castShadow>
-                <meshStandardMaterial color="#ffffff" />
-            </instancedMesh>
-            <instancedMesh ref={buildingCylinderRef} args={[cylinderGeo, undefined, MAX_DECORATIONS]} castShadow>
-                <meshStandardMaterial color="#ffffff" />
-            </instancedMesh>
-            <instancedMesh ref={buildingSphereRef} args={[sphereGeo, undefined, MAX_DECORATIONS]}>
-                <meshStandardMaterial color="#ffffff" transparent opacity={0.6} />
-            </instancedMesh>
+            {/* Building parts - using instance colors with white base material */}
+            <instancedMesh
+                ref={buildingBoxRef}
+                args={[boxGeo, buildingMaterials.box, MAX_BUILDINGS * 6]}
+                castShadow
+                receiveShadow
+            />
+            <instancedMesh ref={buildingConeRef} args={[coneGeo, buildingMaterials.cone, MAX_DECORATIONS]} castShadow />
+            <instancedMesh
+                ref={buildingCylinderRef}
+                args={[cylinderGeo, buildingMaterials.cylinder, MAX_DECORATIONS]}
+                castShadow
+            />
+            <instancedMesh ref={buildingSphereRef} args={[sphereGeo, buildingMaterials.sphere, MAX_DECORATIONS]} />
         </group>
     );
 };
