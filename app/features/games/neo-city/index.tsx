@@ -377,7 +377,11 @@ const App: React.FC = () => {
                 {/* Environment effects - conditionally rendered */}
                 {performanceSettings.environmentEffects && <EnvironmentEffects />}
 
-                <DayNightCycle gameTime={gameTime} lowQuality={performanceSettings.level === 'low'} />
+                <DayNightCycle
+                    gameTime={gameTime}
+                    lowQuality={performanceSettings.level === 'low'}
+                    shadowMapSize={performanceSettings.shadowMapSize}
+                />
 
                 <CityGrid
                     cityData={cityData}

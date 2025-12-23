@@ -150,16 +150,30 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                 <div className="bg-gray-900/90 text-white p-2 md:p-3 rounded-xl border border-gray-700 shadow-2xl backdrop-blur-md flex gap-2 md:gap-3 items-center pointer-events-auto">
                     {/* Performance Toggle */}
                     {onPerformanceChange && (
-                        <div className="flex items-center gap-1 border-r border-gray-700 pr-3">
-                            <Gauge className="w-4 h-4 text-gray-400" />
+                        <div className="flex items-center gap-1.5 border-r border-gray-700 pr-3">
+                            <Gauge
+                                className={`w-4 h-4 ${
+                                    performanceLevel === 'low'
+                                        ? 'text-green-400'
+                                        : performanceLevel === 'medium'
+                                          ? 'text-yellow-400'
+                                          : 'text-red-400'
+                                }`}
+                            />
                             <select
                                 value={performanceLevel}
                                 onChange={(e) => onPerformanceChange(e.target.value as PerformanceLevel)}
-                                className="bg-gray-800 border border-gray-600 rounded-lg px-2 py-1 text-xs font-bold uppercase tracking-wide focus:outline-none focus:ring-1 focus:ring-blue-500"
-                                title="Performance Quality">
-                                <option value="low">Low</option>
-                                <option value="medium">Medium</option>
-                                <option value="high">High</option>
+                                className={`bg-gray-800 border rounded-lg px-2 py-1 text-xs font-bold uppercase tracking-wide focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer ${
+                                    performanceLevel === 'low'
+                                        ? 'border-green-500/50 text-green-400'
+                                        : performanceLevel === 'medium'
+                                          ? 'border-yellow-500/50 text-yellow-400'
+                                          : 'border-red-500/50 text-red-400'
+                                }`}
+                                title="Graphics Quality - Low: Best FPS, Medium: Balanced, High: Best visuals">
+                                <option value="low">🔋 Low</option>
+                                <option value="medium">⚡ Medium</option>
+                                <option value="high">🎨 High</option>
                             </select>
                         </div>
                     )}

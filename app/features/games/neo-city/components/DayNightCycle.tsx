@@ -4,9 +4,10 @@ import * as THREE from 'three';
 interface DayNightCycleProps {
     gameTime: number; // 0 to 24
     lowQuality?: boolean; // Performance mode flag
+    shadowMapSize?: number; // Shadow map resolution
 }
 
-const DayNightCycle: React.FC<DayNightCycleProps> = memo(({ gameTime, lowQuality = false }) => {
+const DayNightCycle: React.FC<DayNightCycleProps> = memo(({ gameTime, lowQuality = false, shadowMapSize = 1024 }) => {
     const angle = ((gameTime - 6) / 24) * Math.PI * 2;
     const radius = 25;
 
@@ -35,9 +36,8 @@ const DayNightCycle: React.FC<DayNightCycleProps> = memo(({ gameTime, lowQuality
         return '#BAE6FD'; // Light blue for day
     }, [isNight, isGoldenHour]);
 
-    // Shadow map size based on quality setting
-    // Lower resolution = better performance
-    const shadowMapSize = lowQuality ? 512 : 1024;
+    // Use provided shadowMapSize or fallback based on quality
+    const actualShadowMapSize = lowQuality ? Math.min(shadowMapSize, 512) : shadowMapSize;
 
     return (
         <group>
@@ -48,7 +48,7 @@ const DayNightCycle: React.FC<DayNightCycleProps> = memo(({ gameTime, lowQuality
                 color={lightColor}
                 castShadow={!lowQuality} // Disable shadows in low quality mode
                 shadow-bias={-0.001}
-                shadow-mapSize={[shadowMapSize, shadowMapSize]}
+                shadow-mapSize={[actualShadowMapSize, actualShadowMapSize]}
                 shadow-camera-left={-15}
                 shadow-camera-right={15}
                 shadow-camera-top={15}

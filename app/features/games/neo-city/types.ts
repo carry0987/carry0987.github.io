@@ -63,6 +63,8 @@ export interface PerformanceSettings {
     environmentEffects: boolean;
     pixelRatio: number;
     antialias: boolean;
+    shadowMapSize: number;
+    maxLights: number;
 }
 
 export const PERFORMANCE_PRESETS: Record<PerformanceLevel, PerformanceSettings> = {
@@ -71,20 +73,26 @@ export const PERFORMANCE_PRESETS: Record<PerformanceLevel, PerformanceSettings> 
         shadows: false,
         environmentEffects: false,
         pixelRatio: 1,
-        antialias: false
+        antialias: false,
+        shadowMapSize: 512,
+        maxLights: 1
     },
     medium: {
         level: 'medium',
         shadows: true,
         environmentEffects: true,
         pixelRatio: 1.5,
-        antialias: false
+        antialias: false,
+        shadowMapSize: 1024,
+        maxLights: 2
     },
     high: {
         level: 'high',
         shadows: true,
         environmentEffects: true,
         pixelRatio: 2,
-        antialias: true
+        antialias: true,
+        shadowMapSize: 2048,
+        maxLights: 4
     }
 };
