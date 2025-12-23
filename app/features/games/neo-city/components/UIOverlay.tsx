@@ -304,11 +304,11 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
 
             {/* Bottom Toolbelt - Centered & Beautified */}
             <div className="flex justify-center pointer-events-auto">
-                <div className="bg-black/40 backdrop-blur-2xl border border-white/20 p-1.5 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.7)] flex items-center space-x-1">
+                <div className="bg-black/40 backdrop-blur-2xl border border-white/20 p-1.5 rounded-2xl shadow-[0_12px_40px_rgba(0,0,0,0.7)] flex items-center gap-1">
                     {/* Select Tool */}
                     <button
                         onClick={() => onSelectType(null)}
-                        className={`flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all duration-300 ${
+                        className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl transition-all duration-300 active:scale-95 ${
                             selectedType === null
                                 ? 'bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.6)] scale-105'
                                 : 'text-gray-300 hover:bg-white/10 hover:text-white'
@@ -317,13 +317,13 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
                         <span className="text-[9px] font-bold uppercase tracking-tighter">Select</span>
                     </button>
 
-                    <div className="w-px h-8 bg-white/10 mx-1" />
+                    <div className="w-px h-8 bg-white/20 self-center mx-0.5" />
 
                     {Object.values(BUILDINGS).map((b) => (
                         <button
                             key={b.type}
                             onClick={() => onSelectType(b.type)}
-                            className={`flex flex-col items-center justify-center w-14 h-14 rounded-xl transition-all duration-300 ${
+                            className={`flex flex-col items-center justify-center w-16 h-16 rounded-xl transition-all duration-300 active:scale-95 ${
                                 selectedType === b.type
                                     ? 'bg-blue-500 text-white shadow-[0_0_20px_rgba(59,130,246,0.6)] scale-105'
                                     : 'text-gray-300 hover:bg-white/10 hover:text-white'
