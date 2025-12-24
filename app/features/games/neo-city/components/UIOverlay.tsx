@@ -266,7 +266,7 @@ const UIOverlay: React.FC<UIOverlayProps> = ({
             </div>
 
             {/* Building Info Panel */}
-            {buildingMeta && (
+            {buildingMeta && isMobile === false && (
                 <div
                     className={`absolute ${
                         isMobile

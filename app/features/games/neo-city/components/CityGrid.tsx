@@ -10,6 +10,7 @@ interface CityGridProps {
     onTileClick: (x: number, z: number) => void;
     selectedType: ZoneType | null;
     selectedBuilding: { x: number; z: number } | null;
+    isMobile?: boolean | null;
 }
 
 // Shared geometries and materials - created once
@@ -73,32 +74,39 @@ const HoverIndicator = memo(
 );
 HoverIndicator.displayName = 'HoverIndicator';
 
-const CityGrid: React.FC<CityGridProps> = ({ cityData, onTileClick, selectedType, selectedBuilding }) => {
+const CityGrid: React.FC<CityGridProps> = ({ cityData, onTileClick, selectedType, selectedBuilding, isMobile }) => {
     const [hovered, setHovered] = useState<{ x: number; z: number } | null>(null);
 
-    const handlePointerMove = useCallback((e: any) => {
-        e.stopPropagation();
-        const x = Math.floor(e.point.x + GRID_SIZE / 2);
-        const z = Math.floor(e.point.z + GRID_SIZE / 2);
-        if (x >= 0 && x < GRID_SIZE && z >= 0 && z < GRID_SIZE) {
-            setHovered({ x, z });
-        } else {
-            setHovered(null);
-        }
-    }, []);
+    const handlePointerMove = useCallback(
+        (e: any) => {
+            if (isMobile) return;
+            e.stopPropagation();
+            const x = Math.floor(e.point.x + GRID_SIZE / 2);
+            const z = Math.floor(e.point.z + GRID_SIZE / 2);
+            if (x >= 0 && x < GRID_SIZE && z >= 0 && z < GRID_SIZE) {
+                setHovered({ x, z });
+            } else {
+                setHovered(null);
+            }
+        },
+        [isMobile]
+    );
 
     const handlePointerOut = useCallback(() => {
+        if (isMobile) return;
         setHovered(null);
-    }, []);
+    }, [isMobile]);
 
     const handleClick = useCallback(
         (e: any) => {
             e.stopPropagation();
-            if (hovered) {
-                onTileClick(hovered.x, hovered.z);
+            const x = Math.floor(e.point.x + GRID_SIZE / 2);
+            const z = Math.floor(e.point.z + GRID_SIZE / 2);
+            if (x >= 0 && x < GRID_SIZE && z >= 0 && z < GRID_SIZE) {
+                onTileClick(x, z);
             }
         },
-        [hovered, onTileClick]
+        [onTileClick]
     );
 
     return (

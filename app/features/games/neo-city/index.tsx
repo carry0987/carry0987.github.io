@@ -406,6 +406,7 @@ const App: React.FC = () => {
                     onTileClick={handleTileClick}
                     selectedType={selectedType}
                     selectedBuilding={selectedBuilding}
+                    isMobile={isMobile}
                 />
 
                 <CityLife cityData={cityData} />
@@ -437,7 +438,13 @@ const App: React.FC = () => {
 
             {gameStarted && (
                 <>
-                    <CityFeed messages={feedMessages} isVisible={isFeedVisible} onClear={() => setFeedMessages([])} />
+                    {isMobile === false && (
+                        <CityFeed
+                            messages={feedMessages}
+                            isVisible={isFeedVisible}
+                            onClear={() => setFeedMessages([])}
+                        />
+                    )}
 
                     {errorMsg && (
                         <div className="absolute top-24 left-1/2 -translate-x-1/2 z-50 bg-red-600/90 text-white px-6 py-2 rounded-full shadow-lg border border-red-400 animate-bounce pointer-events-none flex items-center">
