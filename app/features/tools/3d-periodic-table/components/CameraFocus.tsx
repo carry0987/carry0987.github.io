@@ -1,6 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import { useFrame, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
+import { useIsMobile } from '@/hooks';
 
 interface Props {
     orbitRef: React.RefObject<any>;
@@ -10,6 +11,7 @@ interface Props {
 
 const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected, selectedElementId }) => {
     const { camera } = useThree();
+    const isMobile = useIsMobile();
     const isTransitioning = useRef(false);
     const isInteracting = useRef(false);
     const lastSelectedId = useRef<number | undefined>(undefined);
@@ -52,7 +54,7 @@ const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected, selectedElementId 
         if (isSelected) {
             // Atomic view: Transition to a specific top-down closer angle when selected/switched
             if (isTransitioning.current) {
-                const targetPos = new THREE.Vector3(0, 7, 14);
+                const targetPos = isMobile ? new THREE.Vector3(0, 10, 25) : new THREE.Vector3(0, 7, 14);
 
                 if (camera.position.distanceTo(targetPos) > 0.1) {
                     camera.position.lerp(targetPos, 0.1);
@@ -63,7 +65,7 @@ const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected, selectedElementId 
         } else if (!isInteracting.current) {
             // Main interface: Slowly and continuously pull back to front view [0, 0, 60]
             // Only when NOT interacting to avoid "fighting" the user
-            const targetPos = new THREE.Vector3(0, 0, 60);
+            const targetPos = isMobile ? new THREE.Vector3(0, 0, 100) : new THREE.Vector3(0, 0, 60);
             if (camera.position.distanceTo(targetPos) > 0.1) {
                 camera.position.lerp(targetPos, 0.02);
             }
