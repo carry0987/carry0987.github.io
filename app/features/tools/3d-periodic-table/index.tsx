@@ -335,7 +335,11 @@ const App: React.FC = () => {
                 />
 
                 <Suspense fallback={null}>
-                    <CameraFocus orbitRef={orbitRef} isSelected={!!selectedElement} />
+                    <CameraFocus
+                        orbitRef={orbitRef}
+                        isSelected={!!selectedElement}
+                        selectedElementId={selectedElement?.number}
+                    />
 
                     {!selectedElement && (
                         <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>

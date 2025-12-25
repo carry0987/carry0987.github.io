@@ -5,20 +5,23 @@ import * as THREE from 'three';
 interface Props {
     orbitRef: React.RefObject<any>;
     isSelected: boolean;
+    selectedElementId?: number;
 }
 
-const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected }) => {
+const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected, selectedElementId }) => {
     const { camera } = useThree();
     const isTransitioning = useRef(false);
     const isInteracting = useRef(false);
-    const lastSelected = useRef(isSelected);
+    const lastSelectedId = useRef<number | undefined>(undefined);
 
     useEffect(() => {
-        if (lastSelected.current !== isSelected) {
+        if (isSelected && selectedElementId !== lastSelectedId.current) {
             isTransitioning.current = true;
-            lastSelected.current = isSelected;
+            lastSelectedId.current = selectedElementId;
+        } else if (!isSelected) {
+            lastSelectedId.current = undefined;
         }
-    }, [isSelected]);
+    }, [isSelected, selectedElementId]);
 
     useEffect(() => {
         const orbit = orbitRef.current;
@@ -47,15 +50,12 @@ const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected }) => {
         orbitRef.current.target.lerp(new THREE.Vector3(0, 0, 0), 0.1);
 
         if (isSelected) {
-            // Atomic view: Only transition once when selected, then allow free movement
+            // Atomic view: Transition to a specific top-down closer angle when selected/switched
             if (isTransitioning.current) {
-                const targetDistance = 30;
-                const currentDistance = camera.position.length();
+                const targetPos = new THREE.Vector3(0, 7, 14);
 
-                if (Math.abs(currentDistance - targetDistance) > 0.1) {
-                    const direction = camera.position.clone().normalize();
-                    const newDistance = THREE.MathUtils.lerp(currentDistance, targetDistance, 0.1);
-                    camera.position.copy(direction.multiplyScalar(newDistance));
+                if (camera.position.distanceTo(targetPos) > 0.1) {
+                    camera.position.lerp(targetPos, 0.1);
                 } else {
                     isTransitioning.current = false;
                 }
