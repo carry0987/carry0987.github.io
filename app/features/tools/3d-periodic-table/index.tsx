@@ -352,7 +352,7 @@ const App: React.FC = () => {
 
                     <button
                         onClick={handleNext}
-                        className={`fixed ${isPanelOpen ? 'right-[490px]' : 'right-8'} top-1/2 -translate-y-1/2 z-40 p-6 bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 rounded-full active:scale-90 group hidden md:block shadow-2xl transition-all duration-300`}>
+                        className={`fixed ${isPanelOpen ? 'right-122.5' : 'right-8'} top-1/2 -translate-y-1/2 z-40 p-6 bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 rounded-full active:scale-90 group hidden md:block shadow-2xl transition-all duration-300`}>
                         <ChevronRight className="w-12 h-12 text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all" />
                     </button>
 

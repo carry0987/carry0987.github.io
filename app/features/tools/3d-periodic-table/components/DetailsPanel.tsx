@@ -24,7 +24,7 @@ const DetailsPanel: React.FC<Props> = ({ element, isOpen, onClose }) => {
     return (
         <div
             className={`fixed z-50 bg-slate-900/95 backdrop-blur-3xl shadow-2xl transition-all duration-500 ease-in-out text-slate-100 overflow-y-auto details-scrollbar
-                md:top-1/2 md:-translate-y-1/2 md:right-8 md:left-auto md:w-[450px] md:h-[90vh] md:border md:border-white/10 md:p-10 md:rounded-2xl
+                md:top-1/2 md:-translate-y-1/2 md:right-8 md:left-auto md:w-122.5 md:h-[90vh] md:border md:border-white/10 md:p-10 md:rounded-2xl
                 bottom-0 left-0 right-0 w-full max-h-[75vh] rounded-t-2xl p-6 border-t border-white/10
                 ${isOpen ? 'translate-y-0 opacity-100 md:translate-x-0' : 'translate-y-full opacity-0 md:translate-x-[calc(100%+2rem)]'}`}>
             {/* Mobile Drag Handle */}
