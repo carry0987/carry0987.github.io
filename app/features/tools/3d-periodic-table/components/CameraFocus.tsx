@@ -10,6 +10,7 @@ interface Props {
 const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected }) => {
     const { camera } = useThree();
     const isTransitioning = useRef(false);
+    const isInteracting = useRef(false);
     const lastSelected = useRef(isSelected);
 
     useEffect(() => {
@@ -18,6 +19,26 @@ const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected }) => {
             lastSelected.current = isSelected;
         }
     }, [isSelected]);
+
+    useEffect(() => {
+        const orbit = orbitRef.current;
+        if (!orbit) return;
+
+        const handleStart = () => {
+            isInteracting.current = true;
+        };
+        const handleEnd = () => {
+            isInteracting.current = false;
+        };
+
+        orbit.addEventListener('start', handleStart);
+        orbit.addEventListener('end', handleEnd);
+
+        return () => {
+            orbit.removeEventListener('start', handleStart);
+            orbit.removeEventListener('end', handleEnd);
+        };
+    }, [orbitRef.current]);
 
     useFrame(() => {
         if (!orbitRef.current) return;
@@ -39,10 +60,13 @@ const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected }) => {
                     isTransitioning.current = false;
                 }
             }
-        } else {
+        } else if (!isInteracting.current) {
             // Main interface: Slowly and continuously pull back to front view [0, 0, 60]
+            // Only when NOT interacting to avoid "fighting" the user
             const targetPos = new THREE.Vector3(0, 0, 60);
-            camera.position.lerp(targetPos, 0.05);
+            if (camera.position.distanceTo(targetPos) > 0.1) {
+                camera.position.lerp(targetPos, 0.02);
+            }
         }
 
         orbitRef.current.update();
