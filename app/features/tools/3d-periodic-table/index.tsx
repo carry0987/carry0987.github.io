@@ -185,7 +185,74 @@ const App: React.FC = () => {
     }, [performance]);
 
     return (
-        <div className="relative w-full h-screen bg-dark-bg overflow-hidden text-white">
+        <div className="relative w-full h-dvh bg-dark-bg overflow-hidden text-white">
+            <Canvas shadows dpr={[1, 2]} frameloop={isVisible ? 'always' : 'never'}>
+                <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, isMobile ? 100 : 60]} fov={40} />
+                <OrbitControls
+                    ref={orbitRef}
+                    enableDamping
+                    dampingFactor={0.05}
+                    minDistance={5}
+                    maxDistance={250}
+                    enablePan={false}
+                />
+                <ambientLight intensity={0.5} />
+                <spotLight position={[100, 100, 100]} angle={0.15} penumbra={1} intensity={1} castShadow />
+                <pointLight position={[20, 20, 20]} intensity={1.5} color="#3b82f6" />
+                <Stars
+                    radius={250}
+                    depth={60}
+                    count={starConfig.count}
+                    factor={starConfig.factor}
+                    saturation={0.5}
+                    fade
+                    speed={2}
+                />
+
+                <Suspense fallback={null}>
+                    <CameraFocus
+                        orbitRef={orbitRef}
+                        isSelected={!!selectedElement}
+                        selectedElementId={selectedElement?.number}
+                    />
+
+                    {!selectedElement && (
+                        <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
+                            {ELEMENTS.map((el) => {
+                                const pos = positions.get(el.number);
+                                if (!pos) return null;
+                                return (
+                                    <ElementCard
+                                        key={el.number}
+                                        element={el}
+                                        position={pos}
+                                        isSelected={false}
+                                        isMatched={matchedNumbers.has(el.number)}
+                                        onSelect={handleSelect}
+                                    />
+                                );
+                            })}
+                        </Float>
+                    )}
+
+                    {selectedElement && (
+                        <group position={[0, 0, 0]}>
+                            {viewMode === ElementViewMode.ATOMIC && (
+                                <AtomModel
+                                    element={selectedElement}
+                                    performance={performance}
+                                    isPanelOpen={isPanelOpen}
+                                />
+                            )}
+                            {viewMode === ElementViewMode.CRYSTAL && <CrystalModel element={selectedElement} />}
+                            {viewMode === ElementViewMode.REACTION && (
+                                <ReactionModel element={selectedElement} performance={performance} />
+                            )}
+                        </group>
+                    )}
+                </Suspense>
+            </Canvas>
+
             {/* Top UI */}
             <div className="absolute top-0 left-0 w-full z-40 p-3 md:p-6 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 pointer-events-none">
                 <div className="pointer-events-auto flex items-center justify-between w-full md:w-auto gap-4">
@@ -298,7 +365,7 @@ const App: React.FC = () => {
             {/* View Mode Switcher */}
             {selectedElement && (
                 <div
-                    className={`absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 md:gap-4 bg-slate-900/90 backdrop-blur-3xl border border-white/10 p-2 md:p-4 rounded-3xl md:rounded-4xl shadow-2xl transition-all duration-300 ${
+                    className={`absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 md:gap-4 bg-slate-900/90 backdrop-blur-3xl border border-white/10 p-2 md:p-4 rounded-3xl md:rounded-4xl shadow-2xl transition-all duration-300 ${
                         isPanelOpen
                             ? 'max-md:opacity-0 max-md:pointer-events-none max-md:translate-y-10'
                             : 'opacity-100'
@@ -347,69 +414,6 @@ const App: React.FC = () => {
                     </button>
                 </div>
             )}
-
-            <Canvas shadows dpr={[1, 2]} frameloop={isVisible ? 'always' : 'never'}>
-                <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, isMobile ? 100 : 60]} fov={40} />
-                <OrbitControls
-                    ref={orbitRef}
-                    enableDamping
-                    dampingFactor={0.05}
-                    minDistance={5}
-                    maxDistance={250}
-                    enablePan={false}
-                />
-                <ambientLight intensity={0.5} />
-                <spotLight position={[100, 100, 100]} angle={0.15} penumbra={1} intensity={1} castShadow />
-                <pointLight position={[20, 20, 20]} intensity={1.5} color="#3b82f6" />
-                <Stars
-                    radius={250}
-                    depth={60}
-                    count={starConfig.count}
-                    factor={starConfig.factor}
-                    saturation={0.5}
-                    fade
-                    speed={2}
-                />
-
-                <Suspense fallback={null}>
-                    <CameraFocus
-                        orbitRef={orbitRef}
-                        isSelected={!!selectedElement}
-                        selectedElementId={selectedElement?.number}
-                    />
-
-                    {!selectedElement && (
-                        <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.3}>
-                            {ELEMENTS.map((el) => {
-                                const pos = positions.get(el.number);
-                                if (!pos) return null;
-                                return (
-                                    <ElementCard
-                                        key={el.number}
-                                        element={el}
-                                        position={pos}
-                                        isSelected={false}
-                                        isMatched={matchedNumbers.has(el.number)}
-                                        onSelect={handleSelect}
-                                    />
-                                );
-                            })}
-                        </Float>
-                    )}
-
-                    {selectedElement && (
-                        <group position={[0, 0, 0]}>
-                            {viewMode === ElementViewMode.ATOMIC && (
-                                <AtomModel element={selectedElement} performance={performance} />
-                            )}
-                            {viewMode === ElementViewMode.CRYSTAL && <CrystalModel element={selectedElement} />}
-                            {viewMode === ElementViewMode.REACTION && (
-                                <ReactionModel element={selectedElement} performance={performance} />
-                            )}
-                        </group>
-                    )}
-                </Suspense>
-            </Canvas>
 
             {/* Mobile Backdrop */}
             {isPanelOpen && (

@@ -7,6 +7,7 @@ import { type ElementData, PerformanceLevel } from '../types';
 interface Props {
     element: ElementData;
     performance?: PerformanceLevel;
+    isPanelOpen?: boolean;
 }
 
 const Electron: React.FC<{ radius: number; speed: number; offset: number; trailLength: number }> = ({
@@ -49,11 +50,12 @@ const OrbitLine: React.FC<{ radius: number }> = ({ radius }) => {
     return <Line points={points} color="white" lineWidth={0.5} transparent opacity={0.15} />;
 };
 
-const Nucleus: React.FC<{ protons: number; neutrons: number; maxParticles: number }> = ({
-    protons,
-    neutrons,
-    maxParticles
-}) => {
+const Nucleus: React.FC<{
+    protons: number;
+    neutrons: number;
+    maxParticles: number;
+    isPanelOpen?: boolean;
+}> = ({ protons, neutrons, maxParticles, isPanelOpen }) => {
     const groupRef = useRef<THREE.Group>(null);
     const total = protons + neutrons;
     const displayCount = Math.min(total, maxParticles);
@@ -115,8 +117,16 @@ const Nucleus: React.FC<{ protons: number; neutrons: number; maxParticles: numbe
                 ))}
             </group>
 
-            <Html position={[0, 1.5, 0]} center distanceFactor={10}>
-                <div className="whitespace-nowrap bg-black/90 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-tighter border border-white/20 flex items-center gap-3 pointer-events-none shadow-2xl">
+            <Html
+                position={[0, 1.5, 0]}
+                center
+                distanceFactor={10}
+                style={{
+                    transition: 'opacity 0.3s ease-in-out',
+                    opacity: isPanelOpen ? 0 : 1,
+                    pointerEvents: 'none'
+                }}>
+                <div className="whitespace-nowrap bg-black/90 backdrop-blur-md text-white px-3 py-1.5 rounded-full text-[9px] font-black uppercase tracking-tighter border border-white/20 flex items-center gap-3 shadow-2xl">
                     <span className="flex items-center gap-1.5">
                         <div className="w-1.5 h-1.5 rounded-full bg-red-500"></div>
                         {protons}P
@@ -132,7 +142,7 @@ const Nucleus: React.FC<{ protons: number; neutrons: number; maxParticles: numbe
     );
 };
 
-const AtomModel: React.FC<Props> = ({ element, performance = PerformanceLevel.MEDIUM }) => {
+const AtomModel: React.FC<Props> = ({ element, performance = PerformanceLevel.MEDIUM, isPanelOpen }) => {
     const protons = element.number;
     const neutrons = Math.round(element.atomic_mass) - protons;
 
@@ -164,7 +174,12 @@ const AtomModel: React.FC<Props> = ({ element, performance = PerformanceLevel.ME
         <Float speed={1} rotationIntensity={0.05} floatIntensity={0.05}>
             {/* Scale adjusted from 1.8 to 1.0 to ensure it fits in camera view at Z=20~30 */}
             <group scale={1.0}>
-                <Nucleus protons={protons} neutrons={neutrons} maxParticles={nucleusConfig.maxParticles} />
+                <Nucleus
+                    protons={protons}
+                    neutrons={neutrons}
+                    maxParticles={nucleusConfig.maxParticles}
+                    isPanelOpen={isPanelOpen}
+                />
                 {shells.map((count, shellIdx) => {
                     const radius = (shellIdx + 1) * 2.2;
                     return (
