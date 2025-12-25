@@ -214,6 +214,7 @@ const App: React.FC = () => {
                         orbitRef={orbitRef}
                         isSelected={!!selectedElement}
                         selectedElementId={selectedElement?.number}
+                        isPanelOpen={isPanelOpen}
                     />
 
                     {!selectedElement && (
@@ -254,7 +255,10 @@ const App: React.FC = () => {
             </Canvas>
 
             {/* Top UI */}
-            <div className="absolute top-0 left-0 w-full z-40 p-3 md:p-6 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 pointer-events-none">
+            <div
+                className={`absolute top-0 left-0 z-40 p-3 md:p-6 flex flex-col md:flex-row items-center justify-between gap-3 md:gap-4 pointer-events-none transition-all duration-300 ${
+                    isPanelOpen ? 'w-full md:w-[calc(100%-490px)]' : 'w-full'
+                }`}>
                 <div className="pointer-events-auto flex items-center justify-between w-full md:w-auto gap-4">
                     <div className="flex items-center gap-4">
                         {selectedElement ? (
@@ -348,7 +352,7 @@ const App: React.FC = () => {
 
                     <button
                         onClick={handleNext}
-                        className={`fixed ${isPanelOpen ? 'right-110' : 'right-8'} top-1/2 -translate-y-1/2 z-40 p-6 bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 rounded-full active:scale-90 group hidden md:block shadow-2xl transition-all duration-300`}>
+                        className={`fixed ${isPanelOpen ? 'right-[490px]' : 'right-8'} top-1/2 -translate-y-1/2 z-40 p-6 bg-white/5 hover:bg-white/10 backdrop-blur-xl border border-white/10 rounded-full active:scale-90 group hidden md:block shadow-2xl transition-all duration-300`}>
                         <ChevronRight className="w-12 h-12 text-white/50 group-hover:text-white group-hover:translate-x-1 transition-all" />
                     </button>
 
@@ -365,10 +369,10 @@ const App: React.FC = () => {
             {/* View Mode Switcher */}
             {selectedElement && (
                 <div
-                    className={`absolute bottom-8 md:bottom-10 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 md:gap-4 bg-slate-900/90 backdrop-blur-3xl border border-white/10 p-2 md:p-4 rounded-3xl md:rounded-4xl shadow-2xl transition-all duration-300 ${
+                    className={`absolute bottom-8 md:bottom-10 left-1/2 z-40 flex items-center gap-2 md:gap-4 bg-slate-900/90 backdrop-blur-3xl border border-white/10 p-2 md:p-4 rounded-3xl md:rounded-4xl shadow-2xl transition-all duration-300 ${
                         isPanelOpen
-                            ? 'max-md:opacity-0 max-md:pointer-events-none max-md:translate-y-10'
-                            : 'opacity-100'
+                            ? 'max-md:opacity-0 max-md:pointer-events-none max-md:translate-y-10 -translate-x-1/2 md:-translate-x-[calc(50%+241px)]'
+                            : '-translate-x-1/2 opacity-100'
                     }`}>
                     {[
                         { id: ElementViewMode.ATOMIC, icon: Atom, label: 'Atomic', available: true },

@@ -7,9 +7,10 @@ interface Props {
     orbitRef: React.RefObject<any>;
     isSelected: boolean;
     selectedElementId?: number;
+    isPanelOpen?: boolean;
 }
 
-const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected, selectedElementId }) => {
+const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected, selectedElementId, isPanelOpen }) => {
     const { camera } = useThree();
     const isMobile = useIsMobile();
     const isTransitioning = useRef(false);
@@ -49,12 +50,21 @@ const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected, selectedElementId 
         if (!orbitRef.current) return;
 
         // Smoothly focus the orbit target
-        orbitRef.current.target.lerp(new THREE.Vector3(0, 0, 0), 0.1);
+        const targetCenter = new THREE.Vector3(0, 0, 0);
+        // If panel is open on desktop, offset the target to the right so the model appears on the left
+        if (!isMobile && isSelected && isPanelOpen) {
+            targetCenter.x = 2.5;
+        }
+        orbitRef.current.target.lerp(targetCenter, 0.1);
 
         if (isSelected) {
             // Atomic view: Transition to a specific top-down closer angle when selected/switched
             if (isTransitioning.current) {
                 const targetPos = isMobile ? new THREE.Vector3(0, 10, 25) : new THREE.Vector3(0, 7, 14);
+                // If panel is open on desktop, offset the camera position slightly to the left as well
+                if (!isMobile && isPanelOpen) {
+                    targetPos.x = -1.5;
+                }
 
                 if (camera.position.distanceTo(targetPos) > 0.1) {
                     camera.position.lerp(targetPos, 0.1);
