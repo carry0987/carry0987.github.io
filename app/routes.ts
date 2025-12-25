@@ -18,6 +18,7 @@ export default [
     route('/tools/focusflow-widget', './features/tools/focusflow-widget/index.tsx'),
     route('/tools/imgur-drop', './features/tools/imgur-drop/index.tsx'),
     route('/tools/fakechat', './features/tools/fakechat/index.tsx'),
+    route('/tools/3d-periodic-table', './features/tools/3d-periodic-table/index.tsx'),
     /* Other Routes */
     ...(await flatRoutes({
         ignoredRouteFiles: ['**/.*', '**/*.css', '**/*.scss']
