@@ -25,18 +25,24 @@ const CameraFocus: React.FC<Props> = ({ orbitRef, isSelected }) => {
         // Smoothly focus the orbit target
         orbitRef.current.target.lerp(new THREE.Vector3(0, 0, 0), 0.1);
 
-        if (isTransitioning.current) {
-            const targetDistance = isSelected ? 30 : 60;
-            const currentDistance = camera.position.length();
+        if (isSelected) {
+            // Atomic view: Only transition once when selected, then allow free movement
+            if (isTransitioning.current) {
+                const targetDistance = 30;
+                const currentDistance = camera.position.length();
 
-            // Smoothly adjust camera distance by moving along the current vector
-            if (Math.abs(currentDistance - targetDistance) > 0.1) {
-                const direction = camera.position.clone().normalize();
-                const newDistance = THREE.MathUtils.lerp(currentDistance, targetDistance, 0.1);
-                camera.position.copy(direction.multiplyScalar(newDistance));
-            } else {
-                isTransitioning.current = false;
+                if (Math.abs(currentDistance - targetDistance) > 0.1) {
+                    const direction = camera.position.clone().normalize();
+                    const newDistance = THREE.MathUtils.lerp(currentDistance, targetDistance, 0.1);
+                    camera.position.copy(direction.multiplyScalar(newDistance));
+                } else {
+                    isTransitioning.current = false;
+                }
             }
+        } else {
+            // Main interface: Slowly and continuously pull back to front view [0, 0, 60]
+            const targetPos = new THREE.Vector3(0, 0, 60);
+            camera.position.lerp(targetPos, 0.05);
         }
 
         orbitRef.current.update();
