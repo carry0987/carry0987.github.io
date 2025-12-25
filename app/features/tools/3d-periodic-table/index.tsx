@@ -4,6 +4,7 @@ import { OrbitControls, PerspectiveCamera, Stars, Float } from '@react-three/dre
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { ELEMENTS } from './constants';
 import { type ElementData, LayoutMode, type Vector3D, ElementViewMode, PerformanceLevel } from './types';
+import { saveManager } from './utils/saveManager';
 import ElementCard from './components/ElementCard';
 import DetailsPanel from './components/DetailsPanel';
 import AtomModel from './components/AtomModel';
@@ -30,24 +31,15 @@ import {
 // Import styles
 import './style.css';
 
-const PANEL_STORAGE_KEY = 'elemental3d_panel_open';
-
 const App: React.FC = () => {
-    const [layout, setLayout] = useState<LayoutMode>(LayoutMode.TABLE);
+    const savedSettings = useMemo(() => saveManager.getSettings(), []);
+    const [layout, setLayout] = useState<LayoutMode>(savedSettings.layout);
     const [selectedElement, setSelectedElement] = useState<ElementData | null>(null);
 
-    // Use native localStorage to ensure 100% stability
-    const [isPanelOpen, setIsPanelOpen] = useState(() => {
-        try {
-            const saved = localStorage.getItem(PANEL_STORAGE_KEY);
-            return saved === null ? true : saved === 'true';
-        } catch (e) {
-            return true;
-        }
-    });
+    const [isPanelOpen, setIsPanelOpen] = useState(savedSettings.isPanelOpen);
 
     const [viewMode, setViewMode] = useState<ElementViewMode>(ElementViewMode.ATOMIC);
-    const [performance, setPerformance] = useState<PerformanceLevel>(PerformanceLevel.MEDIUM);
+    const [performance, setPerformance] = useState<PerformanceLevel>(savedSettings.performance);
     const [searchQuery, setSearchQuery] = useState('');
     const orbitRef = useRef<any>(null);
     const cameraRef = useRef<any>(null);
@@ -106,9 +98,17 @@ const App: React.FC = () => {
 
     const togglePanel = (open: boolean) => {
         setIsPanelOpen(open);
-        try {
-            localStorage.setItem(PANEL_STORAGE_KEY, open ? 'true' : 'false');
-        } catch (e) {}
+        saveManager.save({ isPanelOpen: open });
+    };
+
+    const handleLayoutChange = (mode: LayoutMode) => {
+        setLayout(mode);
+        saveManager.save({ layout: mode });
+    };
+
+    const handlePerformanceChange = (level: PerformanceLevel) => {
+        setPerformance(level);
+        saveManager.save({ performance: level });
     };
 
     const handleSelect = (el: ElementData | null) => {
@@ -186,7 +186,7 @@ const App: React.FC = () => {
                                 <MenuItem key={level}>
                                     {({ focus }) => (
                                         <button
-                                            onClick={() => setPerformance(level)}
+                                            onClick={() => handlePerformanceChange(level)}
                                             className={`${
                                                 focus || performance === level
                                                     ? 'bg-blue-600 text-white'
@@ -223,7 +223,7 @@ const App: React.FC = () => {
                             ].map((mode) => (
                                 <button
                                     key={mode.id}
-                                    onClick={() => setLayout(mode.id)}
+                                    onClick={() => handleLayoutChange(mode.id)}
                                     className={`p-2 rounded-full transition-all flex items-center gap-2 px-3 ${
                                         layout === mode.id
                                             ? 'bg-blue-600 text-white shadow-lg'
