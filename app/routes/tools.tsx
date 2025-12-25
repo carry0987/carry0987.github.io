@@ -11,7 +11,7 @@ export default function ToolsPage() {
         {
             title: '3D Periodic Table',
             desc: 'An interactive 3D Periodic Table explorer. Explore elements in 3D space with atomic, crystal, and reaction views.',
-            tech: ['React', 'Three.js', 'React Three Fiber'],
+            tech: ['React', 'Three.js', 'D3.js'],
             category: 'Education',
             icon: Atom,
             toolUrl: '/tools/3d-periodic-table'
