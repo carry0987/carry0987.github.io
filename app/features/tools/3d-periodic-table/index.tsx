@@ -5,6 +5,7 @@ import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
 import { ELEMENTS } from './constants';
 import { type ElementData, LayoutMode, type Vector3D, ElementViewMode, PerformanceLevel } from './types';
 import { saveManager } from './utils/saveManager';
+import { usePageVisibility } from '@/hooks';
 import ElementCard from './components/ElementCard';
 import DetailsPanel from './components/DetailsPanel';
 import AtomModel from './components/AtomModel';
@@ -41,6 +42,7 @@ const App: React.FC = () => {
     const [viewMode, setViewMode] = useState<ElementViewMode>(ElementViewMode.ATOMIC);
     const [performance, setPerformance] = useState<PerformanceLevel>(savedSettings.performance);
     const [searchQuery, setSearchQuery] = useState('');
+    const { isVisible } = usePageVisibility();
     const orbitRef = useRef<any>(null);
     const cameraRef = useRef<any>(null);
 
@@ -309,7 +311,7 @@ const App: React.FC = () => {
                 </div>
             )}
 
-            <Canvas shadows dpr={[1, 2]}>
+            <Canvas shadows dpr={[1, 2]} frameloop={isVisible ? 'always' : 'never'}>
                 <PerspectiveCamera ref={cameraRef} makeDefault position={[0, 0, 60]} fov={40} />
                 <OrbitControls
                     ref={orbitRef}
