@@ -378,14 +378,15 @@ export const handle = { fullscreen: true };
 
 export function meta() {
     return [
-        { title: 'Nippon Colors | 日本の伝統色' },
+        { title: '3D Periodic Table | Elemental3D' },
         {
             property: 'og:title',
-            content: 'Nippon Colors | 日本の伝統色'
+            content: '3D Periodic Table | Elemental3D'
         },
         {
             name: 'description',
-            content: 'Browse traditional Japanese colors (日本の伝統色), search by name, and copy HEX/RGB/CMYK values.'
+            content:
+                'An interactive 3D Periodic Table explorer built with React Three Fiber. Explore elements in 3D space with atomic, crystal, and reaction views.'
         }
     ];
 }

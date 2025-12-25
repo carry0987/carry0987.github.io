@@ -1,6 +1,6 @@
 import type { Route } from './+types/tools';
 import { Link } from 'react-router';
-import { Wrench, ArrowRight, Image, Timer, Upload, MessageCircle, Palette } from 'lucide-react';
+import { Wrench, ArrowRight, Image, Timer, Upload, MessageCircle, Palette, Atom } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: 'Tools | Carry' }, { name: 'description', content: 'A collection of useful tools' }];
@@ -8,6 +8,14 @@ export function meta({}: Route.MetaArgs) {
 
 export default function ToolsPage() {
     const tools = [
+        {
+            title: '3D Periodic Table',
+            desc: 'An interactive 3D Periodic Table explorer. Explore elements in 3D space with atomic, crystal, and reaction views.',
+            tech: ['React', 'Three.js', 'React Three Fiber'],
+            category: 'Education',
+            icon: Atom,
+            toolUrl: '/tools/3d-periodic-table'
+        },
         {
             title: 'Nippon Colors',
             desc: 'Browse traditional Japanese colors (日本の伝統色), search by name, and copy HEX/RGB/CMYK.',
