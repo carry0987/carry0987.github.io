@@ -1,4 +1,4 @@
-import React, { useState, useMemo, Suspense, useRef } from 'react';
+import React, { useState, useMemo, Suspense, useRef, useEffect } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Stars, Float } from '@react-three/drei';
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react';
@@ -75,6 +75,13 @@ const App: React.FC = () => {
     const isMobile = useIsMobile();
     const orbitRef = useRef<any>(null);
     const cameraRef = useRef<any>(null);
+
+    // Default close panel on mobile
+    useEffect(() => {
+        if (isMobile) {
+            setIsPanelOpen(false);
+        }
+    }, [isMobile]);
 
     const matchedNumbers = useMemo(() => {
         if (!searchQuery) return new Set(ELEMENTS.map((e) => e.number));
@@ -290,7 +297,12 @@ const App: React.FC = () => {
 
             {/* View Mode Switcher */}
             {selectedElement && (
-                <div className="absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 md:gap-4 bg-slate-900/90 backdrop-blur-3xl border border-white/10 p-2 md:p-4 rounded-3xl md:rounded-4xl shadow-2xl">
+                <div
+                    className={`absolute bottom-6 md:bottom-10 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2 md:gap-4 bg-slate-900/90 backdrop-blur-3xl border border-white/10 p-2 md:p-4 rounded-3xl md:rounded-4xl shadow-2xl transition-all duration-300 ${
+                        isPanelOpen
+                            ? 'max-md:opacity-0 max-md:pointer-events-none max-md:translate-y-10'
+                            : 'opacity-100'
+                    }`}>
                     {[
                         { id: ElementViewMode.ATOMIC, icon: Atom, label: 'Atomic', available: true },
                         {
@@ -398,6 +410,14 @@ const App: React.FC = () => {
                     )}
                 </Suspense>
             </Canvas>
+
+            {/* Mobile Backdrop */}
+            {isPanelOpen && (
+                <div
+                    className="fixed inset-0 bg-black/40 backdrop-blur-sm z-40 md:hidden transition-opacity animate-fade-in"
+                    onClick={() => togglePanel(false)}
+                />
+            )}
 
             <DetailsPanel element={selectedElement} isOpen={isPanelOpen} onClose={() => togglePanel(false)} />
         </div>

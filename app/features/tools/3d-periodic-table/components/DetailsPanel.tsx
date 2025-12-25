@@ -23,9 +23,13 @@ const DetailsPanel: React.FC<Props> = ({ element, isOpen, onClose }) => {
 
     return (
         <div
-            className={`fixed inset-y-0 right-0 w-full md:w-100 bg-slate-900/95 backdrop-blur-2xl border-l border-white/10 shadow-2xl z-50 overflow-y-auto transform transition-transform duration-500 ease-in-out p-6 md:p-8 text-slate-100 ${
-                isOpen ? 'translate-x-0' : 'translate-x-full'
-            }`}>
+            className={`fixed z-50 bg-slate-900/95 backdrop-blur-3xl shadow-2xl transition-transform duration-500 ease-in-out text-slate-100 overflow-y-auto
+                md:inset-y-0 md:right-0 md:w-100 md:border-l md:border-white/10 md:p-8 md:translate-y-0
+                bottom-0 left-0 right-0 w-full max-h-[75vh] rounded-t-[2.5rem] md:rounded-none p-6 border-t border-white/10 md:border-t-0
+                ${isOpen ? 'translate-y-0 md:translate-x-0' : 'translate-y-full md:translate-x-full'}`}>
+            {/* Mobile Drag Handle */}
+            <div className="w-12 h-1.5 bg-white/20 rounded-full mx-auto mb-6 md:hidden shrink-0" />
+
             <div className="flex justify-between items-start mb-6 md:mb-8">
                 <div>
                     <span className="text-4xl md:text-5xl font-black tracking-tighter" style={{ color }}>
