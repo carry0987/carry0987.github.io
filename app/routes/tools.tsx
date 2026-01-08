@@ -9,20 +9,20 @@ export function meta({}: Route.MetaArgs) {
 export default function ToolsPage() {
     const tools = [
         {
-            title: '3D Periodic Table',
-            desc: 'An interactive 3D Periodic Table explorer. Explore elements in 3D space with atomic, crystal, and reaction views.',
-            tech: ['React', 'Three.js', 'React Three Fiber'],
-            category: 'Education',
-            icon: Atom,
-            toolUrl: '/tools/3d-periodic-table'
-        },
-        {
             title: 'Nippon Colors',
             desc: 'Browse traditional Japanese colors (日本の伝統色), search by name, and copy HEX/RGB/CMYK.',
             tech: ['React', 'Color Utils', 'Clipboard API'],
             category: 'Design',
             icon: Palette,
             toolUrl: '/tools/nippon-colors'
+        },
+        {
+            title: '3D Periodic Table',
+            desc: 'An interactive 3D Periodic Table explorer. Explore elements in 3D space with atomic, crystal, and reaction views.',
+            tech: ['React', 'Three.js', 'React Three Fiber'],
+            category: 'Education',
+            icon: Atom,
+            toolUrl: '/tools/3d-periodic-table'
         },
         {
             title: 'SVG Generator',
