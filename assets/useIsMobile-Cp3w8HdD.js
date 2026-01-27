@@ -1,0 +1,1 @@
+import{r as t}from"./chunk-JZWAC4HX-CEDt07HX.js";const r=768;function f(){const[o,n]=t.useState(null),e=t.useRef(null);return t.useEffect(()=>(n(window.innerWidth<r),e.current=new ResizeObserver(s=>{for(const c of s){const u=c.contentRect.width;n(u<r)}}),e.current.observe(document.body),()=>{e.current?.disconnect()}),[]),o}export{f as u};
