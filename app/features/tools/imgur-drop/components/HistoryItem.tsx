@@ -42,7 +42,7 @@ export const HistoryItem: React.FC<HistoryItemProps> = ({ item }) => {
                 <div className="flex-1 p-5 flex flex-col justify-between">
                     <div>
                         <div className="flex justify-between items-start mb-2">
-                            <h4 className="font-semibold text-white text-sm truncate max-w-[200px]">
+                            <h4 className="font-semibold text-white text-sm truncate max-w-50">
                                 {item.id}.{item.type.split('/')[1]}
                             </h4>
                             <span className="flex items-center text-xs text-slate-500">
