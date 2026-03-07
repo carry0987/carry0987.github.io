@@ -23,7 +23,7 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@google/genai": "^1.43.0",
+    "@google/genai": "^1.44.0",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@mediapipe/pose": "^0.5.1675469404",
@@ -36,7 +36,7 @@
     "d3": "^7.9.0",
     "html-to-image": "^1.11.13",
     "isbot": "^5.1.35",
-    "lucide-react": "^0.576.0",
+    "lucide-react": "^0.577.0",
     "pixi.js": "^8.16.0",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
@@ -49,7 +49,7 @@
     "@carry0987/utils": "^3.10.3",
     "@tailwindcss/vite": "^4.2.1",
     "@types/jquery": "^4.0.0",
-    "@types/node": "^25.3.3",
+    "@types/node": "^25.3.5",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
     "@types/three": "^0.183.1",
