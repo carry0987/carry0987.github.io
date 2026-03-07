@@ -1,6 +1,6 @@
 import type { Route } from './+types/tools';
 import { Link } from 'react-router';
-import { Wrench, ArrowRight, Image, Timer, Upload, MessageCircle, Palette, Atom } from 'lucide-react';
+import { Wrench, ArrowRight, Image, Timer, Upload, MessageCircle, Palette, Atom, ImageIcon } from 'lucide-react';
 
 export function meta({}: Route.MetaArgs) {
     return [{ title: 'Tools | Carry' }, { name: 'description', content: 'A collection of useful tools' }];
@@ -15,6 +15,14 @@ export default function ToolsPage() {
             category: 'Design',
             icon: Palette,
             toolUrl: '/tools/nippon-colors'
+        },
+        {
+            title: 'Image Processor',
+            desc: 'Secure browser-side image processing. Add ID watermarks, crop, rotate, and export to PDF without uploading.',
+            tech: ['React', 'Fabric.js', 'Pica', 'jsPDF'],
+            category: 'Utility',
+            icon: ImageIcon,
+            toolUrl: '/tools/image-processor'
         },
         {
             title: '3D Periodic Table',

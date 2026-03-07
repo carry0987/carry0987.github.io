@@ -19,6 +19,7 @@ export default [
     route('/tools/imgur-drop', './features/tools/imgur-drop/index.tsx'),
     route('/tools/fakechat', './features/tools/fakechat/index.tsx'),
     route('/tools/3d-periodic-table', './features/tools/3d-periodic-table/index.tsx'),
+    route('/tools/image-processor', './features/tools/image-processor/index.tsx'),
     /* Other Routes */
     ...(await flatRoutes({
         ignoredRouteFiles: ['**/.*', '**/*.css', '**/*.scss']
