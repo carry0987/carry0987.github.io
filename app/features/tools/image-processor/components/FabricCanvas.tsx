@@ -83,8 +83,10 @@ const FabricCanvas: React.FC<FabricCanvasProps> = ({
     }, [imageUrl]);
 
     return (
-        <div className="flex items-center justify-center p-4 bg-gray-100 rounded-lg shadow-inner overflow-hidden">
-            <canvas ref={canvasRef} />
+        <div className="flex items-center justify-center p-4 bg-gray-100 rounded-lg shadow-inner overflow-auto max-h-[70vh]">
+            <div className="shadow-lg bg-white">
+                <canvas ref={canvasRef} />
+            </div>
         </div>
     );
 };

@@ -93,9 +93,6 @@ importers:
       '@tailwindcss/vite':
         specifier: ^4.2.1
         version: 4.2.1(vite@7.3.1(@types/node@25.3.5)(jiti@2.6.1)(lightningcss@1.31.1))
-      '@types/fabric':
-        specifier: ^5.3.11
-        version: 5.3.11
       '@types/node':
         specifier: ^25.3.5
         version: 25.3.5
@@ -955,9 +952,6 @@ packages:
 
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
-
-  '@types/fabric@5.3.11':
-    resolution: {integrity: sha512-dvicyfS0rDW2KGnwXGz+t+ckMGZUtHzhp8XvaM99R1TsYVsIenf96PbEWCNMHknR6a3/lyYwh1APxxm+DqRkpw==}
 
   '@types/node@25.3.5':
     resolution: {integrity: sha512-oX8xrhvpiyRCQkG1MFchB09f+cXftgIXb3a7UUa4Y3wpmZPw5tyZGTLWhlESOLq1Rq6oDlc8npVU2/9xiCuXMA==}
@@ -3093,8 +3087,6 @@ snapshots:
   '@types/earcut@3.0.0': {}
 
   '@types/estree@1.0.8': {}
-
-  '@types/fabric@5.3.11': {}
 
   '@types/node@25.3.5':
     dependencies:

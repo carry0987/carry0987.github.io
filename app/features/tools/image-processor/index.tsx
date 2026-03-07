@@ -15,18 +15,32 @@ const ImageProcessor: React.FC = () => {
 
     const [watermarkSettings, setWatermarkSettings] = useState<WatermarkSettings>({
         text: '僅供身分驗證，他用無效',
-        fontSize: 0, // Using 0 as default (offset from standard)
+        fontSize: 0,
         fontColor: '#000000',
         opacity: 0.3,
-        angle: 45, // Matches iOS Shortcut default
+        angle: 45,
         lineHeight: 1.2,
-        gutter: 20, // Added default gutter
+        gutter: 20,
         isRepeat: true,
         file: null,
         originalUrl: null,
         width: 0,
         height: 0
     });
+
+    const resetSettings = useCallback(() => {
+        setWatermarkSettings((prev) => ({
+            ...prev,
+            text: '僅供身分驗證，他用無效',
+            fontSize: 0,
+            fontColor: '#000000',
+            opacity: 0.3,
+            angle: 45,
+            lineHeight: 1.2,
+            gutter: 20,
+            isRepeat: true
+        }));
+    }, []);
 
     // Load settings from LocalStorage after hydration
     useEffect(() => {
@@ -335,7 +349,14 @@ const ImageProcessor: React.FC = () => {
                 {/* 右側控制區 */}
                 <section className="lg:col-span-1 space-y-6">
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
-                        <h2 className="text-xl font-semibold mb-4 text-gray-800">浮水印設定</h2>
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-xl font-semibold text-gray-800">浮水印設定</h2>
+                            <button
+                                onClick={resetSettings}
+                                className="text-xs font-medium text-blue-600 hover:text-blue-700 bg-blue-50 px-2 py-1 rounded transition-colors">
+                                重置預設
+                            </button>
+                        </div>
 
                         <div className="space-y-4">
                             {/* Text Input */}
@@ -347,7 +368,7 @@ const ImageProcessor: React.FC = () => {
                                     onChange={(e) =>
                                         setWatermarkSettings({ ...watermarkSettings, text: e.target.value })
                                     }
-                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 text-sm text-gray-900 bg-white"
                                     placeholder="輸入浮水印文字"
                                 />
                             </div>
