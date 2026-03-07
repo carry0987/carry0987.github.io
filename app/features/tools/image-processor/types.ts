@@ -7,11 +7,12 @@ export interface ImageAdjustment {
 
 export interface WatermarkSettings {
     text: string;
-    fontSize: number;
+    fontSize: number; // This will now act as an offset/increment from base
     fontColor: string;
     opacity: number;
     angle: number;
     lineHeight: number;
+    gutter: number; // Added for spacing control
     isRepeat: boolean;
     file: File | null;
     originalUrl: string | null;

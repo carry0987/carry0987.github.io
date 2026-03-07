@@ -15,11 +15,12 @@ const ImageProcessor: React.FC = () => {
 
     const [watermarkSettings, setWatermarkSettings] = useState<WatermarkSettings>({
         text: '僅供身分驗證，他用無效',
-        fontSize: 24,
-        fontColor: '#ff0000',
+        fontSize: 0, // Using 0 as default (offset from standard)
+        fontColor: '#000000',
         opacity: 0.3,
-        angle: -45,
+        angle: 45, // Matches iOS Shortcut default
         lineHeight: 1.2,
+        gutter: 20, // Added default gutter
         isRepeat: true,
         file: null,
         originalUrl: null,
@@ -122,41 +123,57 @@ const ImageProcessor: React.FC = () => {
         const canvasWidth = canvas.width || 800;
         const canvasHeight = canvas.height || 600;
 
+        // Dynamic base font size calculation based on image height (matches iOS Shortcut)
+        const baseFontSize = Math.round(canvasHeight / 15);
+        const standardFontSize = baseFontSize >= 15 ? baseFontSize : 15;
+        // Apply offset: fontSize in settings acts as % change or simple addition
+        let finalFontSize = standardFontSize * (1 + watermarkSettings.fontSize / 50);
+        finalFontSize = finalFontSize >= 12 ? finalFontSize : 12;
+
         if (watermarkSettings.isRepeat) {
             // Create a temporary text object to measure dimensions
-            const tempText = new fabric.IText(watermarkSettings.text, {
-                fontSize: watermarkSettings.fontSize,
+            const tempText = new fabric.IText(watermarkSettings.text + '  ', {
+                fontSize: finalFontSize,
                 lineHeight: watermarkSettings.lineHeight
             });
-            const textWidth = (tempText.width || 100) + 40; // Add some horizontal padding
-            const textHeight = (tempText.height || 30) * watermarkSettings.lineHeight + 40; // Add vertical padding
+            const textWidth = tempText.width || 100;
+            const textHeight = finalFontSize * 1.2 + watermarkSettings.gutter * 5;
 
-            // Reference logic from iOS Shortcut:
-            // 1. Calculate the bounding box of the canvas after rotation to ensure full coverage
+            // Tiling Logic from iOS Shortcut:
             const angleRad = (watermarkSettings.angle * Math.PI) / 180;
             const cosA = Math.abs(Math.cos(angleRad));
             const sinA = Math.abs(Math.sin(angleRad));
 
-            // The size of the area we need to fill to cover the canvas at this angle
-            const boundingWidth = canvasWidth * cosA + canvasHeight * sinA;
-            const boundingHeight = canvasWidth * sinA + canvasHeight * cosA;
+            // Calculate the area needed to fill
+            const newW = canvasWidth * cosA + canvasHeight * sinA;
+            const newH = canvasWidth * sinA + canvasHeight * cosA;
 
-            // 2. Center the coordinate system for easier rotation-based filling
+            // Coordinate system transformation: Center of rotation
             const centerX = canvasWidth / 2;
             const centerY = canvasHeight / 2;
 
-            // 3. Define the fill range (from -bounding/2 to bounding/2 relative to center)
-            const startX = -boundingWidth / 2 - textWidth;
-            const endX = boundingWidth / 2 + textWidth;
-            const startY = -boundingHeight / 2 - textHeight;
-            const endY = boundingHeight / 2 + textHeight;
+            // Ranges for filling
+            const xOver = Math.ceil((newW - canvasWidth) / textWidth / 2);
+            const yOver = Math.ceil((newH - canvasHeight) / textHeight / 2);
+            const xStep = Math.ceil(newW / textWidth);
+            const yStep = Math.ceil(newH / textHeight);
 
-            for (let x = startX; x <= endX; x += textWidth) {
-                for (let y = startY; y <= endY; y += textHeight) {
-                    const text = new fabric.IText(watermarkSettings.text, {
-                        left: centerX + x * Math.cos(angleRad) - y * Math.sin(angleRad),
-                        top: centerY + x * Math.sin(angleRad) + y * Math.cos(angleRad),
-                        fontSize: watermarkSettings.fontSize,
+            for (let i = -xOver; i <= xStep + xOver; i++) {
+                for (let j = -yOver; j <= yStep + yOver; j++) {
+                    // Translate local grid (i, j) to canvas space with rotation
+                    const localX = i * textWidth - newW / 2;
+                    const localY = j * textHeight - newH / 2;
+
+                    // Standard rotation matrix:
+                    // x' = x*cos - y*sin
+                    // y' = x*sin + y*cos
+                    const canvasX = centerX + localX * Math.cos(angleRad) - localY * Math.sin(angleRad);
+                    const canvasY = centerY + localX * Math.sin(angleRad) + localY * Math.cos(angleRad);
+
+                    const text = new fabric.IText(watermarkSettings.text + '  ', {
+                        left: canvasX,
+                        top: canvasY,
+                        fontSize: finalFontSize,
                         fill: watermarkSettings.fontColor,
                         opacity: watermarkSettings.opacity,
                         angle: watermarkSettings.angle,
@@ -175,7 +192,7 @@ const ImageProcessor: React.FC = () => {
                 top: canvasHeight / 2,
                 originX: 'center',
                 originY: 'center',
-                fontSize: watermarkSettings.fontSize,
+                fontSize: finalFontSize,
                 fill: watermarkSettings.fontColor,
                 opacity: watermarkSettings.opacity,
                 angle: watermarkSettings.angle,
@@ -370,12 +387,12 @@ const ImageProcessor: React.FC = () => {
                             <div className="grid grid-cols-2 gap-4">
                                 <div>
                                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                                        大小 ({watermarkSettings.fontSize}px)
+                                        大小 ({watermarkSettings.fontSize})
                                     </label>
                                     <input
                                         type="range"
-                                        min="12"
-                                        max="120"
+                                        min="-50"
+                                        max="100"
                                         value={watermarkSettings.fontSize}
                                         onChange={(e) =>
                                             setWatermarkSettings({
@@ -392,8 +409,8 @@ const ImageProcessor: React.FC = () => {
                                     </label>
                                     <input
                                         type="range"
-                                        min="-180"
-                                        max="180"
+                                        min="0"
+                                        max="360"
                                         value={watermarkSettings.angle}
                                         onChange={(e) =>
                                             setWatermarkSettings({
@@ -406,22 +423,21 @@ const ImageProcessor: React.FC = () => {
                                 </div>
                             </div>
 
-                            {/* Line Height & Repeat */}
+                            {/* Gutter & Repeat */}
                             <div className="flex items-center space-x-4">
                                 <div className="flex-1">
                                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                                        行高 ({watermarkSettings.lineHeight})
+                                        間距 ({watermarkSettings.gutter})
                                     </label>
                                     <input
                                         type="range"
-                                        min="0.5"
-                                        max="3.0"
-                                        step="0.1"
-                                        value={watermarkSettings.lineHeight}
+                                        min="0"
+                                        max="100"
+                                        value={watermarkSettings.gutter}
                                         onChange={(e) =>
                                             setWatermarkSettings({
                                                 ...watermarkSettings,
-                                                lineHeight: parseFloat(e.target.value)
+                                                gutter: parseInt(e.target.value)
                                             })
                                         }
                                         className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-3"
@@ -447,7 +463,7 @@ const ImageProcessor: React.FC = () => {
                                 <button
                                     disabled={!imageState.url}
                                     onClick={generateIDWatermark}
-                                    className="w-full flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+                                    className="w-full flex items-center justify-center px-4 py-2.5 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors shadow-sm">
                                     產生浮水印
                                 </button>
 
