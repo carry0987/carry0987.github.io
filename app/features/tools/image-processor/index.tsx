@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useCallback, Suspense, lazy } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { getLocalValue, setLocalValue } from '@carry0987/utils';
+import * as fabric from 'fabric';
 import { useFileUpload } from './hooks/useFileUpload';
 import { useHydrated } from '@/hooks/useHydrated';
+import FabricCanvas from './components/FabricCanvas';
 import type { WatermarkSettings } from './types';
-
-const FabricCanvas = lazy(() => import('./components/FabricCanvas'));
 
 const ImageProcessor: React.FC = () => {
     const [imageState, setImageState] = useState<{ url: string | null; file: File | null }>({ url: null, file: null });
@@ -125,9 +125,8 @@ const ImageProcessor: React.FC = () => {
         [processFile]
     );
 
-    const generateIDWatermark = useCallback(async () => {
+    const generateIDWatermark = useCallback(() => {
         if (!canvas) return;
-        const fabric = await import('fabric');
 
         // Remove existing watermarks if any
         const objects = canvas.getObjects();
@@ -322,19 +321,12 @@ const ImageProcessor: React.FC = () => {
                         </div>
                     ) : (
                         <div className="space-y-4">
-                            <Suspense
-                                fallback={
-                                    <div className="h-96 bg-gray-100 animate-pulse rounded-lg flex items-center justify-center">
-                                        載入畫布中...
-                                    </div>
-                                }>
-                                <FabricCanvas
-                                    imageUrl={imageState.url}
-                                    onCanvasReady={handleCanvasReady}
-                                    width={800}
-                                    height={600}
-                                />
-                            </Suspense>
+                            <FabricCanvas
+                                imageUrl={imageState.url}
+                                onCanvasReady={handleCanvasReady}
+                                width={800}
+                                height={600}
+                            />
                             <div className="flex justify-center space-x-4">
                                 <button
                                     onClick={() => setImageState({ url: null, file: null })}
