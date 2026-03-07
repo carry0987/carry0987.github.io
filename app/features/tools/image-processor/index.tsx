@@ -212,15 +212,18 @@ const ImageProcessor: React.FC = () => {
         if (!canvas) return;
 
         const activeObject = canvas.getActiveObject();
-        if (
-            activeObject &&
-            activeObject.name === 'watermark' &&
-            activeObject instanceof (window as any).fabric?.IText
-        ) {
+        if (activeObject && activeObject.name === 'watermark' && activeObject instanceof fabric.IText) {
+            // Recalculate size if it's based on dynamic scaling
+            const canvasHeight = canvas.height || 600;
+            const baseFontSize = Math.round(canvasHeight / 15);
+            const standardFontSize = baseFontSize >= 15 ? baseFontSize : 15;
+            let finalFontSize = standardFontSize * (1 + watermarkSettings.fontSize / 50);
+            finalFontSize = finalFontSize >= 12 ? finalFontSize : 12;
+
             activeObject.set({
                 text: watermarkSettings.text,
                 fill: watermarkSettings.fontColor,
-                fontSize: watermarkSettings.fontSize,
+                fontSize: finalFontSize,
                 opacity: watermarkSettings.opacity,
                 angle: watermarkSettings.angle,
                 lineHeight: watermarkSettings.lineHeight
@@ -350,17 +353,44 @@ const ImageProcessor: React.FC = () => {
                             </div>
 
                             {/* Color & Opacity */}
-                            <div className="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">顏色</label>
-                                    <input
-                                        type="color"
-                                        value={watermarkSettings.fontColor}
-                                        onChange={(e) =>
-                                            setWatermarkSettings({ ...watermarkSettings, fontColor: e.target.value })
-                                        }
-                                        className="w-full h-9 border border-gray-300 rounded-md cursor-pointer"
-                                    />
+                            <div className="space-y-3">
+                                <label className="block text-sm font-medium text-gray-700">顏色與透明度</label>
+                                <div className="flex flex-wrap gap-2 mb-2">
+                                    {['#000000', '#ff2600', '#0433ff', '#00f900', '#fffb00', '#ffffff'].map((color) => (
+                                        <button
+                                            key={color}
+                                            onClick={() =>
+                                                setWatermarkSettings({ ...watermarkSettings, fontColor: color })
+                                            }
+                                            className={`w-7 h-7 rounded-full border border-gray-200 transition-transform hover:scale-110 ${
+                                                watermarkSettings.fontColor === color
+                                                    ? 'ring-2 ring-blue-500 ring-offset-2'
+                                                    : ''
+                                            }`}
+                                            style={{ backgroundColor: color }}
+                                            title={color}
+                                        />
+                                    ))}
+                                    <div className="relative w-7 h-7">
+                                        <input
+                                            type="color"
+                                            value={watermarkSettings.fontColor}
+                                            onChange={(e) =>
+                                                setWatermarkSettings({
+                                                    ...watermarkSettings,
+                                                    fontColor: e.target.value
+                                                })
+                                            }
+                                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                                        />
+                                        <div
+                                            className="w-full h-full rounded-full border border-gray-200"
+                                            style={{
+                                                background:
+                                                    'conic-gradient(red, #ff4d00, #ff9900, #ffe600, #ccff00, #80ff00, #33ff00, #00ff1a, #00ff66, #00ffb3, cyan, #00b3ff, #0066ff, #001aff, #3300ff, #8000ff, #cc00ff, #ff00e6, #ff0099, #ff004d, red)'
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-700 mb-1">
@@ -378,7 +408,7 @@ const ImageProcessor: React.FC = () => {
                                                 opacity: parseFloat(e.target.value)
                                             })
                                         }
-                                        className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-3"
+                                        className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                                     />
                                 </div>
                             </div>
@@ -424,10 +454,10 @@ const ImageProcessor: React.FC = () => {
                             </div>
 
                             {/* Gutter & Repeat */}
-                            <div className="flex items-center space-x-4">
+                            <div className="flex items-center space-x-4 border-t border-gray-100 pt-3">
                                 <div className="flex-1">
                                     <label className="block text-xs font-medium text-gray-700 mb-1">
-                                        間距 ({watermarkSettings.gutter})
+                                        行高/間距 ({watermarkSettings.gutter})
                                     </label>
                                     <input
                                         type="range"
@@ -440,10 +470,11 @@ const ImageProcessor: React.FC = () => {
                                                 gutter: parseInt(e.target.value)
                                             })
                                         }
-                                        className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer mt-3"
+                                        className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                                     />
                                 </div>
-                                <div className="flex items-center mt-5">
+                                <div className="flex flex-col items-center">
+                                    <label className="text-[10px] text-gray-500 mb-1">重複鋪滿</label>
                                     <input
                                         id="repeat-checkbox"
                                         type="checkbox"
@@ -451,11 +482,8 @@ const ImageProcessor: React.FC = () => {
                                         onChange={(e) =>
                                             setWatermarkSettings({ ...watermarkSettings, isRepeat: e.target.checked })
                                         }
-                                        className="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
+                                        className="w-5 h-5 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500"
                                     />
-                                    <label htmlFor="repeat-checkbox" className="ml-2 text-sm font-medium text-gray-700">
-                                        重複鋪滿
-                                    </label>
                                 </div>
                             </div>
 
