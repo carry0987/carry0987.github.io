@@ -262,9 +262,14 @@ const ImageProcessor: React.FC = () => {
         canvas.discardActiveObject();
         canvas.renderAll();
 
+        // Calculate multiplier to export at original image resolution
+        const mainImg = canvas.getObjects().find((obj: any) => obj.name === 'mainImage');
+        const multiplier = mainImg?.scaleX ? 1 / mainImg.scaleX : 1;
+
         const dataURL = canvas.toDataURL({
             format: 'png',
-            quality: 1
+            quality: 1,
+            multiplier
         });
 
         const link = document.createElement('a');
