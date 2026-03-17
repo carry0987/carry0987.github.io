@@ -23,7 +23,7 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@google/genai": "^1.44.0",
+    "@google/genai": "^1.45.0",
     "@headlessui/react": "^2.2.9",
     "@heroicons/react": "^2.2.0",
     "@mediapipe/pose": "^0.5.1675469404",
@@ -37,11 +37,11 @@
     "fabric": "^7.2.0",
     "heic2any": "^0.0.4",
     "html-to-image": "^1.11.13",
-    "isbot": "^5.1.35",
-    "jspdf": "^4.2.0",
+    "isbot": "^5.1.36",
+    "jspdf": "^4.2.1",
     "lucide-react": "^0.577.0",
     "pica": "^9.0.1",
-    "pixi.js": "^8.17.0",
+    "pixi.js": "^8.17.1",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "react-dropzone": "^15.0.0",
@@ -53,7 +53,7 @@
     "@carry0987/darkmode": "^1.2.1",
     "@carry0987/utils": "^3.10.3",
     "@tailwindcss/vite": "^4.2.1",
-    "@types/node": "^25.4.0",
+    "@types/node": "^25.5.0",
     "@types/pica": "^9.0.5",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
@@ -62,7 +62,7 @@
     "tailwindcss": "^4.2.1",
     "three-stdlib": "^2.36.1",
     "typescript": "^5.9.3",
-    "vite": "^7.3.1",
+    "vite": "^8.0.0",
     "vite-tsconfig-paths": "^6.1.1"
   }
 }
