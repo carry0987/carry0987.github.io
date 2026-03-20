@@ -1,4 +1,4 @@
-import{r as e}from"./chunk-ChSjv458.js";import{A as t,P as n,t as r}from"./jsx-runtime-Dq8LFInI.js";import"./scheduler-CyQEmfgH.js";import{h as i}from"./three.module-hAz3go68.js";import{o as a,r as o,s,t as c}from"./OrbitControls-CCprOXdE.js";import{t as l}from"./shaderMaterial-CyZimBva.js";var u=e(n(),1),d=function(e){return e.FIREBALL=`FIREBALL`,e.TERRAIN=`TERRAIN`,e.SPHERE_BLOB=`SPHERE_BLOB`,e.PARTICLES=`PARTICLES`,e}({}),f=`
+import{r as e}from"./chunk-ChSjv458.js";import{A as t,P as n,t as r}from"./jsx-runtime-Dq8LFInI.js";import"./scheduler-CyQEmfgH.js";import{h as i}from"./three.module-hAz3go68.js";import{o as a,r as o,s,t as c}from"./OrbitControls-Ck_6qhBs.js";import{t as l}from"./shaderMaterial-CyZimBva.js";var u=e(n(),1),d=function(e){return e.FIREBALL=`FIREBALL`,e.TERRAIN=`TERRAIN`,e.SPHERE_BLOB=`SPHERE_BLOB`,e.PARTICLES=`PARTICLES`,e}({}),f=`
 vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 permute(vec4 x) { return mod289(((x*34.0)+1.0)*x); }

@@ -1,4 +1,4 @@
-import{r as e}from"./chunk-ChSjv458.js";import{P as t}from"./jsx-runtime-Dq8LFInI.js";import{Ft as n,h as r,wt as i,yt as a}from"./three.module-hAz3go68.js";import{s as o}from"./OrbitControls-CCprOXdE.js";import{t as s}from"./constants-ndaHe9YA.js";var c=e(t()),l=class extends a{constructor(){super({uniforms:{time:{value:0},fade:{value:1}},vertexShader:`
+import{r as e}from"./chunk-ChSjv458.js";import{P as t}from"./jsx-runtime-Dq8LFInI.js";import{Ft as n,h as r,wt as i,yt as a}from"./three.module-hAz3go68.js";import{s as o}from"./OrbitControls-Ck_6qhBs.js";import{t as s}from"./constants-ndaHe9YA.js";var c=e(t()),l=class extends a{constructor(){super({uniforms:{time:{value:0},fade:{value:1}},vertexShader:`
       uniform float time;
       attribute float size;
       varying vec3 vColor;
