@@ -3,5 +3,3 @@ onlyBuiltDependencies:
   - core-js
   - esbuild
   - protobufjs
-patchedDependencies:
-  '@mediapipe/tasks-vision@0.10.33': patches/@mediapipe__tasks-vision@0.10.33.patch
