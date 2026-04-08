@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "@google/genai": "^1.48.0",
-    "@headlessui/react": "^2.2.9",
+    "@headlessui/react": "^2.2.10",
     "@heroicons/react": "^2.2.0",
     "@mediapipe/pose": "^0.5.1675469404",
     "@mediapipe/tasks-vision": "0.10.34",
@@ -62,6 +62,6 @@
     "tailwindcss": "^4.2.2",
     "three-stdlib": "^2.36.1",
     "typescript": "^6.0.2",
-    "vite": "^8.0.5"
+    "vite": "^8.0.7"
   }
 }
