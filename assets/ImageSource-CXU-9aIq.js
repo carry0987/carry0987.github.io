@@ -1,1 +1,0 @@
-import{U as e,rt as t}from"./Geometry-yFSMk2uO.js";var n=class extends e{constructor(e){super(e),this.uploadMethodId=`image`,this.autoGarbageCollect=!0}static test(e){return globalThis.HTMLImageElement&&e instanceof HTMLImageElement||typeof ImageBitmap<`u`&&e instanceof ImageBitmap||globalThis.VideoFrame&&e instanceof VideoFrame}};n.extension=t.TextureSource;export{n as t};
