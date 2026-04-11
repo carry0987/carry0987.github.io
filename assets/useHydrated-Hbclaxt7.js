@@ -1,0 +1,1 @@
+import{r as e}from"./chunk-ChSjv458.js";import{P as t}from"./jsx-runtime-CDrvMv1E.js";var n=e(t(),1),r=()=>()=>{};function i(){return(0,n.useSyncExternalStore)(r,()=>!0,()=>!1)}export{i as t};
