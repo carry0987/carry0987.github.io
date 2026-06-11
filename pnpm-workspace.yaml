@@ -1,5 +1,8 @@
-onlyBuiltDependencies:
-  - canvas
-  - core-js
-  - esbuild
-  - protobufjs
+allowBuilds:
+  '@google/genai': true
+  canvas: true
+  core-js: true
+  esbuild: true
+  protobufjs: true
+minimumReleaseAgeExclude:
+  - '@types/node@25.9.3'
