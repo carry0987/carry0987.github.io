@@ -1,0 +1,1 @@
+var e=async()=>(await new Promise(e=>setTimeout(e,1e3)),null);export{e as clientLoader};
