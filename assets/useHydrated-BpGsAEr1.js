@@ -1,0 +1,1 @@
+import{K as e,Y as t}from"./jsx-runtime-CUO12s_e.js";var n=t(e(),1),r=()=>()=>{};function i(){return(0,n.useSyncExternalStore)(r,()=>!0,()=>!1)}export{i as t};
