@@ -30,7 +30,7 @@ export const generateSvgFromPrompt = async (prompt: string, apiKey: string): Pro
         const fullPrompt = `Create an SVG representation of the following object/item: "${prompt}"`;
 
         const response = await ai.models.generateContent({
-            model: 'gemini-3-pro-preview',
+            model: 'gemini-3.1-pro-preview',
             contents: fullPrompt,
             config: {
                 systemInstruction: systemPrompt,
