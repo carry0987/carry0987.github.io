@@ -3,12 +3,7 @@ export type Platform = 'instagram' | 'line' | 'telegram' | 'tiktok';
 export type AIProvider = 'openai' | 'gemini';
 
 export type PhoneModelId =
-    | 'iphone-15-pro-max'
-    | 'iphone-15-pro'
-    | 'iphone-15'
-    | 'iphone-se'
-    | 'pixel-8-pro'
-    | 'galaxy-s24';
+    'iphone-15-pro-max' | 'iphone-15-pro' | 'iphone-15' | 'iphone-se' | 'pixel-8-pro' | 'galaxy-s24';
 
 export interface PhoneModel {
     id: PhoneModelId;
