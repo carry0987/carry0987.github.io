@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { getLocalValue, setLocalValue } from '@carry0987/utils';
+import { getLocalValue, setLocalValue } from '@carry0987/utils/browser';
 import * as fabric from 'fabric';
 import { useFileUpload } from './hooks/useFileUpload';
 import { useHydrated } from '@/hooks/useHydrated';

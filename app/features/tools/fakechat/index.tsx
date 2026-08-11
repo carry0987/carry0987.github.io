@@ -3,7 +3,7 @@ import { Link } from 'react-router';
 import { toPng } from 'html-to-image';
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/react';
 import { ArrowLeft, MessageCircle, Smartphone, ChevronDown, Check } from 'lucide-react';
-import { getLocalValue, setLocalValue } from '@carry0987/utils';
+import { getLocalValue, setLocalValue } from '@carry0987/utils/browser';
 import type { ChatSettings, Message, Platform, PhoneModel, AIProvider, AIGeneratorSettings } from './types';
 import { DEFAULT_SETTINGS, INITIAL_MESSAGES, PHONE_MODELS, DEFAULT_PHONE_MODEL } from './constants';
 import ChatPreview from './components/ChatPreview';

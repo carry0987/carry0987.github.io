@@ -4,7 +4,7 @@ import { SvgPreview } from './components/SvgPreview';
 import { generateSvgFromPrompt } from './services/geminiService';
 import { type GeneratedSvg, GenerationStatus, type ApiError } from './types';
 import React, { useState, useEffect } from 'react';
-import { getLocalValue, setLocalValue } from '@carry0987/utils';
+import { getLocalValue, setLocalValue } from '@carry0987/utils/browser';
 import { AlertCircle } from 'lucide-react';
 
 // Import CSS

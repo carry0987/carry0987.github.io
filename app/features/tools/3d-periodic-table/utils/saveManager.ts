@@ -1,4 +1,4 @@
-import { getLocalValue, setLocalValue, removeLocalValue } from '@carry0987/utils';
+import { getLocalValue, setLocalValue, removeLocalValue } from '@carry0987/utils/browser';
 import { LayoutMode, PerformanceLevel } from '../types';
 
 export interface SaveData {

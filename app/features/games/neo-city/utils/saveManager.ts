@@ -1,4 +1,4 @@
-import { getLocalValue, setLocalValue, removeLocalValue } from '@carry0987/utils';
+import { getLocalValue, setLocalValue, removeLocalValue } from '@carry0987/utils/browser';
 import type { TileData, CityStats, FeedMessage, SaveData } from '../types';
 
 const DB_NAME = 'neo-city-db';
