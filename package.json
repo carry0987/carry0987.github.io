@@ -23,7 +23,7 @@
     "typecheck": "react-router typegen && tsc"
   },
   "dependencies": {
-    "@google/genai": "^2.16.0",
+    "@google/genai": "^2.17.1",
     "@headlessui/react": "^2.2.10",
     "@heroicons/react": "^2.2.0",
     "@mediapipe/pose": "^0.5.1675469404",
@@ -51,7 +51,7 @@
   "devDependencies": {
     "@adakrei/stats": "^1.0.1",
     "@carry0987/darkmode": "^1.2.1",
-    "@carry0987/utils": "^4.0.0",
+    "@carry0987/utils": "^4.0.1",
     "@tailwindcss/vite": "^4.3.3",
     "@types/node": "^26.2.0",
     "@types/pica": "^9.0.5",

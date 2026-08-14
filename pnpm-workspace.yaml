@@ -15,4 +15,5 @@ minimumReleaseAgeExclude:
   - '@mediapipe/tasks-vision@1.0.0'
   - lucide-react@1.31.0
   - react-dropzone@20.1.0
-  - '@carry0987/utils@4.0.0'
+  - '@carry0987/utils@4.0.0 || 4.0.1'
+  - '@google/genai@2.17.1'
