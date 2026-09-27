@@ -1,0 +1,1 @@
+import{X as e,q as t}from"./jsx-runtime-CZ7C0zjR.js";var n=e(t(),1),r=()=>()=>{};function i(){return(0,n.useSyncExternalStore)(r,()=>!0,()=>!1)}export{i as t};
