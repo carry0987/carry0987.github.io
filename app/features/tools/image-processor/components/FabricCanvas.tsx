@@ -39,9 +39,12 @@ const FabricCanvas: React.FC<FabricCanvasProps> = ({
     useEffect(() => {
         const canvas = fabricRef.current;
         if (!canvas || !imageUrl) return;
+        let cancelled = false;
 
         // Load Image
         fabric.FabricImage.fromURL(imageUrl, { crossOrigin: 'anonymous' }).then((img) => {
+            if (cancelled || fabricRef.current !== canvas) return;
+
             // Get original image dimensions
             const imgWidth = img.width!;
             const imgHeight = img.height!;
@@ -80,6 +83,10 @@ const FabricCanvas: React.FC<FabricCanvasProps> = ({
             canvas.sendObjectToBack(img);
             canvas.renderAll();
         });
+
+        return () => {
+            cancelled = true;
+        };
     }, [imageUrl]);
 
     return (

@@ -11,10 +11,23 @@ export const useFileUpload = () => {
         setError(null);
 
         try {
+            const isHeic = file.type === 'image/heic' || file.type === 'image/heif' || /\.hei[cf]$/i.test(file.name);
+            const isImage =
+                file.type.startsWith('image/') || isHeic || (!file.type && /\.(png|jpe?g|webp)$/i.test(file.name));
+
+            if (!isImage) {
+                setError('請選擇支援的圖片檔案。');
+                return null;
+            }
+            if (file.size > 20 * 1024 * 1024) {
+                setError('圖片大小不可超過 20 MB。');
+                return null;
+            }
+
             let targetFile = file;
 
             // Handle HEIC/HEIF
-            if (file.type === 'image/heic' || file.type === 'image/heif' || file.name.toLowerCase().endsWith('.heic')) {
+            if (isHeic) {
                 const heic2any = (await import('heic2any')).default;
                 const convertedBlob = await (heic2any as any)({
                     blob: file,

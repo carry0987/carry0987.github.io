@@ -10,6 +10,7 @@ const ImageProcessor: React.FC = () => {
     const [imageState, setImageState] = useState<{ url: string | null; file: File | null }>({ url: null, file: null });
     const [canvas, setCanvas] = useState<any | null>(null);
     const [history, setHistory] = useState<string[]>([]);
+    const [isDragging, setIsDragging] = useState(false);
     const isHydrated = useHydrated();
     const { processFile, isProcessing, error } = useFileUpload();
 
@@ -112,17 +113,34 @@ const ImageProcessor: React.FC = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, [undo, isHydrated]);
 
-    const handleFileChange = useCallback(
-        async (event: React.ChangeEvent<HTMLInputElement>) => {
-            const file = event.target.files?.[0];
-            if (!file) return;
-
+    const handleFile = useCallback(
+        async (file: File) => {
+            if (isProcessing) return;
             const result = await processFile(file);
             if (result) {
                 setImageState(result);
             }
         },
-        [processFile]
+        [isProcessing, processFile]
+    );
+
+    const handleFileChange = useCallback(
+        (event: React.ChangeEvent<HTMLInputElement>) => {
+            const file = event.target.files?.[0];
+            event.target.value = '';
+            if (file) void handleFile(file);
+        },
+        [handleFile]
+    );
+
+    const handleDrop = useCallback(
+        (event: React.DragEvent<HTMLDivElement>) => {
+            event.preventDefault();
+            setIsDragging(false);
+            const file = event.dataTransfer.files[0];
+            if (file) void handleFile(file);
+        },
+        [handleFile]
     );
 
     const generateIDWatermark = useCallback(() => {
@@ -281,15 +299,30 @@ const ImageProcessor: React.FC = () => {
     return (
         <div className="max-w-7xl mx-auto p-4 md:p-8 space-y-6">
             <header className="text-center space-y-2">
-                <h1 className="text-3xl font-bold tracking-tight text-gray-900">圖片處理工具</h1>
+                <h1 className="text-3xl font-bold tracking-tight text-white-900">圖片處理工具</h1>
                 <p className="text-gray-600">純前端圖片處理，隱私安全，支援身分證影印浮水印、裁切與旋轉</p>
             </header>
 
-            <main className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                {/* 左側預覽區 */}
-                <section className="lg:col-span-3 space-y-4">
+            <main className="space-y-6">
+                <section className="space-y-4">
                     {!imageState.url ? (
-                        <div className="flex flex-col items-center justify-center h-96 border-2 border-dashed border-gray-300 rounded-xl bg-gray-50/50 hover:bg-gray-50 transition-colors">
+                        <div
+                            className={`flex flex-col items-center justify-center h-96 border-2 border-dashed rounded-xl transition-colors ${
+                                isDragging
+                                    ? 'border-blue-500 bg-blue-50'
+                                    : 'border-gray-300 bg-gray-50/50 hover:bg-gray-50'
+                            }`}
+                            aria-busy={isProcessing}
+                            onDragEnter={(event) => {
+                                event.preventDefault();
+                                if (event.dataTransfer.types.includes('Files')) setIsDragging(true);
+                            }}
+                            onDragOver={(event) => event.preventDefault()}
+                            onDragLeave={(event) => {
+                                if (!event.currentTarget.contains(event.relatedTarget as Node | null))
+                                    setIsDragging(false);
+                            }}
+                            onDrop={handleDrop}>
                             <input
                                 type="file"
                                 id="file-upload"
@@ -310,7 +343,7 @@ const ImageProcessor: React.FC = () => {
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             strokeWidth={2}
-                                            d="9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                                            d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V7a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
                                         />
                                     </svg>
                                 </div>
@@ -343,8 +376,7 @@ const ImageProcessor: React.FC = () => {
                     )}
                 </section>
 
-                {/* 右側控制區 */}
-                <section className="lg:col-span-1 space-y-6">
+                <section className="w-full max-w-4xl mx-auto space-y-6">
                     <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100">
                         <div className="flex items-center justify-between mb-4">
                             <h2 className="text-xl font-semibold text-gray-800">浮水印設定</h2>
