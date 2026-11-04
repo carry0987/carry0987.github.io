@@ -11,24 +11,19 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [25]
     steps:
       - name: Checkout repo
         uses: actions/checkout@v6
         with:
           fetch-depth: 0
 
-      - uses: pnpm/action-setup@v6
+      - name: Setup pnpm
+        uses: pnpm/setup@v2
         with:
-          version: latest
-
-      - name: Setup Node.js v${{ matrix.node-version }}
-        uses: actions/setup-node@v6
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: pnpm
+          version: 12
+          cache: true
+          install: false
+          runtime: node@24
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
