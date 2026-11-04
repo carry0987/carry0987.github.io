@@ -1,0 +1,1 @@
+import{r as e}from"./rolldown-runtime-XKyaHtl9.js";import{ot as t}from"./jsx-runtime-C3US_PGx.js";var n=e(t(),1),r=()=>()=>{};function i(){return(0,n.useSyncExternalStore)(r,()=>!0,()=>!1)}export{i as t};
