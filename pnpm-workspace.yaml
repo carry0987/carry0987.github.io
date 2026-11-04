@@ -4,3 +4,11 @@ allowBuilds:
   core-js: true
   esbuild: true
   protobufjs: true
+minimumReleaseAgeExclude:
+  - '@mediapipe/tasks-vision@1.2.2'
+  - d3-delaunay@6.0.6
+  - d3@7.9.2
+  - lucide-react@1.68.0
+permissions:
+  pixi.js:
+    skills: true
